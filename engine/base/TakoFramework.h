@@ -3,6 +3,7 @@
 #include "DX12Basic.h"
 #include "D3DResourceLeakCheker.h"
 #include "Camera.h"
+#include "CameraManager.h"
 #include "SrvManager.h"
 #include "AbstractSceneFactory.h"
 
@@ -48,9 +49,11 @@ protected: // メンバ変数
 #ifdef _DEBUG
 	ImGuiManager* imguiManager_ = nullptr;
 #endif
-
-	// カメラ
+	// デフォルトカメラ
 	Camera* defaultCamera_ = nullptr;
+
+	// カメラマネージャー
+	CameraManager* cameraManager_ = nullptr;
 
 	// シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;

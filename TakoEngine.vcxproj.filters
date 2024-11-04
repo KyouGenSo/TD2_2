@@ -200,6 +200,12 @@
     <ClCompile Include="engine\scene\Transition.cpp">
       <Filter>ソース ファイル\engine\scene</Filter>
     </ClCompile>
+    <ClCompile Include="engine\effect\ParticleManager.cpp">
+      <Filter>ソース ファイル\engine\effect</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\CameraManager.cpp">
+      <Filter>ソース ファイル\engine\3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\func\mathFunc\Mat4x4Func.h">
@@ -313,6 +319,12 @@
     <ClInclude Include="engine\scene\Transition.h">
       <Filter>ヘッダー ファイル\engine\scene</Filter>
     </ClInclude>
+    <ClInclude Include="engine\effect\ParticleManager.h">
+      <Filter>ヘッダー ファイル\engine\effect</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\CameraManager.h">
+      <Filter>ヘッダー ファイル\engine\3d</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\NoTex.hlsli">
@@ -322,6 +334,9 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="resources\shaders\FullScreen.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="resources\shaders\Particle.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
@@ -366,6 +381,12 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="resources\shaders\Bloom.PS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Particle.VS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Particle.PS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

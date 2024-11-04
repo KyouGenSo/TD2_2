@@ -53,11 +53,29 @@ struct Vector3 final {
 		return result;
 	}
 
+	Vector3 operator+(float s) const {
+		Vector3 result;
+		result.x = x + s;
+		result.y = y + s;
+		result.z = z + s;
+
+		return result;
+	}
+
 	Vector3 operator-(const Vector3& v) const {
 		Vector3 result;
 		result.x = x - v.x;
 		result.y = y - v.y;
 		result.z = z - v.z;
+
+		return result;
+	}
+
+	Vector3 operator-(float s) const {
+		Vector3 result;
+		result.x = x - s;
+		result.y = y - s;
+		result.z = z - s;
 
 		return result;
 	}
