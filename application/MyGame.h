@@ -26,6 +26,11 @@ public: // メンバ関数
 	/// </summary>
 	void Draw() override;
 
+	/// <summary>
+	/// DX12を取得
+	/// </summary>
+	DX12Basic* GetDX12() { return dx12_; }
+
 private: // メンバ変数
 
 	float vignettePower = 0.f;

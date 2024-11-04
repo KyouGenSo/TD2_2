@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "MyGame.h"
 #include "SceneManager.h"
 #include"Audio.h"
 #include"ModelManager.h"
@@ -6,7 +7,7 @@
 #include"TextureManager.h"
 #include"SpriteBasic.h"
 #include"Input.h"
-#include "DebugCamera.h"
+#include"ParticleManager.h"
 
 #ifdef _DEBUG
 #include"ImGui.h"
@@ -53,9 +54,7 @@ void GameScene::Update()
 	///              更新処理               ///
 	/// ================================== ///
 
-
 	object3d_->Update();
-
 
 	// シーン遷移
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
