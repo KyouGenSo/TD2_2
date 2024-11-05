@@ -31,8 +31,6 @@ void GameScene::Initialize()
 	boss_ = new Boss();
 	boss_->Initialize();
 
-	object3d_->SetModel("teapot.obj");
-
 	//---------------------------------------
 	// プレイヤーの初期化
 	player_ = std::make_unique<Player>();
@@ -47,7 +45,6 @@ void GameScene::Initialize()
 
 void GameScene::Finalize()
 {
-	delete object3d_;
 	delete boss_;
 }
 
@@ -104,9 +101,6 @@ void GameScene::Draw()
 	//-------------------Modelの描画-------------------//
 	// 3Dモデル共通描画設定
 	Object3dBasic::GetInstance()->SetCommonRenderSetting();
-
-	// モデル描画
-	//object3d_->Draw();
 
 	boss_->Draw();
 
