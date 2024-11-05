@@ -2,7 +2,7 @@
 #include "Object3d.h"
 
 void Boss::Initialize(){
-	object3d_ = new Object3d();
+	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize();
 	object3d_->SetModel("Boss.obj");
 
@@ -22,10 +22,4 @@ void Boss::Update(){
 
 void Boss::Draw(){
 	object3d_->Draw();
-}
-
-Boss::~Boss()
-{
-	//解放
-	delete object3d_;
 }

@@ -7,6 +7,7 @@
 #include "vector3.h"
 #include "vector4.h"
 #include "Mat4x4Func.h"
+#include <memory>
 
 //class Model;
 class Object3d;
@@ -19,15 +20,13 @@ public:
 	void Update();
 	void Draw();
 
-	~Boss();
-
 private:
 	//WorldTransform worldTransform_;
 
 	//// ViewProjectionのポインタを追加
 	//ViewProjection viewProjection_;
 
-	Object3d* object3d_ = nullptr;
+	std::unique_ptr<Object3d> object3d_ = nullptr;
 
 	Transform transform_;
 
