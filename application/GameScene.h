@@ -1,10 +1,12 @@
 #pragma once
 #include "BaseScene.h"
-#include"Sprite.h"
-#include"Object3d.h"
+#include "Sprite.h"
+#include "Object3d.h"
+#include <memory>
+#include "Player.h"
+#include "Ground.h"
 
-class GameScene : public BaseScene
-{
+class GameScene : public BaseScene {
 public: // メンバ関数
 
 	/// <summary>
@@ -37,4 +39,14 @@ private: // メンバ変数
 	Object3d* object3d_ = nullptr;
 
 	bool isDebug_ = false;
+
+	//---------------------------------------
+	// 地面
+	std::unique_ptr<Ground> ground_;
+
+	//---------------------------------------
+	// プレイヤー
+	std::unique_ptr<Player> player_;
+
+
 };
