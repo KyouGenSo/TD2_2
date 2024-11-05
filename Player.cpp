@@ -30,10 +30,9 @@ void Player::Initialize() {
 	// 回転
 	rotation_ = Vector3(0.0f, 0.0f, 0.0f);
 	// 位置
-	translation_ = Vector3(0.0f, 0.0f, 0.0f);
+	translation_ = Vector3(0.0f, 0.0f, -13.0f);
+	object3d_->SetTranslate(translation_);
 
-	//---------------------------------------
-	// 
 
 }
 

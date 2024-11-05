@@ -7,8 +7,8 @@
  * \note
  *********************************************************************/
 #include "Ground.h"
-///--------------------------------------------------------------
-///						 Engine
+ ///--------------------------------------------------------------
+ ///						 Engine
 #include "Input.h"
 #include "Model.h"
 #include "ModelManager.h"
@@ -19,6 +19,9 @@ void Ground::Initialize() {
 	//---------------------------------------
 	// モデルの読み込み
 	ModelManager::GetInstance()->LoadModel("Ground.obj");
+
+	//---------------------------------------
+	// 3Dオブジェクト
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize();
 	object3d_->SetModel("Ground.obj");
@@ -31,9 +34,6 @@ void Ground::Initialize() {
 	rotation_ = Vector3(0.0f, 0.0f, 0.0f);
 	// 位置
 	translation_ = Vector3(0.0f, 0.0f, 0.0f);
-
-	//---------------------------------------
-	//	
 
 }
 
