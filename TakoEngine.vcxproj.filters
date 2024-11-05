@@ -206,9 +206,6 @@
     <ClCompile Include="engine\3d\CameraManager.cpp">
       <Filter>ソース ファイル\engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="Boss.cpp">
-      <Filter>ソース ファイル\engine\3d</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\func\mathFunc\Mat4x4Func.h">
@@ -326,9 +323,6 @@
       <Filter>ヘッダー ファイル\engine\effect</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\CameraManager.h">
-      <Filter>ヘッダー ファイル\engine\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="Boss.h">
       <Filter>ヘッダー ファイル\engine\3d</Filter>
     </ClInclude>
   </ItemGroup>
