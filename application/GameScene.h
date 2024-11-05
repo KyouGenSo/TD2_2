@@ -2,6 +2,7 @@
 #include "BaseScene.h"
 #include"Sprite.h"
 #include"Object3d.h"
+#include "Boss.h"
 
 class GameScene : public BaseScene
 {
@@ -36,7 +37,7 @@ private: // メンバ変数
 
 	Object3d* object3d_ = nullptr;
 	//Boss
-	Object3d* bossObject3d_ = nullptr;
+	Boss* boss_ = nullptr;
 
 	bool isDebug_ = false;
 };
