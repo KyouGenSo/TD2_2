@@ -24,11 +24,12 @@ void GameScene::Initialize()
 	///              初期化処理              ///
 	/// ================================== ///
 
-	ModelManager::GetInstance()->LoadModel("teapot.obj");
+	ModelManager::GetInstance()->LoadModel("player.obj");
+	//ModelManager::GetInstance()->LoadModel("Boss.obj");
 
 	object3d_ = new Object3d();
 	object3d_->Initialize();
-	object3d_->SetModel("teapot.obj");
+	object3d_->SetModel("player.obj");
 }
 
 void GameScene::Finalize()

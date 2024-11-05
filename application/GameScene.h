@@ -35,6 +35,8 @@ public: // メンバ関数
 private: // メンバ変数
 
 	Object3d* object3d_ = nullptr;
+	//Boss
+	Object3d* bossObject3d_ = nullptr;
 
 	bool isDebug_ = false;
 };
