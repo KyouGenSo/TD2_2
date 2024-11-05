@@ -118,6 +118,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\io\Input.cpp" />
     <ClCompile Include="engine\func\commonFunc\Logger.cpp" />
     <ClCompile Include="application\GameScene.cpp" />
+    <ClCompile Include="Ground.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\func\mathFunc\Mat4x4Func.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
@@ -138,6 +139,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\scene\SceneManager.cpp" />
     <ClCompile Include="application\SceneFactory.cpp" />
     <ClCompile Include="engine\scene\Transition.cpp" />
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boss.h" />
@@ -180,6 +182,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\SceneFactory.h" />
     <ClInclude Include="engine\math\Matrix3x3.h" />
     <ClInclude Include="engine\scene\Transition.h" />
+    <ClInclude Include="Ground.h" />
+    <ClInclude Include="Player.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\FullScreen.hlsli">

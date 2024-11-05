@@ -27,13 +27,22 @@ void GameScene::Initialize()
 	ModelManager::GetInstance()->LoadModel("player.obj");
 	ModelManager::GetInstance()->LoadModel("Boss.obj");
 
-	object3d_ = new Object3d();
-	object3d_->Initialize();
-	object3d_->SetModel("player.obj");
-
 	//Boss
 	boss_ = new Boss();
 	boss_->Initialize();
+
+	object3d_->SetModel("teapot.obj");
+
+	//---------------------------------------
+	// プレイヤーの初期化
+	player_ = std::make_unique<Player>();
+	player_->Initialize();
+
+	//---------------------------------------
+	// 地面の初期化
+	ground_ = std::make_unique<Ground>();
+	ground_->Initialize();
+
 }
 
 void GameScene::Finalize()
@@ -63,6 +72,14 @@ void GameScene::Update()
 	//object3d_->Update();
 	boss_->Update();
 
+	//---------------------------------------
+	// プレイヤーの更新
+	player_->Update();
+
+	//---------------------------------------
+	// 地面の更新
+	ground_->Update();
+
 	// シーン遷移
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
 	{
@@ -90,7 +107,16 @@ void GameScene::Draw()
 
 	// モデル描画
 	//object3d_->Draw();
+
 	boss_->Draw();
+
+	//---------------------------------------
+	// プレイヤーの描画
+	player_->Draw();
+
+	//---------------------------------------
+	// 地面の描画
+	ground_->Draw();
 
 	//-------------------Modelの描画-------------------//
 
