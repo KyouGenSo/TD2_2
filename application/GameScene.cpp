@@ -24,10 +24,13 @@ void GameScene::Initialize()
 	///              初期化処理              ///
 	/// ================================== ///
 
-	ModelManager::GetInstance()->LoadModel("teapot.obj");
+	ModelManager::GetInstance()->LoadModel("player.obj");
+	ModelManager::GetInstance()->LoadModel("Boss.obj");
 
-	object3d_ = new Object3d();
-	object3d_->Initialize();
+	//Boss
+	boss_ = new Boss();
+	boss_->Initialize();
+
 	object3d_->SetModel("teapot.obj");
 
 	//---------------------------------------
@@ -45,6 +48,7 @@ void GameScene::Initialize()
 void GameScene::Finalize()
 {
 	delete object3d_;
+	delete boss_;
 }
 
 void GameScene::Update()
@@ -65,7 +69,8 @@ void GameScene::Update()
 	///              更新処理               ///
 	/// ================================== ///
 
-	object3d_->Update();
+	//object3d_->Update();
+	boss_->Update();
 
 	//---------------------------------------
 	// プレイヤーの更新
@@ -102,6 +107,8 @@ void GameScene::Draw()
 
 	// モデル描画
 	//object3d_->Draw();
+
+	boss_->Draw();
 
 	//---------------------------------------
 	// プレイヤーの描画

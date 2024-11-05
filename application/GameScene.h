@@ -4,6 +4,7 @@
 #include "Object3d.h"
 #include <memory>
 #include "Player.h"
+#include "Boss.h"
 #include "Ground.h"
 
 class GameScene : public BaseScene {
@@ -37,6 +38,8 @@ public: // メンバ関数
 private: // メンバ変数
 
 	Object3d* object3d_ = nullptr;
+	//Boss
+	Boss* boss_ = nullptr;
 
 	bool isDebug_ = false;
 
