@@ -207,7 +207,7 @@
       <Filter>ソース ファイル\engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="Boss.cpp">
-      <Filter>ソース ファイル\engine\3d</Filter>
+      <Filter>ソース ファイル\application</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -329,7 +329,7 @@
       <Filter>ヘッダー ファイル\engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="Boss.h">
-      <Filter>ヘッダー ファイル\engine\3d</Filter>
+      <Filter>ヘッダー ファイル\application</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
