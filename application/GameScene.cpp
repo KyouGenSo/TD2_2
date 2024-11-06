@@ -26,20 +26,27 @@ void GameScene::Initialize()
 
 	ModelManager::GetInstance()->LoadModel("player.obj");
 	ModelManager::GetInstance()->LoadModel("Boss.obj");
+	ModelManager::GetInstance()->LoadModel("skydome.obj");
 
-	//Boss
+	//---------------------------------------
+	// ボスの初期化
 	boss_ = new Boss();
 	boss_->Initialize();
 
 	//---------------------------------------
 	// プレイヤーの初期化
 	player_ = std::make_unique<Player>();
-	player_->Initialize();
+	player_->Initialize(boss_);
 
 	//---------------------------------------
 	// 地面の初期化
 	ground_ = std::make_unique<Ground>();
 	ground_->Initialize();
+
+	//---------------------------------------
+	// 天球の初期化
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Initialize();
 
 }
 
@@ -66,7 +73,8 @@ void GameScene::Update()
 	///              更新処理               ///
 	/// ================================== ///
 
-	//object3d_->Update();
+	//---------------------------------------
+	// ボスの更新
 	boss_->Update();
 
 	//---------------------------------------
@@ -76,6 +84,10 @@ void GameScene::Update()
 	//---------------------------------------
 	// 地面の更新
 	ground_->Update();
+
+	//---------------------------------------
+	// 天球の更新
+	skydome_->Update();
 
 	// シーン遷移
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
@@ -102,6 +114,8 @@ void GameScene::Draw()
 	// 3Dモデル共通描画設定
 	Object3dBasic::GetInstance()->SetCommonRenderSetting();
 
+	//---------------------------------------
+	// ボスの描画
 	boss_->Draw();
 
 	//---------------------------------------
@@ -111,6 +125,10 @@ void GameScene::Draw()
 	//---------------------------------------
 	// 地面の描画
 	ground_->Draw();
+
+	//---------------------------------------
+	// 天球の描画
+	skydome_->Draw();
 
 	//-------------------Modelの描画-------------------//
 

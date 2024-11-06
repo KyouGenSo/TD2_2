@@ -9,30 +9,17 @@
 #include "Mat4x4Func.h"
 #include <memory>
 
-//class Model;
 class Object3d;
 
-class Boss
+class Skydome
 {
 
-public: // メンバ関数
-
-	// 初期化
+public:
 	void Initialize();
-	
-	// 更新
 	void Update();
-
-	// 描画
 	void Draw();
 
-	// Transformのゲッター
-	const Transform& GetTransform() const {
-		return transform_;
-	}
-
-private: // メンバ変数
-
+private:
 	std::unique_ptr<Object3d> object3d_ = nullptr;
 
 	Transform transform_;
