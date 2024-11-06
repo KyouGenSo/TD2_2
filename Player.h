@@ -52,8 +52,8 @@ private:
 
 	Boss* boss_ = nullptr; // Boss クラスへのポインタ
 	float angle_ = 0.0f;   // 現在の角度
-	const float radius_ = 10.0f; // Boss を中心とする円の半径
-	const float rotationSpeed_ = 0.05f; // 回転速度
+	const float radius_ = 12.5f; // Boss を中心とする円の半径
+	const float rotationSpeed_ = 0.04f; // 回転速度
 
 };
 
