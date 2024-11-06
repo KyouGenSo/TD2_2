@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "Boss.h"
 #include "Ground.h"
+#include "Skydome.h"
 
 class GameScene : public BaseScene {
 public: // メンバ関数
@@ -37,7 +38,8 @@ public: // メンバ関数
 
 private: // メンバ変数
 
-	//Boss
+	//---------------------------------------
+	// ボス
 	Boss* boss_ = nullptr;
 
 	bool isDebug_ = false;
@@ -50,5 +52,7 @@ private: // メンバ変数
 	// プレイヤー
 	std::unique_ptr<Player> player_;
 
-
+	//---------------------------------------
+	// 天球
+	std::unique_ptr<Skydome> skydome_;
 };
