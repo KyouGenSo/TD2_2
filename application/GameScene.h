@@ -7,6 +7,7 @@
 #include "Boss.h"
 #include "Ground.h"
 #include "Skydome.h"
+#include "DebugCamera.h"
 
 class GameScene : public BaseScene {
 public: // メンバ関数

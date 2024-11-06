@@ -68,6 +68,10 @@ void GameScene::Update()
 	{
 		DebugCamera::GetInstance()->Update();
 	}
+
+	// DebugCamera にプレイヤーを追従させる
+	DebugCamera::GetInstance()->FollowPlayer(*player_);
+
 #endif
 	/// ================================== ///
 	///              更新処理               ///

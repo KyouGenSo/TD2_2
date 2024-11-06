@@ -2,8 +2,17 @@
 #include "WinApp.h"
 #include"Input.h"
 #include "Vector3.h"
+#include "Player.h"
 
 DebugCamera* DebugCamera::instance_ = nullptr;
+
+Vector3 DebugCamera::CalculateRotationFromDirection(const Vector3& direction)
+{
+	Vector3 rotation;
+	rotation.y = atan2f(direction.x, direction.z); // Y軸回転
+	rotation.x = atan2f(direction.y, sqrtf(direction.x * direction.x + direction.z * direction.z)); // X軸回転
+	return rotation;
+}
 
 DebugCamera* DebugCamera::GetInstance()
 {
@@ -210,4 +219,23 @@ void DebugCamera::Move3D()
 		transform_.rotate.y += rotateSpeed_;
 	}
 	
+}
+
+// プレイヤーの位置を追従する
+void DebugCamera::FollowPlayer(const Player& player) {
+	// プレイヤーの位置を取得
+	Vector3 playerPos = player.GetPosition();
+
+	// カメラの位置をプレイヤーの後方にオフセット付きで配置
+	transform_.translate = playerPos + offset_;
+
+	// プレイヤーの位置に向かってカメラが回転するように設定
+	Vector3 direction = playerPos - transform_.translate;
+	transform_.rotate = CalculateRotationFromDirection(direction);
+
+	// 各行列の再計算
+	worldMat_ = Mat4x4::MakeAffine(transform_.scale, transform_.rotate, transform_.translate);
+	viewMat_ = Mat4x4::Inverse(worldMat_);
+	projectionMat_ = Mat4x4::MakePerspective(fovY_, aspect_, nearZ_, farZ_);
+	viewProjectionMat_ = Mat4x4::Multiply(viewMat_, projectionMat_);
 }

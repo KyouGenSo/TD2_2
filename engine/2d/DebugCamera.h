@@ -1,5 +1,6 @@
 #pragma once
 #include "Mat4x4Func.h"
+#include "Player.h"
 
 class DebugCamera
 {
@@ -12,6 +13,11 @@ private: // シングルトン設定
 	~DebugCamera() = default;
 	DebugCamera(DebugCamera&) = delete;
 	DebugCamera& operator=(DebugCamera&) = delete;
+
+	// プレイヤーを追従する際のオフセット
+	Vector3 offset_ = { 5.0f, 3.0f, -18.0f };
+	// 方向ベクトルからカメラの回転を計算する補助関数
+	Vector3 CalculateRotationFromDirection(const Vector3& direction);
 
 public: // メンバー関数
 
@@ -57,6 +63,8 @@ public: // メンバー関数
 		is2D_ = false;
 	}
 
+	// プレイヤーを追従する関数
+	void FollowPlayer(const Player& player);
 
 	//-----------------------------------------Getter-----------------------------------------//
 	///<summary>

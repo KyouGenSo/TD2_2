@@ -28,6 +28,9 @@ public:
 	/// \brief 描画 
 	void Draw();
 
+	//playerの位置を取得するためのgetter
+	const Vector3& GetPosition() const { return transform_.translate; }
+
 	///--------------------------------------------------------------
 	///							入出力関数
 public:

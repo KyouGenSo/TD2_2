@@ -51,10 +51,10 @@ void Player::Update() {
 	if (boss_ == nullptr) return;
 
 	// 左右移動の回転処理
-	if (Input::GetInstance()->PushKey(DIK_A)) {
+	if (Input::GetInstance()->PushKey(DIK_B)) {
 		angle_ -= rotationSpeed_; // 左回転
 	}
-	if (Input::GetInstance()->PushKey(DIK_D)) {
+	if (Input::GetInstance()->PushKey(DIK_N)) {
 		angle_ += rotationSpeed_; // 右回転
 	}
 
@@ -64,7 +64,7 @@ void Player::Update() {
 	transform_.translate.z = bossTransform.translate.z + radius_ * sinf(angle_);
 
 	// ジャンプ処理
-	if (Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
+	if (Input::GetInstance()->PushKey(DIK_H) && !isJumping_) {
 		isJumping_ = true;
 		jumpVelocity_ = jumpPower_;
 	}
