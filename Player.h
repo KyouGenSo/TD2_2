@@ -11,6 +11,8 @@
 #include"Object3d.h"
 #include"Vector3.h"
 #include <memory>
+#include "Input.h"
+#include "Boss.h"
 
 class Player {
 	///--------------------------------------------------------------
@@ -40,12 +42,13 @@ private:
 
 	//---------------------------------------
 	// SRT
-	// 大きさ
-	Vector3 scale_ = Vector3(1.0f, 1.0f, 1.0f);
-	// 回転
-	Vector3 rotation_ = Vector3(0.0f, 0.0f, 0.0f);
-	// 位置
-	Vector3 translation_ = Vector3(0.0f, 0.0f, 0.0f);
+	Transform transform_;
+
+	// ジャンプ関連の変数
+	bool isJumping_ = false;
+	float jumpVelocity_ = 0.0f;
+	const float gravity_ = -0.02f;
+	const float jumpPower_ = 0.4f;
 
 };
 

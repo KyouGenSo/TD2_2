@@ -26,21 +26,50 @@ void Player::Initialize() {
 	//---------------------------------------
 	// SRT
 	// 大きさ
-	scale_ = Vector3(1.0f, 1.0f, 1.0f);
+	transform_.scale = { 5.0f,5.0f,5.0f };
 	// 回転
-	rotation_ = Vector3(0.0f, 0.0f, 0.0f);
+	transform_.rotate = { 0.0f,0.0f,0.0f };
 	// 位置
-	translation_ = Vector3(0.0f, 0.0f, -13.0f);
-	object3d_->SetTranslate(translation_);
-
-
+	transform_.translate = { 0.0f, 0.0f, -13.0f };
 }
 
 ///=============================================================================
 ///						更新
 void Player::Update() {
+
+	// 左右移動処理
+	const float moveSpeed = 0.6f; // 移動速度
+	if (Input::GetInstance()->PushKey(DIK_A)) {  // 左方向に移動
+		transform_.translate.x -= moveSpeed;
+	}
+	if (Input::GetInstance()->PushKey(DIK_D)) {  // 右方向に移動
+		transform_.translate.x += moveSpeed;
+	}
+
+	// ジャンプ処理
+	if (Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
+		isJumping_ = true;
+		jumpVelocity_ = jumpPower_;
+	}
+
+	if (isJumping_) {
+		transform_.translate.y += jumpVelocity_;
+		jumpVelocity_ += gravity_;
+
+		if (transform_.translate.y <= 0.0f) {
+			transform_.translate.y = 0.0f;
+			isJumping_ = false;
+			jumpVelocity_ = 0.0f;
+		}
+	}
+
+	// 入力の更新
+	//input_->Update();
 	//---------------------------------------
 	// モデルの更新
+	object3d_->SetScale(transform_.scale);
+	object3d_->SetRotate(transform_.rotate);
+	object3d_->SetTranslate(transform_.translate);
 	object3d_->Update();
 
 }
