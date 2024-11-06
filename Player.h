@@ -20,7 +20,7 @@ class Player {
 public:
 
 	/// \brief 初期化
-	void Initialize();
+	void Initialize(Boss* boss);
 
 	/// \brief 更新
 	void Update();
@@ -49,6 +49,11 @@ private:
 	float jumpVelocity_ = 0.0f;
 	const float gravity_ = -0.02f;
 	const float jumpPower_ = 0.4f;
+
+	Boss* boss_ = nullptr; // Boss クラスへのポインタ
+	float angle_ = 0.0f;   // 現在の角度
+	const float radius_ = 10.0f; // Boss を中心とする円の半径
+	const float rotationSpeed_ = 0.05f; // 回転速度
 
 };
 

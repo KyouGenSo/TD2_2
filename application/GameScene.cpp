@@ -34,7 +34,7 @@ void GameScene::Initialize()
 	//---------------------------------------
 	// プレイヤーの初期化
 	player_ = std::make_unique<Player>();
-	player_->Initialize();
+	player_->Initialize(boss_);
 
 	//---------------------------------------
 	// 地面の初期化
