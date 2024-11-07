@@ -62,17 +62,29 @@ void Player::Update() {
     object3d_->SetTranslate(transform_.translate);
     object3d_->Update();
 
-    // 追従カメラ
+    // プレイヤーの背後に追従するカメラ
     Camera* camera = Object3dBasic::GetInstance()->GetCamera();
     if (camera) {
-        Vector3 cameraOffset(0.0f, 5.0f, -15.0f); // プレイヤーの背後に配置するオフセット
-        Vector3 cameraPos = transform_.translate + cameraOffset;
+        // プレイヤーの回転角度に合わせたカメラのオフセットを計算
+        float cameraDistance = 15.0f; // プレイヤーからカメラまでの距離
+        float cameraHeight = 5.0f;    // カメラの高さ
+
+        // プレイヤーの背後の位置を計算
+        float offsetX = cameraDistance * sinf(transform_.rotate.y);
+        float offsetZ = cameraDistance * cosf(transform_.rotate.y);
+
+        Vector3 cameraPos;
+        cameraPos.x = transform_.translate.x - offsetX;
+        cameraPos.y = transform_.translate.y + cameraHeight;
+        cameraPos.z = transform_.translate.z - offsetZ;
+
         camera->SetTranslate(cameraPos);
 
-        // カメラがプレイヤーを向くための角度計算
-        Vector3 directionToPlayer = transform_.translate - cameraPos;
+        // カメラがプレイヤーを向くように調整
+        Vector3 lookAt = transform_.translate;
+        Vector3 directionToPlayer = lookAt - cameraPos;
         float cameraYAngle = atan2f(directionToPlayer.x, directionToPlayer.z);
-        camera->SetRotate(Vector3(0.3f, cameraYAngle, 0.0f)); // Y 軸方向の角度のみ更新
+        camera->SetRotate(Vector3(0.3f, cameraYAngle, 0.0f));
     }
 }
 
