@@ -66,8 +66,8 @@ void Player::Update() {
     Camera* camera = Object3dBasic::GetInstance()->GetCamera();
     if (camera) {
         // プレイヤーの回転角度に合わせたカメラのオフセットを計算
-        float cameraDistance = 15.0f; // プレイヤーからカメラまでの距離
-        float cameraHeight = 5.0f;    // カメラの高さ
+        float cameraDistance = 25.0f; // プレイヤーからカメラまでの距離を少し遠めに
+        float cameraHeight = 2.0f;    // カメラの高さを低めに設定
 
         // プレイヤーの背後の位置を計算
         float offsetX = cameraDistance * sinf(transform_.rotate.y);
@@ -80,11 +80,13 @@ void Player::Update() {
 
         camera->SetTranslate(cameraPos);
 
-        // カメラがプレイヤーを向くように調整
+        // カメラが見上げるように角度を調整
         Vector3 lookAt = transform_.translate;
         Vector3 directionToPlayer = lookAt - cameraPos;
         float cameraYAngle = atan2f(directionToPlayer.x, directionToPlayer.z);
-        camera->SetRotate(Vector3(0.3f, cameraYAngle, 0.0f));
+
+        // X軸の回転角を負の値にしてカメラを見上げるように設定
+        camera->SetRotate(Vector3(-0.08f, cameraYAngle, 0.0f));
     }
 }
 
