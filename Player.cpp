@@ -7,11 +7,13 @@
 #include <cmath>
 
 void Player::Initialize(Boss* boss) {
+    // プレイヤーモデルの読み込みと設定
     ModelManager::GetInstance()->LoadModel("Player.obj");
     object3d_ = std::make_unique<Object3d>();
     object3d_->Initialize();
     object3d_->SetModel("Player.obj");
 
+    // スケール、回転、位置の初期設定
     transform_.scale = { 5.0f, 5.0f, 5.0f };
     transform_.rotate = { 0.0f, 0.0f, 0.0f };
     transform_.translate = { 0.0f, 0.0f, -13.0f };
@@ -22,7 +24,7 @@ void Player::Initialize(Boss* boss) {
 void Player::Update() {
     if (boss_ == nullptr) return;
 
-    // 左右移動の回転処理
+    // プレイヤーの左右移動 (Boss の周りを回転)
     if (Input::GetInstance()->PushKey(DIK_A)) {
         angle_ -= rotationSpeed_; // 左回転
     }
@@ -91,5 +93,6 @@ void Player::Update() {
 }
 
 void Player::Draw() {
+    // モデルの描画
     object3d_->Draw();
 }
