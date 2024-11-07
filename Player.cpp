@@ -12,6 +12,8 @@
 #include "Input.h"
 #include "Model.h"
 #include "ModelManager.h"
+#include <Object3dBasic.h>
+#include "Camera.h"
 
 ///=============================================================================
 ///						初期化
@@ -86,6 +88,21 @@ void Player::Update() {
 	object3d_->SetRotate(transform_.rotate);
 	object3d_->SetTranslate(transform_.translate);
 	object3d_->Update();
+
+	//---------------------------------------
+	// 追従カメラ
+	// デフォルトカメラの取得
+	Camera* camera = Object3dBasic::GetInstance()->GetCamera();
+	if (camera) {
+		// プレイヤーの位置を中心にカメラを配置
+		Vector3 cameraOffset(0.0f, 5.0f, -15.0f);
+		Vector3 cameraPos = transform_.translate + cameraOffset;
+		camera->SetTranslate(cameraPos);
+
+		// カメラの向き（プレイヤーを向くように設定）
+		Vector3 lookAt = transform_.translate;
+		camera->SetRotate(Vector3(0.3f, 0.0f, 0.0f));
+	}
 
 }
 
