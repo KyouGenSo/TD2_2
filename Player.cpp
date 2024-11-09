@@ -58,6 +58,9 @@ void Player::Update() {
         }
     }
 
+    // BossにPlayerの位置を通知
+    boss_->SetPlayerPosition(transform_.translate);
+
     // モデルの更新
     object3d_->SetScale(transform_.scale);
     object3d_->SetRotate(transform_.rotate);

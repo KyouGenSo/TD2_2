@@ -26,6 +26,11 @@ public: // メンバ関数
 	// 描画
 	void Draw();
 
+	// Playerの位置をセットする関数
+	void SetPlayerPosition(const Vector3& playerPosition) {
+		playerPosition_ = playerPosition;
+	}
+
 	// Transformのゲッター
 	const Transform& GetTransform() const {
 		return transform_;
@@ -37,5 +42,7 @@ private: // メンバ変数
 
 	Transform transform_;
 
+	Vector3 playerPosition_;
+	const float rotationLerpSpeed_ = 0.05f; // 補間速度
 };
 
