@@ -28,6 +28,12 @@ public:
 	/// \brief 描画 
 	void Draw();
 
+	/// \brief 移動
+	void Move();
+
+	/// \brief カメラ
+	void FollowCamera();
+
 	///--------------------------------------------------------------
 	///							入出力関数
 public:
