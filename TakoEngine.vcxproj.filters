@@ -160,6 +160,12 @@
       <Filter>ソースファイル\engine\func\commom</Filter>
     </ClCompile>
     <ClCompile Include="Skydome.cpp" />
+    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="CollisionManager.cpp" />
+    <ClCompile Include="ObjectBase.cpp" />
+    <ClCompile Include="AABBCollider.cpp" />
+    <ClCompile Include="SphereCollider.cpp" />
+    <ClCompile Include="CapsuleCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\GameScene.h">
@@ -289,6 +295,12 @@
       <Filter>ヘッダーファイル\engine\func\common</Filter>
     </ClInclude>
     <ClInclude Include="Skydome.h" />
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="ObjectBase.h" />
+    <ClInclude Include="AABBCollider.h" />
+    <ClInclude Include="SphereCollider.h" />
+    <ClInclude Include="CapsuleCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\FullScreen.hlsli">
