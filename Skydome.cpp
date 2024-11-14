@@ -7,7 +7,7 @@ void Skydome::Initialize(){
 	object3d_->SetModel("skydome.obj");
 
 	//初期位置の設定
-	transform_.scale = { 60.0f,60.0f,60.0f };
+	transform_.scale = { 100.0f,100.0f,100.0f };
 	transform_.rotate = { 0.0f,0.0f,0.0f };
 	transform_.translate = { 0.0f,0.0f,0.0f };
 }
