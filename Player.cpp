@@ -24,7 +24,7 @@ void Player::Initialize(Boss* boss) {
 void Player::Update() {
 
 	// Boss が存在しない場合、処理をスキップ
-    //（Boss の位置に依存した処理があるため、nullptr の場合にクラッシュを防ぐための安全対策）
+	//（Boss の位置に依存した処理があるため、nullptr の場合にクラッシュを防ぐための安全対策）
 	if (boss_ == nullptr) return;
 
 	// 移動処理
