@@ -81,14 +81,15 @@ void TitleScene::Draw()
 	// スプライト共通描画設定
 	SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
+	//タイトルスプライト
+	//titleSprite_->SetPos(Vector2(0.0f, 0.0f));
+
 
 
 	//--------------------------------------------------//
 
 	Draw2D::GetInstance()->DrawBox(Vector2(500.0f, 500.0f), Vector2(100.0f, 100.0f), Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 
-	//タイトルスプライト
-	//titleSprite_->SetPos(Vector2(0.0f, 0.0f));
 }
 
 void TitleScene::DrawImGui()
