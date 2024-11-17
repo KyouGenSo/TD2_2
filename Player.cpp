@@ -19,6 +19,8 @@ void Player::Initialize(Boss* boss) {
 	transform_.translate = { 0.0f, 0.0f, -13.0f };
 
 	boss_ = boss; // Boss のポインタを設定
+
+	followCamera_ = std::make_unique<FollowCamera>();
 }
 
 void Player::Update() {
@@ -40,7 +42,7 @@ void Player::Update() {
 	object3d_->Update();
 
 	// 追従カメラ
-	FollowCamera();
+	followCamera_->Update(transform_.translate, transform_.rotate);
 
 }
 
@@ -83,35 +85,5 @@ void Player::Move()
 			isJumping_ = false;
 			jumpVelocity_ = 0.0f;
 		}
-	}
-}
-
-void Player::FollowCamera()
-{
-	// プレイヤーの背後に追従するカメラ
-	Camera* camera = Object3dBasic::GetInstance()->GetCamera();
-	if (camera) {
-		// プレイヤーの回転角度に合わせたカメラのオフセットを計算
-		float cameraDistance = 25.0f; // プレイヤーからカメラまでの距離を少し遠めに
-		float cameraHeight = 2.0f;    // カメラの高さを低めに設定
-
-		// プレイヤーの背後の位置を計算
-		float offsetX = cameraDistance * sinf(transform_.rotate.y);
-		float offsetZ = cameraDistance * cosf(transform_.rotate.y);
-
-		Vector3 cameraPos;
-		cameraPos.x = transform_.translate.x - offsetX;
-		cameraPos.y = transform_.translate.y + cameraHeight;
-		cameraPos.z = transform_.translate.z - offsetZ;
-
-		camera->SetTranslate(cameraPos);
-
-		// カメラが見上げるように角度を調整
-		Vector3 lookAt = transform_.translate;
-		Vector3 directionToPlayer = lookAt - cameraPos;
-		float cameraYAngle = atan2f(directionToPlayer.x, directionToPlayer.z);
-
-		// X軸の回転角を負の値にしてカメラを見上げるように設定
-		camera->SetRotate(Vector3(-0.08f, cameraYAngle, 0.0f));
 	}
 }

@@ -34,6 +34,9 @@ public: // メンバー関数
 	void SetNearClip(float nearZ) { nearZ_ = nearZ; }
 	void SetFarClip(float farZ) { farZ_ = farZ; }
 	void SetViewProjectionMatrix(const Matrix4x4& viewProjectionMatrix) { viewProjectionMatrix_ = viewProjectionMatrix; }
+	void SetLookAt(const Vector3& lookAt) {
+		lookAt_ = lookAt;
+	}
 
 private: // メンバー変数
 
@@ -55,4 +58,6 @@ private: // メンバー変数
 
 	// ビュープロジェクション行列
 	Matrix4x4 viewProjectionMatrix_;
+
+	Vector3 lookAt_; // 視点
 };

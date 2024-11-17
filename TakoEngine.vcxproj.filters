@@ -160,6 +160,7 @@
       <Filter>ソースファイル\engine\func\commom</Filter>
     </ClCompile>
     <ClCompile Include="Skydome.cpp" />
+    <ClCompile Include="FollowCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\GameScene.h">
@@ -289,6 +290,7 @@
       <Filter>ヘッダーファイル\engine\func\common</Filter>
     </ClInclude>
     <ClInclude Include="Skydome.h" />
+    <ClInclude Include="FollowCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\FullScreen.hlsli">
