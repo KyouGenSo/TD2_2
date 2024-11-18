@@ -105,8 +105,6 @@ void GameScene::Draw()
 	// スプライト共通描画設定
 	SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
-
-
 	//--------------------------------------------------//
 
 
@@ -137,7 +135,8 @@ void GameScene::Draw()
 	// スプライト共通描画設定
 	SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
-
+	// ボスのHPバーの描画
+	boss_->HPDraw();
 
 	//--------------------------------------------------//
 }
