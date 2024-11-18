@@ -17,7 +17,7 @@ public:
 
 private:
     Vector3 previousPosition_; // プレイヤーの過去の位置
-    float followSpeed_ = 0.15f; // 補間速度
+    float followSpeed_ = 0.2f; // 補間速度
     float cameraDistance_ = 25.0f; // カメラ距離
     float cameraHeight_ = 2.0f;    // カメラ高さ
 };
