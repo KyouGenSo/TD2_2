@@ -8,7 +8,13 @@
 #include <cassert>
 #include<fstream>
 #include<sstream>
+#include <numbers>
 #include "Input.h"
+
+Object3d::~Object3d()
+{
+	delete light_;
+}
 
 void Object3d::Initialize()
 {
@@ -20,13 +26,16 @@ void Object3d::Initialize()
 	// 座標変換行列データの生成
 	CreateTransformationMatrixData();
 
-	// 平行光源データの生成
-	CreateDirectionalLightData();
+	// カメラデータの生成
+	CreateCameraForGPUData();
+
+	// ライトの生成と初期化
+	light_ = new Light();
+	light_->Initialize(Object3dBasic::GetInstance()->GetDX12Basic());
 }
 
 void Object3d::Update()
 {
-
 	m_camera_ = Object3dBasic::GetInstance()->GetCamera();
 
 	// トランスフォームでワールド行列を作る
@@ -44,6 +53,7 @@ void Object3d::Update()
 	// 座標変換行列データに書き込む
 	transformationMatData_->WVP = wvpMatrix;
 	transformationMatData_->world = worldMatrix;
+	transformationMatData_->worldInvTranspose = Mat4x4::InverseTranspose(worldMatrix);
 }
 
 void Object3d::Draw()
@@ -51,8 +61,11 @@ void Object3d::Draw()
 	// 座標変換行列CBufferの場所を設定
 	Object3dBasic::GetInstance()->GetDX12Basic()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatResource_->GetGPUVirtualAddress());
 
-	// 平行光源CBufferの場所を設定
-	Object3dBasic::GetInstance()->GetDX12Basic()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
+	// シェーダー用カメラデータの場所を設定
+	Object3dBasic::GetInstance()->GetDX12Basic()->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraForGPUResource_->GetGPUVirtualAddress());
+
+	// ライトの描画設定
+	light_->PreDraw();
 
 	// モデルの描画
 	if (m_model_)
@@ -66,6 +79,45 @@ void Object3d::SetModel(const std::string& fileName)
 	m_model_ = ModelManager::GetInstance()->FindModel(fileName);
 }
 
+void Object3d::SetShininess(float shininess)
+{
+	if (m_model_)
+	{
+		m_model_->SetShininess(shininess);
+	}
+}
+
+void Object3d::SetEnableLighting(bool enableLighting)
+{
+	if (m_model_)
+	{
+		m_model_->SetEnableLighting(enableLighting);
+	}
+}
+
+void Object3d::SetEnableHighlight(bool enableHighlight)
+{
+	if (m_model_)
+	{
+		m_model_->SetEnableHighlight(enableHighlight);
+	}
+}
+
+void Object3d::SetDirectionalLight(const Vector3& direction, const Vector4& color, int32_t lightType, float intensity)
+{
+	light_->SetDirectionalLight(direction, color, lightType, intensity);
+}
+
+void Object3d::SetPointLight(const Vector3& position, const Vector4& color, float intensity, float radius, float decay, bool enable, int index)
+{
+	light_->SetPointLight(position, color, intensity, radius, decay, enable, index);
+}
+
+void Object3d::SetSpotLight(const Vector3& position, const Vector3& direction, const Vector4& color, float intensity, float distance, float decay, float cosAngle, bool enable)
+{
+	light_->SetSpotLight(position, direction, color, intensity, distance, decay, cosAngle, enable);
+}
+
 void Object3d::CreateTransformationMatrixData()
 {
 	// 座標変換行列リソースを生成
@@ -77,22 +129,17 @@ void Object3d::CreateTransformationMatrixData()
 	// 座標変換行列データの初期値を書き込む
 	transformationMatData_->WVP = Mat4x4::MakeIdentity();
 	transformationMatData_->world = Mat4x4::MakeIdentity();
+	transformationMatData_->worldInvTranspose = Mat4x4::MakeIdentity();
 }
 
-void Object3d::CreateDirectionalLightData()
+void Object3d::CreateCameraForGPUData()
 {
-	// 平行光源リソースを生成
-	directionalLightResource_ = Object3dBasic::GetInstance()->GetDX12Basic()->MakeBufferResource(sizeof(DirectionalLight));
+	// カメラリソースを生成
+	cameraForGPUResource_ = Object3dBasic::GetInstance()->GetDX12Basic()->MakeBufferResource(sizeof(CameraForGPU));
 
-	// 平行光源リソースをマップ
-	directionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData_));
+	// カメラリソースをマップ
+	cameraForGPUResource_->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGPUData_));
 
-	// 平行光源データの初期値を書き込む
-	directionalLightData_->direction = Vector3(0.0f, -1.0f, 0.0f); // ライトの方向
-	
-	directionalLightData_->color = { 1.0f, 1.0f, 1.0f, 1.0f };     // ライトの色
-	
-	directionalLightData_->lightType = 1;                          // ライトのタイプ 0:Lambert 1:Half-Lambert
-	
-	directionalLightData_->intensity = 1.0f;                       // 輝度
+	// カメラデータの初期値を書き込む
+	cameraForGPUData_->worldPos = m_camera_->GetTranslate();
 }

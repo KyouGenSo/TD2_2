@@ -50,7 +50,7 @@ public: // メンバー関数
 	Camera* GetCamera() const { return camera_; }
 	bool GetDebug() const { return isDebug_; }
 
-	// -----------------------------------Getters-----------------------------------//
+	// -----------------------------------Setters-----------------------------------//
 	void SetCamera(Camera* camera) { camera_ = camera; }
 	void SetDebug(bool isDebug) { isDebug_ = isDebug; }
 
@@ -75,6 +75,7 @@ private: // メンバー変数
 
 	// ビュープロジェクション行列
 	Matrix4x4 viewProjectionMatrix_;
+	Matrix4x4 debugViewProjectionMatrix_;
 
 	// デバッグフラグ
 	bool isDebug_ = false;
