@@ -7,12 +7,6 @@
 #include <cmath>
 
 void Player::Initialize(Boss* boss) {
-	// プレイヤーモデルの読み込みと設定
-	ModelManager::GetInstance()->LoadModel("Player.obj");
-	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize();
-	object3d_->SetModel("Player.obj");
-
 	// スケール、回転、位置の初期設定
 	transform_.scale = { 5.0f, 5.0f, 5.0f };
 	transform_.rotate = { 0.0f, 0.0f, 0.0f };
@@ -22,7 +16,7 @@ void Player::Initialize(Boss* boss) {
 
 
 	//プレイヤーの位置とColliderの位置を同期
-	ObjectBase::Init(transform_.translate, transform_.translate, 0.1f);
+	ObjectBase::Init(transform_.translate, transform_.translate,16.0f);
 }
 
 void Player::Update() {
@@ -47,17 +41,14 @@ void Player::Update() {
 	FollowCamera();
 
 
-	Vector3 test = transform_.translate + Vector3(0.0f, 100.0f, 0.0f);
+	Vector3 test = transform_.translate + Vector3(0.0f, 32.0f, 0.0f);
 	ObjectBase::Update(transform_.translate, test);
 }
 
 void Player::Draw() {
 	// モデルの描画
 	object3d_->Draw();
-}
 
-void Player::Draw2D() {
-	// 2D描画処理
 	ObjectBase::Draw();
 }
 

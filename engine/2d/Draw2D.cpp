@@ -6,22 +6,21 @@
 
 Draw2D* Draw2D::instance_ = nullptr;
 
-Draw2D* Draw2D::GetInstance()
-{
-    if (instance_ == nullptr)
-    {
+Draw2D* Draw2D::GetInstance() {
+    if(instance_ == nullptr) {
         instance_ = new Draw2D();
     }
     return instance_;
 }
 
-void Draw2D::Initialize(DX12Basic* dx12)
-{
+void Draw2D::Initialize(DX12Basic* dx12) {
     m_dx12_ = dx12;
 
     isDebug_ = false;
 
+    worldMatrix_ = Mat4x4::MakeIdentity();
     viewMatrix_ = Mat4x4::MakeIdentity();
+    projectionMatrix_ = Mat4x4::MakeOrtho(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f);
 
     // パイプラインステートの生成
     CreatePSO(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, trianglePipelineState_, triangleRootSignature_);
@@ -29,7 +28,7 @@ void Draw2D::Initialize(DX12Basic* dx12)
 
     // 座標変換行列データの生成
     CreateTransformMatData();
-    
+
     // 三角形の頂点データを生成
     triangleData_ = new TriangleData();
     CreateTriangleVertexData(triangleData_);
@@ -43,8 +42,7 @@ void Draw2D::Initialize(DX12Basic* dx12)
     CreateLineVertexData(lineData_);
 }
 
-void Draw2D::Finalize()
-{
+void Draw2D::Finalize() {
     transformationMatrixBuffer_->Release();
 
     triangleData_->vertexBuffer->Release();
@@ -56,35 +54,31 @@ void Draw2D::Finalize()
     lineData_->vertexBuffer->Release();
 
 
-    if (instance_ != nullptr)
-    {
+    if(instance_ != nullptr) {
         delete instance_;
         instance_ = nullptr;
     }
 }
 
-void Draw2D::Update()
-{
-    if (isDebug_)
-    {
-        Matrix4x4 viewMatrix = DebugCamera::GetInstance()->GetViewMat();
+void Draw2D::Update() {
+    transformationMatrixData_->world = worldMatrix_;
 
-        transformationMatrixData_->WVP = Mat4x4::Multiply(transformationMatrixData_->world, Mat4x4::Multiply(viewMatrix, Mat4x4::MakeOrtho(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f)));
-    } else
-    {
-        transformationMatrixData_->WVP = Mat4x4::Multiply(transformationMatrixData_->world, Mat4x4::Multiply(viewMatrix_, Mat4x4::MakeOrtho(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f)));
+    if(isDebug_) {
+        debugViewMatrix_ = DebugCamera::GetInstance()->GetViewMat();
+
+        transformationMatrixData_->WVP = Mat4x4::Multiply(transformationMatrixData_->world, Mat4x4::Multiply(debugViewMatrix_, projectionMatrix_));
+    } else {
+        transformationMatrixData_->WVP = Mat4x4::Multiply(transformationMatrixData_->world, Mat4x4::Multiply(viewMatrix_, projectionMatrix_));
     }
 }
 
-void Draw2D::ImGui()
-{
+void Draw2D::ImGui() {
 #ifdef _DEBUG
 
 #endif // _DEBUG
 }
 
-void Draw2D::DrawTriangle(const Vector2& pos1, const Vector2& pos2, const Vector2& pos3, const Vector4& color)
-{
+void Draw2D::DrawTriangle(const Vector2& pos1, const Vector2& pos2, const Vector2& pos3, const Vector4& color) {
 
     // 頂点データの設定
     triangleData_->vertexData[triangleIndex_].position = Vector2(pos1.x, pos1.y);
@@ -112,14 +106,13 @@ void Draw2D::DrawTriangle(const Vector2& pos1, const Vector2& pos2, const Vector
     m_dx12_->GetCommandList()->SetGraphicsRootConstantBufferView(0, transformationMatrixBuffer_->GetGPUVirtualAddress());
 
     // 描画
-    m_dx12_->GetCommandList()->DrawInstanced(kVertexCountTrriangle, 1, static_cast<INT>(triangleIndex_), 0);
+    m_dx12_->GetCommandList()->DrawInstanced(kVertexCountTrriangle, 1, static_cast<INT>( triangleIndex_ ), 0);
 
     triangleIndex_ += kVertexCountTrriangle + 1;
 
 }
 
-void Draw2D::DrawBox(const Vector2& pos, const Vector2& size, const Vector4& color)
-{
+void Draw2D::DrawBox(const Vector2& pos, const Vector2& size, const Vector4& color) {
     // 頂点データの設定
     boxData_->vertexData[boxVertexIndex_].position = Vector2(pos.x, pos.y);
     boxData_->vertexData[boxVertexIndex_ + 1].position = Vector2(pos.x + size.x, pos.y);
@@ -159,14 +152,13 @@ void Draw2D::DrawBox(const Vector2& pos, const Vector2& size, const Vector4& col
     m_dx12_->GetCommandList()->SetGraphicsRootConstantBufferView(0, transformationMatrixBuffer_->GetGPUVirtualAddress());
 
     // 描画
-    m_dx12_->GetCommandList()->DrawIndexedInstanced(kIndexCountBox, 1, static_cast<UINT>(boxIndexIndex_), static_cast<INT>(boxVertexIndex_), 0);
+    m_dx12_->GetCommandList()->DrawIndexedInstanced(kIndexCountBox, 1, static_cast<UINT>( boxIndexIndex_ ), static_cast<INT>( boxVertexIndex_ ), 0);
 
     boxIndexIndex_ += kIndexCountBox + 1;
     boxVertexIndex_ += kVertexCountBox + 1;
 }
 
-void Draw2D::DrawBox(const Vector2& pos, const Vector2& size, const float angle, const Vector4& color)
-{
+void Draw2D::DrawBox(const Vector2& pos, const Vector2& size, const float angle, const Vector4& color) {
     // 回転行列の生成
     Matrix4x4 rotationMatrix = Mat4x4::MakeRotateZ(angle);
 
@@ -184,8 +176,7 @@ void Draw2D::DrawBox(const Vector2& pos, const Vector2& size, const float angle,
     };
 
     // 回転
-    for (auto& vertex : vertexPos)
-    {
+    for(auto& vertex : vertexPos) {
         Vector3 pos2D = { vertex.x, vertex.y, 0.0f };
         pos2D = Mat4x4::TransForm(rotationMatrix, Vector3(pos2D.x, pos2D.y, 0.0f));
         vertex = Vector2(pos2D.x, pos2D.y);
@@ -194,8 +185,8 @@ void Draw2D::DrawBox(const Vector2& pos, const Vector2& size, const float angle,
     // 頂点データの設定
     boxData_->vertexData[boxVertexIndex_].position = Vector2(pos.x + vertexPos[0].x, pos.y + vertexPos[0].y);
     boxData_->vertexData[boxVertexIndex_ + 1].position = Vector2(pos.x + vertexPos[1].x, pos.y + vertexPos[1].y);
-    boxData_->vertexData[boxVertexIndex_ + 2].position = Vector2(pos.x + vertexPos[2].x, pos.y  + vertexPos[2].y);
-    boxData_->vertexData[boxVertexIndex_ + 3].position = Vector2(pos.x + vertexPos[3].x, pos.y  + vertexPos[3].y);
+    boxData_->vertexData[boxVertexIndex_ + 2].position = Vector2(pos.x + vertexPos[2].x, pos.y + vertexPos[2].y);
+    boxData_->vertexData[boxVertexIndex_ + 3].position = Vector2(pos.x + vertexPos[3].x, pos.y + vertexPos[3].y);
 
     // インデックスデータの設定
     boxData_->indexData[boxIndexIndex_] = 0;
@@ -230,14 +221,13 @@ void Draw2D::DrawBox(const Vector2& pos, const Vector2& size, const float angle,
     m_dx12_->GetCommandList()->SetGraphicsRootConstantBufferView(0, transformationMatrixBuffer_->GetGPUVirtualAddress());
 
     // 描画
-    m_dx12_->GetCommandList()->DrawIndexedInstanced(kIndexCountBox, 1, static_cast<UINT>(boxIndexIndex_), static_cast<INT>(boxVertexIndex_), 0);
+    m_dx12_->GetCommandList()->DrawIndexedInstanced(kIndexCountBox, 1, static_cast<UINT>( boxIndexIndex_ ), static_cast<INT>( boxVertexIndex_ ), 0);
 
     boxIndexIndex_ += kIndexCountBox + 1;
     boxVertexIndex_ += kVertexCountBox + 1;
 }
 
-void Draw2D::DrawLine(const Vector2& start, const Vector2& end, const Vector4& color)
-{
+void Draw2D::DrawLine(const Vector2& start, const Vector2& end, const Vector4& color) {
 
     // 頂点データの設定
     lineData_->vertexData[lineIndex_].position = Vector2(start.x, start.y);
@@ -263,22 +253,20 @@ void Draw2D::DrawLine(const Vector2& start, const Vector2& end, const Vector4& c
     m_dx12_->GetCommandList()->SetGraphicsRootConstantBufferView(0, transformationMatrixBuffer_->GetGPUVirtualAddress());
 
     // 描画
-    m_dx12_->GetCommandList()->DrawInstanced(kVertexCountLine, 1, static_cast<INT>(lineIndex_), 0);
+    m_dx12_->GetCommandList()->DrawInstanced(kVertexCountLine, 1, static_cast<INT>( lineIndex_ ), 0);
 
     lineIndex_ += kVertexCountLine + 1;
 
 }
 
-void Draw2D::Reset()
-{
+void Draw2D::Reset() {
     triangleIndex_ = 0;
     boxVertexIndex_ = 0;
     boxIndexIndex_ = 0;
     lineIndex_ = 0;
 }
 
-void Draw2D::CreateRootSignature(ComPtr<ID3D12RootSignature>& rootSignature)
-{
+void Draw2D::CreateRootSignature(ComPtr<ID3D12RootSignature>& rootSignature) {
     HRESULT hr;
 
     // rootSignatureの生成
@@ -299,9 +287,8 @@ void Draw2D::CreateRootSignature(ComPtr<ID3D12RootSignature>& rootSignature)
     Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
 
     hr = D3D12SerializeRootSignature(&descriptionRootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-    if (FAILED(hr))
-    {
-        Logger::Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+    if(FAILED(hr)) {
+        Logger::Log(reinterpret_cast<char*>( errorBlob->GetBufferPointer() ));
         assert(false);
     }
 
@@ -310,8 +297,7 @@ void Draw2D::CreateRootSignature(ComPtr<ID3D12RootSignature>& rootSignature)
     assert(SUCCEEDED(hr));
 }
 
-void Draw2D::CreatePSO(D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopologyType, ComPtr<ID3D12PipelineState>& pipelineState, ComPtr<ID3D12RootSignature>& rootSignature)
-{
+void Draw2D::CreatePSO(D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopologyType, ComPtr<ID3D12PipelineState>& pipelineState, ComPtr<ID3D12RootSignature>& rootSignature) {
 
     HRESULT hr;
 
@@ -381,8 +367,7 @@ void Draw2D::CreatePSO(D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopologyType, ComP
     assert(SUCCEEDED(hr));
 }
 
-void Draw2D::CreateTriangleVertexData(TriangleData* triangleData)
-{
+void Draw2D::CreateTriangleVertexData(TriangleData* triangleData) {
     UINT vertexBufferSize = sizeof(VertexData) * kVertexCountTrriangle * kTrriangleMaxCount;
 
     // 頂点リソースを生成
@@ -395,12 +380,11 @@ void Draw2D::CreateTriangleVertexData(TriangleData* triangleData)
     triangleData->vertexBufferView.StrideInBytes = sizeof(VertexData);
 
     // 頂点リソースをマップ
-    triangleData->vertexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&triangleData->vertexData));
+    triangleData->vertexBuffer->Map(0, nullptr, reinterpret_cast<void**>( &triangleData->vertexData ));
 
 }
 
-void Draw2D::CreateBoxVertexData(BoxData* boxData)
-{
+void Draw2D::CreateBoxVertexData(BoxData* boxData) {
     UINT vertexBufferSize = sizeof(VertexData) * kVertexCountBox * kBoxMaxCount;
     UINT indexBufferSize = sizeof(uint32_t) * kIndexCountBox * kBoxMaxCount;
 
@@ -421,14 +405,13 @@ void Draw2D::CreateBoxVertexData(BoxData* boxData)
     boxData->indexBufferView.Format = DXGI_FORMAT_R32_UINT;
 
     // 頂点リソースをマップ
-    boxData->vertexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&boxData->vertexData));
+    boxData->vertexBuffer->Map(0, nullptr, reinterpret_cast<void**>( &boxData->vertexData ));
 
     // インデックスリソースをマップ
-    boxData->indexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&boxData->indexData));
+    boxData->indexBuffer->Map(0, nullptr, reinterpret_cast<void**>( &boxData->indexData ));
 }
 
-void Draw2D::CreateLineVertexData(LineData* lineData)
-{
+void Draw2D::CreateLineVertexData(LineData* lineData) {
     UINT vertexBufferSize = sizeof(VertexData) * kVertexCountLine * kLineMaxCount;
 
     // 頂点リソースを生成
@@ -441,28 +424,19 @@ void Draw2D::CreateLineVertexData(LineData* lineData)
     lineData->vertexBufferView.StrideInBytes = sizeof(VertexData);
 
     // 頂点リソースをマップ
-    lineData->vertexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&lineData->vertexData));
+    lineData->vertexBuffer->Map(0, nullptr, reinterpret_cast<void**>( &lineData->vertexData ));
 }
 
-void Draw2D::CreateTransformMatData()
-{
+void Draw2D::CreateTransformMatData() {
     // 座標変換行列リソースを生成
     transformationMatrixBuffer_ = m_dx12_->MakeBufferResource(sizeof(TransformationMatrix));
-    //m_dx12_->CreateBufferResource(transformationMatrixBuffer_, sizeof(TransformationMatrix));
 
     // 座標変換行列リソースをマップ
-    transformationMatrixBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData_));
+    transformationMatrixBuffer_->Map(0, nullptr, reinterpret_cast<void**>( &transformationMatrixData_ ));
 
     // 座標変換行列データの初期値を書き込む
-    Matrix4x4 worldMatrix = Mat4x4::MakeIdentity();
-    Matrix4x4 viewMatrix = Mat4x4::MakeIdentity();
-    Matrix4x4 projectionMatrix = Mat4x4::MakeOrtho(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f);
-    Matrix4x4 wvpMatrix = Mat4x4::Multiply(worldMatrix, Mat4x4::Multiply(viewMatrix, projectionMatrix));
+    wvpMatrix_ = Mat4x4::Multiply(worldMatrix_, Mat4x4::Multiply(viewMatrix_, projectionMatrix_));
 
-    transformationMatrixData_->WVP = wvpMatrix;
-    transformationMatrixData_->world = worldMatrix;
+    transformationMatrixData_->WVP = wvpMatrix_;
+    transformationMatrixData_->world = worldMatrix_;
 }
-
-
-
-

@@ -27,7 +27,8 @@ public:
 	/// </summary>
 	void Update(Vector3& startPoint, Vector3& endPoint);
 
-	void Draw();		
+	/// @brief 3D描画
+	void Draw();
 
 	/// <summary>
 	/// 衝突処理イベント

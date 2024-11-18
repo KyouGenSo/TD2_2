@@ -29,8 +29,6 @@ public:
 	/// \brief 描画 
 	void Draw();
 
-	void Draw2D();
-
 	/// \brief 移動
 	void Move();
 
@@ -73,4 +71,3 @@ private:
 
 
 };
-

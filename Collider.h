@@ -10,6 +10,8 @@
 #include "Model.h"
 #include "Vector3.h"
 #include "Mat4x4Func.h"
+#include <memory>
+#include "Object3d.h"
 
  ///=============================================================================
  ///						クラス定義
@@ -20,7 +22,7 @@ public:
 	/**
 	 * \brief 初期化
 	 */
-	void Initialize() {};
+	void Initialize();
 
 	///--------------------------------------------------------------
 	///						 入出力関数　
@@ -79,7 +81,7 @@ public:
 	 * \param  color
 	 * \note
 	 */
-	void DrawCapsule(const Vector4& color);
+	void DrawCapsule();
 
 	/**----------------------------------------------------------------------------
 	 * \brief  SetDrawEnabled 描画のオン/オフ
@@ -105,13 +107,13 @@ public:
 		return { v.x * scalar, v.y * scalar, v.z * scalar };
 	}
 
-	Vector3 Transform(const Vector3& v, const Matrix4x4& m) {
-		return {
-			v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0] + m.m[3][0],
-			v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1] + m.m[3][1],
-			v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2] + m.m[3][2]
-		};
-	}
+	//Vector3 Transform(const Vector3& v, const Matrix4x4& m) {
+	//	return {
+	//		v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0] + m.m[3][0],
+	//		v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1] + m.m[3][1],
+	//		v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2] + m.m[3][2]
+	//	};
+	//}
 
 	Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth) {
 		// 単位行列で初期化
@@ -158,4 +160,11 @@ private:
 
 	bool drawEnabled_ = true; // 描画のオン/
 
+	//---------------------------------------
+	// 3Dオブジェクト
+	std::unique_ptr<Object3d> object3d_;
+
+	//---------------------------------------
+	// SRT
+	Transform transform_;
 };

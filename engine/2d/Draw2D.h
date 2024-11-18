@@ -12,8 +12,7 @@ using namespace std;
 // ComPtrのエイリアス
 template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-class Draw2D
-{
+class Draw2D {
 private: // シングルトン設定
 	// インスタンス
 	static Draw2D* instance_;
@@ -24,22 +23,19 @@ private: // シングルトン設定
 	Draw2D& operator=(const Draw2D&) = delete;
 
 public: // 構造体
-	struct VertexData
-	{
+	struct VertexData {
 		Vector2 position;
 		Vector4 color;
 	};
 
 	// 座標変換行列データ
-	struct TransformationMatrix
-	{
+	struct TransformationMatrix {
 		Matrix4x4 WVP;
 		Matrix4x4 world;
 	};
 
 	// 三角形構造体
-	struct TriangleData
-	{
+	struct TriangleData {
 		VertexData* vertexData;
 		// 頂点バッファ
 		ComPtr<ID3D12Resource> vertexBuffer;
@@ -48,8 +44,7 @@ public: // 構造体
 	};
 
 	// 矩形構造体
-	struct BoxData
-	{
+	struct BoxData {
 		VertexData* vertexData;
 		uint32_t* indexData;
 		// 頂点バッファ
@@ -63,8 +58,7 @@ public: // 構造体
 	};
 
 	// 線分構造体
-	struct LineData
-	{
+	struct LineData {
 		VertexData* vertexData;
 		// 頂点バッファ
 		ComPtr<ID3D12Resource> vertexBuffer;
@@ -120,10 +114,37 @@ public: // メンバ関数
 	/// </summary>
 	void Reset();
 
+	// -----------------------------------Getters-----------------------------------//
+	/// <summary>
+	/// デバッグフラグを取得
+	/// <summary>
+	const bool GetDebug() const { return isDebug_; }
+
+	/// <summary>
+	/// デバッグ用ビューマトリックスを取得
+	/// <summary>
+	const Matrix4x4& GetWorldMatrix() const { return worldMatrix_; }
+
+	/// <summary>
+	/// デバッグ用ビューマトリックスを取得
+	/// <summary>
+	const Matrix4x4& GetViewMatrix() const { return viewMatrix_; }
+
+	/// <summary>
+	/// デバッグ用ビューマトリックスを取得
+	/// <summary>
+	const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix_; }
+
+	// -----------------------------------Setters-----------------------------------//
 	/// <summary>
 	/// デバッグフラグtrueでデバッグモード
 	/// <summary>
 	void SetDebug(bool isDebug) { isDebug_ = isDebug; }
+
+	/// <summary>
+	/// ワールドマトリックスを設定
+	/// <summary>
+	void SetWorldMatrix(const Matrix4x4& worldMatrix) { worldMatrix_ = worldMatrix; }
 
 	/// <summary>
 	/// ビューマトリックスを設定
@@ -131,9 +152,9 @@ public: // メンバ関数
 	void SetViewMatrix(const Matrix4x4& viewMatrix) { viewMatrix_ = viewMatrix; }
 
 	/// <summary>
-	/// デバッグフラグを取得
+	/// プロジェクションマトリックスを設定
 	/// <summary>
-	const bool GetDebug() const { return isDebug_; }
+	void SetProjectionMatrix(const Matrix4x4& projectionMatrix) { projectionMatrix_ = projectionMatrix; }
 
 private: // プライベートメンバ関数
 	/// <summary>
@@ -191,6 +212,13 @@ private: // メンバ変数
 	// 線のインデクス
 	uint32_t lineIndex_ = 0;
 
+	// マトリックス
+	Matrix4x4 worldMatrix_;
+	Matrix4x4 viewMatrix_;
+	Matrix4x4 projectionMatrix_;
+	Matrix4x4 wvpMatrix_;
+	Matrix4x4 debugViewMatrix_;
+
 	// ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> triangleRootSignature_;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> lineRootSignature_;
@@ -204,9 +232,6 @@ private: // メンバ変数
 
 	// 座標変換行列データ
 	TransformationMatrix* transformationMatrixData_;
-
-	// ビューマトリックス
-	Matrix4x4 viewMatrix_;
 
 	// 三角形データ
 	TriangleData* triangleData_;

@@ -8,11 +8,15 @@
  *********************************************************************/
 #include "ObjectBase.h"
 #include <iostream>
+#include "ModelManager.h"
 
  ///====================初期化====================///
 void ObjectBase::Init(Vector3& startPoint, Vector3& endPoint, float radius) {
 	// コライダーの生成
 	collider_ = std::make_unique<Collider>();
+
+	// コライダーの初期化
+	collider_->Initialize();
 
 	// キャラの位置とコライダーの位置を同期
 	collider_->SetStart(startPoint);
@@ -29,5 +33,5 @@ void ObjectBase::Update(Vector3& startPoint, Vector3& endPoint) {
 
 void ObjectBase::Draw() {
 	// コライダーの更新
-	collider_->DrawCapsule(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+	collider_->DrawCapsule();
 }
