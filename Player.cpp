@@ -4,7 +4,9 @@
 #include "ModelManager.h"
 #include "Object3dBasic.h"
 #include "Camera.h"
+#include "ImGuiManager.h"
 #include <cmath>
+#include <numbers>
 
 void Player::Initialize(Boss* boss) {
 	// プレイヤーモデルの読み込みと設定
@@ -19,6 +21,16 @@ void Player::Initialize(Boss* boss) {
 	transform_.translate = { 0.0f, 0.0f, -13.0f };
 
 	boss_ = boss; // Boss のポインタを設定
+
+	// lightの初期設定
+	lightPos_ = { transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z };
+	lightDir_ = boss_->GetTransform().translate - lightPos_;
+	lightColor_ = { 1.0f, 1.0f, 1.0f, 1.0f };
+	lightIntensity_ = 1.0f;
+	lightRange_ = 10.0f;
+	lightDecay_ = 1.0f;
+	lightSpotAngle_ = std::cos(std::numbers::pi_v<float> / 3.0f);
+	isSpotLight_ = true;
 }
 
 void Player::Update() {
@@ -38,6 +50,11 @@ void Player::Update() {
 	object3d_->SetRotate(transform_.rotate);
 	object3d_->SetTranslate(transform_.translate);
 	object3d_->Update();
+
+	// ライト
+	lightPos_ = { transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z };
+	lightDir_ = boss_->GetTransform().translate - lightPos_;
+	Object3dBasic::GetInstance()->SetSpotLight(lightPos_, lightDir_.normalize(), lightColor_, lightIntensity_, lightRange_, lightDecay_, lightSpotAngle_, isSpotLight_);
 
 	// 追従カメラ
 	FollowCamera();
@@ -114,4 +131,18 @@ void Player::FollowCamera()
 		// X軸の回転角を負の値にしてカメラを見上げるように設定
 		camera->SetRotate(Vector3(-0.08f, cameraYAngle, 0.0f));
 	}
+}
+
+void Player::DrawImGui()
+{
+	ImGui::Begin("Player SpotLight");
+	ImGui::DragFloat3("Light Pos", &lightPos_.x, 0.1f);
+	ImGui::DragFloat3("Light Dir", &lightDir_.x, 0.1f);
+	ImGui::ColorEdit4("Light Color", &lightColor_.x);
+	ImGui::SliderFloat("Light Intensity", &lightIntensity_, 0.0f, 10.0f);
+	ImGui::SliderFloat("Light Range", &lightRange_, 0.0f, 100.0f);
+	ImGui::SliderFloat("Light Decay", &lightDecay_, 0.0f, 2.0f);
+	ImGui::SliderFloat("Light Spot Angle", &lightSpotAngle_, 0.0f, 1.0f);
+	ImGui::Checkbox("SpotLight", &isSpotLight_);
+	ImGui::End();
 }

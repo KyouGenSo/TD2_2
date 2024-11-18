@@ -34,6 +34,9 @@ public:
 	/// \brief カメラ
 	void FollowCamera();
 
+	/// \brief ImGuiの描画
+	void DrawImGui();
+
 	///--------------------------------------------------------------
 	///							入出力関数
 public:
@@ -61,5 +64,14 @@ private:
 	const float radius_ = 12.5f; // Boss を中心とする円の半径
 	const float rotationSpeed_ = 0.04f; // 回転速度
 
+	// light関連変数
+	Vector3 lightPos_;
+	Vector3 lightDir_;
+	Vector4 lightColor_;
+	float lightIntensity_;
+	float lightRange_;
+	float lightDecay_;
+	float lightSpotAngle_;
+	bool isSpotLight_;
 };
 

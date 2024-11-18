@@ -24,6 +24,9 @@ void GameScene::Initialize()
 	///              初期化処理              ///
 	/// ================================== ///
 
+	// 平行光源の設定
+	Object3dBasic::GetInstance()->SetDirectionalLightIntensity(0.05f);
+
 	ModelManager::GetInstance()->LoadModel("player.obj");
 	ModelManager::GetInstance()->LoadModel("Boss.obj");
 	ModelManager::GetInstance()->LoadModel("skydome.obj");
@@ -145,6 +148,6 @@ void GameScene::Draw()
 void GameScene::DrawImGui()
 {
 #ifdef _DEBUG
-
+	player_->DrawImGui();
 #endif // DEBUG
 }
