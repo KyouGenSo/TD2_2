@@ -19,13 +19,17 @@ void Player::Initialize(Boss* boss) {
 	transform_.translate = { 0.0f, 0.0f, -13.0f };
 
 	boss_ = boss; // Boss のポインタを設定
+
+
+	//プレイヤーの位置とColliderの位置を同期
+	ObjectBase::Init(transform_.translate, transform_.translate, 0.1f);
 }
 
 void Player::Update() {
 
 	// Boss が存在しない場合、処理をスキップ
 	//（Boss の位置に依存した処理があるため、nullptr の場合にクラッシュを防ぐための安全対策）
-	if (boss_ == nullptr) return;
+	if(boss_ == nullptr) return;
 
 	// 移動処理
 	Move();
@@ -42,6 +46,9 @@ void Player::Update() {
 	// 追従カメラ
 	FollowCamera();
 
+
+	Vector3 test = transform_.translate + Vector3(0.0f, 100.0f, 0.0f);
+	ObjectBase::Update(transform_.translate, test);
 }
 
 void Player::Draw() {
@@ -49,13 +56,17 @@ void Player::Draw() {
 	object3d_->Draw();
 }
 
-void Player::Move()
-{
+void Player::Draw2D() {
+	// 2D描画処理
+	ObjectBase::Draw();
+}
+
+void Player::Move() {
 	// プレイヤーの左右移動 (Boss の周りを回転)
-	if (Input::GetInstance()->PushKey(DIK_A)) {
+	if(Input::GetInstance()->PushKey(DIK_A)) {
 		angle_ -= rotationSpeed_; // 左回転
 	}
-	if (Input::GetInstance()->PushKey(DIK_D)) {
+	if(Input::GetInstance()->PushKey(DIK_D)) {
 		angle_ += rotationSpeed_; // 右回転
 	}
 
@@ -69,16 +80,16 @@ void Player::Move()
 	transform_.rotate.y = atan2f(directionToBoss.x, directionToBoss.z);
 
 	// ジャンプ処理
-	if (Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
+	if(Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
 		isJumping_ = true;
 		jumpVelocity_ = jumpPower_;
 	}
 
-	if (isJumping_) {
+	if(isJumping_) {
 		transform_.translate.y += jumpVelocity_;
 		jumpVelocity_ += gravity_;
 
-		if (transform_.translate.y <= 0.0f) {
+		if(transform_.translate.y <= 0.0f) {
 			transform_.translate.y = 0.0f;
 			isJumping_ = false;
 			jumpVelocity_ = 0.0f;
@@ -86,11 +97,10 @@ void Player::Move()
 	}
 }
 
-void Player::FollowCamera()
-{
+void Player::FollowCamera() {
 	// プレイヤーの背後に追従するカメラ
 	Camera* camera = Object3dBasic::GetInstance()->GetCamera();
-	if (camera) {
+	if(camera) {
 		// プレイヤーの回転角度に合わせたカメラのオフセットを計算
 		float cameraDistance = 25.0f; // プレイヤーからカメラまでの距離を少し遠めに
 		float cameraHeight = 2.0f;    // カメラの高さを低めに設定
@@ -113,5 +123,15 @@ void Player::FollowCamera()
 
 		// X軸の回転角を負の値にしてカメラを見上げるように設定
 		camera->SetRotate(Vector3(-0.08f, cameraYAngle, 0.0f));
+	}
+}
+
+void Player::OnCollision(ObjectBase* objectBase) {
+	// 衝突処理
+	//ダイナミックキャストにて判定
+	if(dynamic_cast<Boss*>( objectBase )) {
+		// Boss との衝突処理
+	} else {
+		// その他のオブジェクトとの衝突処理
 	}
 }

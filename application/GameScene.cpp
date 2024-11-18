@@ -137,6 +137,8 @@ void GameScene::Draw()
 	// スプライト共通描画設定
 	SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
+	player_->Draw2D();
+
 
 
 	//--------------------------------------------------//

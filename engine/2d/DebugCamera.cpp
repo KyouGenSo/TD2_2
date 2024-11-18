@@ -17,7 +17,7 @@ DebugCamera* DebugCamera::GetInstance()
 void DebugCamera::Initialize()
 {
 	transform_ = { Vector3(1.0f, 1.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, -50.0f) };
-	fovY_ = 0.45f;
+	fovY_ = 0.45f;	
 	aspect_ = float(WinApp::kClientWidth) / float(WinApp::kClientHeight);
 	nearZ_ = 0.1f;
 	farZ_ = 100.0f;
