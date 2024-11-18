@@ -21,7 +21,9 @@ void Draw2D::Initialize(DX12Basic* dx12)
 
     isDebug_ = false;
 
+    worldMatrix_ = Mat4x4::MakeIdentity();
     viewMatrix_ = Mat4x4::MakeIdentity();
+    projectionMatrix_ = Mat4x4::MakeOrtho(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f);
 
     // パイプラインステートの生成
     CreatePSO(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, trianglePipelineState_, triangleRootSignature_);
@@ -29,7 +31,7 @@ void Draw2D::Initialize(DX12Basic* dx12)
 
     // 座標変換行列データの生成
     CreateTransformMatData();
-    
+
     // 三角形の頂点データを生成
     triangleData_ = new TriangleData();
     CreateTriangleVertexData(triangleData_);
@@ -65,14 +67,16 @@ void Draw2D::Finalize()
 
 void Draw2D::Update()
 {
+    transformationMatrixData_->world = worldMatrix_;
+
     if (isDebug_)
     {
-        Matrix4x4 viewMatrix = DebugCamera::GetInstance()->GetViewMat();
+        debugViewMatrix_ = DebugCamera::GetInstance()->GetViewMat();
 
-        transformationMatrixData_->WVP = Mat4x4::Multiply(transformationMatrixData_->world, Mat4x4::Multiply(viewMatrix, Mat4x4::MakeOrtho(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f)));
+        transformationMatrixData_->WVP = Mat4x4::Multiply(transformationMatrixData_->world, Mat4x4::Multiply(debugViewMatrix_, projectionMatrix_));
     } else
     {
-        transformationMatrixData_->WVP = Mat4x4::Multiply(transformationMatrixData_->world, Mat4x4::Multiply(viewMatrix_, Mat4x4::MakeOrtho(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f)));
+        transformationMatrixData_->WVP = Mat4x4::Multiply(transformationMatrixData_->world, Mat4x4::Multiply(viewMatrix_, projectionMatrix_));
     }
 }
 
@@ -194,8 +198,8 @@ void Draw2D::DrawBox(const Vector2& pos, const Vector2& size, const float angle,
     // 頂点データの設定
     boxData_->vertexData[boxVertexIndex_].position = Vector2(pos.x + vertexPos[0].x, pos.y + vertexPos[0].y);
     boxData_->vertexData[boxVertexIndex_ + 1].position = Vector2(pos.x + vertexPos[1].x, pos.y + vertexPos[1].y);
-    boxData_->vertexData[boxVertexIndex_ + 2].position = Vector2(pos.x + vertexPos[2].x, pos.y  + vertexPos[2].y);
-    boxData_->vertexData[boxVertexIndex_ + 3].position = Vector2(pos.x + vertexPos[3].x, pos.y  + vertexPos[3].y);
+    boxData_->vertexData[boxVertexIndex_ + 2].position = Vector2(pos.x + vertexPos[2].x, pos.y + vertexPos[2].y);
+    boxData_->vertexData[boxVertexIndex_ + 3].position = Vector2(pos.x + vertexPos[3].x, pos.y + vertexPos[3].y);
 
     // インデックスデータの設定
     boxData_->indexData[boxIndexIndex_] = 0;
@@ -448,21 +452,13 @@ void Draw2D::CreateTransformMatData()
 {
     // 座標変換行列リソースを生成
     transformationMatrixBuffer_ = m_dx12_->MakeBufferResource(sizeof(TransformationMatrix));
-    //m_dx12_->CreateBufferResource(transformationMatrixBuffer_, sizeof(TransformationMatrix));
 
     // 座標変換行列リソースをマップ
     transformationMatrixBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData_));
 
     // 座標変換行列データの初期値を書き込む
-    Matrix4x4 worldMatrix = Mat4x4::MakeIdentity();
-    Matrix4x4 viewMatrix = Mat4x4::MakeIdentity();
-    Matrix4x4 projectionMatrix = Mat4x4::MakeOrtho(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f);
-    Matrix4x4 wvpMatrix = Mat4x4::Multiply(worldMatrix, Mat4x4::Multiply(viewMatrix, projectionMatrix));
+    wvpMatrix_ = Mat4x4::Multiply(worldMatrix_, Mat4x4::Multiply(viewMatrix_, projectionMatrix_));
 
-    transformationMatrixData_->WVP = wvpMatrix;
-    transformationMatrixData_->world = worldMatrix;
+    transformationMatrixData_->WVP = wvpMatrix_;
+    transformationMatrixData_->world = worldMatrix_;
 }
-
-
-
-
