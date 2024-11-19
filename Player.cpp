@@ -83,20 +83,19 @@ void Player::Update() {
 	currentLight_->lightPos = { transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z };
 	// フラグがオンの場合のみ自動更新
 	if (autoUpdateLightDir_) {
-		currentLight_->lightDir = boss_->GetTransform().translate - currentLight_->lightPos;
+		currentLight_->lightDir = (boss_->GetTransform().translate - currentLight_->lightPos).normalize();
 	}
 
-	// ライトの設定を反映
 	Object3dBasic::GetInstance()->SetSpotLight(
-		currentLight_->lightPos,
-		currentLight_->lightDir.normalize(),
-		currentLight_->lightColor,
-		currentLight_->lightIntensity,
-		currentLight_->lightRange,
-		currentLight_->lightDecay,
-		currentLight_->lightSpotAngle,
-		currentLight_->isSpotLight
-	);
+    currentLight_->lightPos,
+    currentLight_->lightDir.normalize(), // 正規化
+    currentLight_->lightColor,
+    currentLight_->lightIntensity,
+    currentLight_->lightRange,
+    currentLight_->lightDecay,
+    currentLight_->lightSpotAngle,
+    currentLight_->isSpotLight
+);
 
 
 	// 移動処理
