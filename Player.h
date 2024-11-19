@@ -66,15 +66,28 @@ private:
 
 	std::unique_ptr<FollowCamera> followCamera_;
 
-	// light関連変数
-	Vector3 lightPos_;
-	Vector3 lightDir_;
-	Vector4 lightColor_;
-	float lightIntensity_;
-	float lightRange_;
-	float lightDecay_;
-	float lightSpotAngle_;
-	bool isSpotLight_;
+	////ライト関連のコード-------------------------
+
+	struct LightProfile {
+		Vector3 lightPos;
+		Vector3 lightDir;
+		Vector4 lightColor;
+		float lightIntensity;
+		float lightRange;
+		float lightDecay;
+		float lightSpotAngle;
+		bool isSpotLight;
+	};
+
+	// ライトプロファイル
+	LightProfile narrowStrongLight_;  // 範囲が狭く光が強い
+	LightProfile wideWeakLight_;      // 範囲が広く光が弱い
+	LightProfile* currentLight_;      // 現在のライト設定を指すポインタ
+
+	// キー切り替えフラグ
+	bool isLightProfileToggled_ = false;
+
+	////----------------------------------------
 
 };
 
