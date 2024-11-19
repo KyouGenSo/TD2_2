@@ -126,6 +126,9 @@
     <ClCompile Include="engine\scene\SceneManager.cpp">
       <Filter>ソースファイル\engine\scene</Filter>
     </ClCompile>
+    <ClCompile Include="engine\2d\Sprite.cpp">
+      <Filter>ソースファイル\engine\2d</Filter>
+    </ClCompile>
     <ClCompile Include="engine\2d\SpriteBasic.cpp">
       <Filter>ソースファイル\engine\2d</Filter>
     </ClCompile>
@@ -156,14 +159,20 @@
     <ClCompile Include="engine\func\commonFunc\StringUtility.cpp">
       <Filter>ソースファイル\engine\func\commom</Filter>
     </ClCompile>
-    <ClCompile Include="Skydome.cpp" />
+    <ClCompile Include="ClearScene.cpp">
+      <Filter>ソースファイル\application</Filter>
+    </ClCompile>
+    <ClCompile Include="FollowCamera.cpp">
+      <Filter>ソースファイル\application</Filter>
+    </ClCompile>
+    <ClCompile Include="Skydome.cpp">
+      <Filter>ソースファイル\application</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectScene.cpp">
+      <Filter>ソースファイル\application\scenes</Filter>
+    </ClCompile>
     <ClCompile Include="engine\3d\Light.cpp">
       <Filter>ソースファイル\engine\3d</Filter>
-    <ClCompile Include="FollowCamera.cpp" />
-    <ClCompile Include="SelectScene.cpp" />
-    <ClCompile Include="ClearScene.cpp" />
-    <ClCompile Include="engine\2d\Sprite.cpp">
-      <Filter>ソースファイル\engine\audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -293,13 +302,21 @@
     <ClInclude Include="engine\func\commonFunc\StringUtility.h">
       <Filter>ヘッダーファイル\engine\func\common</Filter>
     </ClInclude>
-    <ClInclude Include="Skydome.h" />
+    <ClInclude Include="FollowCamera.h">
+      <Filter>ヘッダーファイル\application</Filter>
+    </ClInclude>
+    <ClInclude Include="Skydome.h">
+      <Filter>ヘッダーファイル\application</Filter>
+    </ClInclude>
+    <ClInclude Include="ClearScene.h">
+      <Filter>ヘッダーファイル\application\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectScene.h">
+      <Filter>ヘッダーファイル\application\scenes</Filter>
+    </ClInclude>
     <ClInclude Include="engine\3d\Light.h">
       <Filter>ヘッダーファイル\engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="FollowCamera.h" />
-    <ClInclude Include="SelectScene.h" />
-    <ClInclude Include="ClearScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\FullScreen.hlsli">
