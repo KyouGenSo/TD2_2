@@ -92,7 +92,7 @@ void GameScene::Update()
 	// シーン遷移
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
 	{
-		SceneManager::GetInstance()->ChangeScene("title");
+		SceneManager::GetInstance()->ChangeScene("clear");
 	}
 }
 
@@ -104,8 +104,6 @@ void GameScene::Draw()
 	//------------------背景Spriteの描画------------------//
 	// スプライト共通描画設定
 	SpriteBasic::GetInstance()->SetCommonRenderSetting();
-
-
 
 	//--------------------------------------------------//
 
@@ -137,7 +135,8 @@ void GameScene::Draw()
 	// スプライト共通描画設定
 	SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
-
+	// ボスのHPバーの描画
+	boss_->HPDraw();
 
 	//--------------------------------------------------//
 }
