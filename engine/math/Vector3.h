@@ -97,4 +97,18 @@ struct Vector3 final {
 
 		return result;
 	}
+
+	// 正規化　※長さが0の場合は(0, 0, 0)を返す
+	Vector3 normalize() {
+		float length = sqrt(x * x + y * y + z * z);
+		if (length == 0.0f) {
+			return { 0.0f, 0.0f, 0.0f };
+		}
+
+		x /= length;
+		y /= length;
+		z /= length;
+
+		return { x, y, z };
+	}
 };
