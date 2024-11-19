@@ -27,7 +27,7 @@ public:
 	/// </summary>
 	void Update(Vector3& startPoint, Vector3& endPoint);
 
-	/// @brief 3D描画
+	/// @brief
 	void Draw();
 
 	/// <summary>
@@ -43,7 +43,12 @@ public:
 
 
 protected:
-
 	// コライダー
 	std::unique_ptr<Collider> collider_;
+
+	// 3Dオブジェクト
+	std::unique_ptr<Object3d> object3d_;
+
+	// SRT
+	Transform transform_;
 };

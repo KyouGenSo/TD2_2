@@ -75,76 +75,6 @@ public:
 	 */
 	bool Intersects(const Collider& other) const;
 
-
-	/**----------------------------------------------------------------------------
-	 * \brief  DrawCapsule カプセルの描画
-	 * \param  color
-	 * \note
-	 */
-	void DrawCapsule();
-
-	/**----------------------------------------------------------------------------
-	 * \brief  SetDrawEnabled 描画のオン/オフ
-	 * \param  enabled
-	 * \note
-	 */
-	void SetDrawEnabled(bool enabled) { drawEnabled_ = enabled; }
-	/**----------------------------------------------------------------------------
-	 * \brief  IsDrawEnabled
-	 * \return
-	 * \note
-	 */
-	bool IsDrawEnabled() const { return drawEnabled_; }
-
-	///--------------------------------------------------------------
-	///						 
-	// ローカル関数の定義
-	Vector3 AddVector3(const Vector3& a, const Vector3& b) {
-		return { a.x + b.x, a.y + b.y, a.z + b.z };
-	}
-
-	Vector3 MultiplyVector3(const Vector3& v, float scalar) {
-		return { v.x * scalar, v.y * scalar, v.z * scalar };
-	}
-
-	//Vector3 Transform(const Vector3& v, const Matrix4x4& m) {
-	//	return {
-	//		v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0] + m.m[3][0],
-	//		v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1] + m.m[3][1],
-	//		v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2] + m.m[3][2]
-	//	};
-	//}
-
-	Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth) {
-		// 単位行列で初期化
-		Matrix4x4 result = IdentityMatrix();
-
-		// ビューポート変換行列の要素を計算する
-		result.m[0][0] = width / 2.0f;
-		result.m[1][1] = -height / 2.0f;
-		result.m[2][2] = maxDepth - minDepth;
-		result.m[3][0] = left + width / 2.0f;
-		result.m[3][1] = top + height / 2.0f;
-		result.m[3][2] = minDepth;
-
-		return result;
-	}
-
-	Matrix4x4 IdentityMatrix() {
-		Matrix4x4 result;
-		for(int i = 0; i < 4; ++i) {
-			for(int j = 0; j < 4; ++j) {
-				if(i == j) {
-					result.m[i][j] = 1.0f;
-				} else {
-					result.m[i][j] = 0.0f;
-				}
-			}
-		}
-		return result;
-	}
-
-
 	///-------------------------------------------///
 	/// メンバ変数
 	///-------------------------------------------///
@@ -157,14 +87,4 @@ private:
 
 	/// ===衝突範囲=== ///
 	float radius_ = 1.0f;
-
-	bool drawEnabled_ = true; // 描画のオン/
-
-	//---------------------------------------
-	// 3Dオブジェクト
-	std::unique_ptr<Object3d> object3d_;
-
-	//---------------------------------------
-	// SRT
-	Transform transform_;
 };
