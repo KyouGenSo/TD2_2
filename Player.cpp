@@ -21,6 +21,9 @@ void Player::Initialize(Boss* boss) {
 	boss_ = boss; // Boss のポインタを設定
 
 	followCamera_ = std::make_unique<FollowCamera>();
+
+	actionDelay_ = 180; // 初期の制限時間を設定
+	canAct_ = false;   // 初期状態では行動不可
 }
 
 void Player::Update() {

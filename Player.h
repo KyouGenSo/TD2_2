@@ -62,5 +62,7 @@ private:
 
 	std::unique_ptr<FollowCamera> followCamera_;
 
+	int actionDelay_ = 180; // 行動制限時間（フレーム数）
+	bool canAct_ = false;  // プレイヤーが行動可能かどうか
 };
 
