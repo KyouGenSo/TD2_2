@@ -25,15 +25,36 @@ void Player::Initialize(Boss* boss) {
 	followCamera_ = std::make_unique<FollowCamera>();
 
 
-	// lightの初期設定
-	lightPos_ = { transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z };
-	lightDir_ = boss_->GetTransform().translate - lightPos_;
-	lightColor_ = { 1.0f, 1.0f, 1.0f, 1.0f };
-	lightIntensity_ = 1.0f;
-	lightRange_ = 10.0f;
-	lightDecay_ = 1.0f;
-	lightSpotAngle_ = std::cos(std::numbers::pi_v<float> / 3.0f);
-	isSpotLight_ = true;
+	//// lightの初期設定-----------------------------------------------------------------------------------------------------------------------------
+
+	// 範囲が狭く光が強いライト設定
+	narrowStrongLight_ = {
+		{ transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z }, // lightPos
+		boss->GetTransform().translate - Vector3(transform_.translate.x, transform_.translate.y + 5.0f, transform_.translate.z), // lightDir
+		{ 1.0f, 1.0f, 1.0f, 1.0f }, // lightColor
+		10.0f, // 光の強さ
+		30.0f, // ライト範囲
+		0.1f, // 光減衰
+		std::cos(std::numbers::pi_v<float> / 20.0f), // ライトスポット角度
+		true // isSpotLightフラグ
+	};
+
+	// 範囲が広く光が弱いライト設定
+	wideWeakLight_ = {
+		{ transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z }, // lightPos
+		boss->GetTransform().translate - Vector3(transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z), // lightDir
+		{ 0.5f, 0.5f, 0.5f, 1.0f }, // lightColor
+		1.0f, // 光の強さ
+		20.0f, // ライト範囲
+		1.0f, // 光減衰
+		std::cos(std::numbers::pi_v<float> / -10.0f), // ライトスポット角度
+		true // isSpotLightフラグ
+	};
+
+	// 初期ライト設定
+	currentLight_ = &narrowStrongLight_;
+
+	////-------------------------------------------------------------------------------------------------------------------------------------------
 
 }
 
@@ -42,6 +63,41 @@ void Player::Update() {
 	// Boss が存在しない場合、処理をスキップ
 	//（Boss の位置に依存した処理があるため、nullptr の場合にクラッシュを防ぐための安全対策）
 	if (boss_ == nullptr) return;
+
+
+	// ライト切り替え
+	if (Input::GetInstance()->TriggerKey(DIK_L)) {
+		if (isLightProfileToggled_) {
+			currentLight_ = &narrowStrongLight_;
+		} else {
+			currentLight_ = &wideWeakLight_;
+		}
+		isLightProfileToggled_ = !isLightProfileToggled_;
+	}
+
+	// 照らす対象の位置を調整して上向きの角度を設定
+	//Vector3 targetPosition = boss_->GetTransform().translate;
+	//targetPosition.y += 15.0f;
+
+	// 現在のライト設定を更新
+	currentLight_->lightPos = { transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z };
+	// フラグがオンの場合のみ自動更新
+	if (autoUpdateLightDir_) {
+		currentLight_->lightDir = boss_->GetTransform().translate - currentLight_->lightPos;
+	}
+
+	// ライトの設定を反映
+	Object3dBasic::GetInstance()->SetSpotLight(
+		currentLight_->lightPos,
+		currentLight_->lightDir.normalize(),
+		currentLight_->lightColor,
+		currentLight_->lightIntensity,
+		currentLight_->lightRange,
+		currentLight_->lightDecay,
+		currentLight_->lightSpotAngle,
+		currentLight_->isSpotLight
+	);
+
 
 	// 移動処理
 	Move();
@@ -54,11 +110,6 @@ void Player::Update() {
 	object3d_->SetRotate(transform_.rotate);
 	object3d_->SetTranslate(transform_.translate);
 	object3d_->Update();
-
-	// ライト
-	lightPos_ = { transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z };
-	lightDir_ = boss_->GetTransform().translate - lightPos_;
-	Object3dBasic::GetInstance()->SetSpotLight(lightPos_, lightDir_.normalize(), lightColor_, lightIntensity_, lightRange_, lightDecay_, lightSpotAngle_, isSpotLight_);
 
 	// 追従カメラ
 	followCamera_->Update(transform_.translate, transform_.rotate);
@@ -110,14 +161,25 @@ void Player::Move()
 void Player::DrawImGui()
 {
 	ImGui::Begin("Player SpotLight");
-	ImGui::DragFloat3("Light Pos", &lightPos_.x, 0.1f);
-	ImGui::DragFloat3("Light Dir", &lightDir_.x, 0.1f);
-	ImGui::ColorEdit4("Light Color", &lightColor_.x);
-	ImGui::SliderFloat("Light Intensity", &lightIntensity_, 0.0f, 10.0f);
-	ImGui::SliderFloat("Light Range", &lightRange_, 0.0f, 100.0f);
-	ImGui::SliderFloat("Light Decay", &lightDecay_, 0.0f, 2.0f);
-	ImGui::SliderFloat("Light Spot Angle", &lightSpotAngle_, 0.0f, 1.0f);
-	ImGui::Checkbox("SpotLight", &isSpotLight_);
+
+	ImGui::Text("Current Light Profile: %s", isLightProfileToggled_ ? "Wide Weak" : "Narrow Strong");
+
+	// 自動更新のオン/オフ切り替え
+	ImGui::Checkbox("Auto Update Light Direction", &autoUpdateLightDir_);
+	// ライト方向の手動操作（自動更新がオフの場合のみ）
+	if (!autoUpdateLightDir_) {
+		ImGui::DragFloat3("Light Dir", &currentLight_->lightDir.x, 0.01f, -10.0f, 10.0f);
+	}
+
+	ImGui::DragFloat3("Light Pos", &currentLight_->lightPos.x, 0.1f);
+	ImGui::ColorEdit4("Light Color", &currentLight_->lightColor.x);
+	ImGui::SliderFloat("Light Intensity", &currentLight_->lightIntensity, 0.0f, 10.0f);
+	ImGui::SliderFloat("Light Range", &currentLight_->lightRange, 0.0f, 100.0f);
+	ImGui::SliderFloat("Light Decay", &currentLight_->lightDecay, 0.0f, 2.0f);
+	ImGui::SliderFloat("Light Spot Angle", &currentLight_->lightSpotAngle, 0.0f, 1.0f);
+	ImGui::Checkbox("SpotLight", &currentLight_->isSpotLight);
+
 	ImGui::End();
+
 
 }

@@ -86,6 +86,8 @@ private:
 
 	// キー切り替えフラグ
 	bool isLightProfileToggled_ = false;
+	// ライトの方向を自動更新するかどうかのフラグ
+	bool autoUpdateLightDir_ = true;
 
 	////----------------------------------------
 
