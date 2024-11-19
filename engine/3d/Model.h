@@ -37,12 +37,14 @@ public: // 構造体
 	// マテリアル
 	struct Material
 	{
-		Vector4 color;
+		Vector4 color;          // 16 bytes (aligned to 16 bytes)
 		bool enableLighting;
-		float padding[3];
+		float padding1[3];
 		Matrix4x4 uvTransform;
+		float shininess;
+		bool enableHighlight;
+		float padding2[3];
 	};
-
 public: // メンバー関数
 	/// <summary>
 	/// 初期化
@@ -64,6 +66,11 @@ public: // メンバー関数
 	/// </summary>
 	void LoadMtlFile(const std::string& directoryPath, const std::string& fileName);
 
+	// -----------------------------------Setters-----------------------------------//
+	void SetShininess(float shininess) { materialData_->shininess = shininess; }
+	void SetEnableLighting(bool enableLighting) { materialData_->enableLighting = enableLighting; }
+	void SetEnableHighlight(bool enableHighlight) { materialData_->enableHighlight = enableHighlight; }
+
 private: // プライベートメンバー関数
 
 	///<summary>
@@ -76,7 +83,7 @@ private: // プライベートメンバー関数
 	/// </summary>
 	void CreateMaterialData();
 private:
-	
+
 	ModelBasic* m_modelBasic_;
 
 	std::string directoryFolderName_;

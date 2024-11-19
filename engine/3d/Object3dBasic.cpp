@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "Camera.h"
 
+
 #ifdef _DEBUG
 #include "DebugCamera.h"
 #endif
@@ -26,24 +27,31 @@ void Object3dBasic::Initialize(DX12Basic* dx12)
 
 	// パイプラインステートの生成
 	CreatePSO();
+
+	// ライトの生成と初期化
+	light_ = new Light();
+	light_->Initialize(m_dx12_);
 }
 
 void Object3dBasic::Update()
 {
-	
 	if (isDebug_)
 	{
-		viewProjectionMatrix_ = DebugCamera::GetInstance()->GetViewProjectionMat();
+#ifdef _DEBUG
+		debugViewProjectionMatrix_ = DebugCamera::GetInstance()->GetViewProjectionMat();
+		camera_->SetViewProjectionMatrix(debugViewProjectionMatrix_);
+#endif
 	} else
 	{
 		viewProjectionMatrix_ = camera_->GetViewMatrix() * camera_->GetProjectionMatrix();
+		camera_->SetViewProjectionMatrix(viewProjectionMatrix_);
 	}
-
-	camera_->SetViewProjectionMatrix(viewProjectionMatrix_);
 }
 
 void Object3dBasic::Finalize()
 {
+	delete light_;
+
 	if (instance_ != nullptr)
 	{
 		delete instance_;
@@ -61,6 +69,24 @@ void Object3dBasic::SetCommonRenderSetting()
 
 	// トポロジの設定
 	m_dx12_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// ライトの描画設定
+	light_->PreDraw();
+}
+
+void Object3dBasic::SetDirectionalLight(const Vector3& direction, const Vector4& color, int32_t lightType, float intensity)
+{
+	light_->SetDirectionalLight(direction, color, lightType, intensity);
+}
+
+void Object3dBasic::SetPointLight(const Vector3& position, const Vector4& color, float intensity, float radius, float decay, bool enable, int index)
+{
+	light_->SetPointLight(position, color, intensity, radius, decay, enable, index);
+}
+
+void Object3dBasic::SetSpotLight(const Vector3& position, const Vector3& direction, const Vector4& color, float intensity, float distance, float decay, float cosAngle, bool enable)
+{
+	light_->SetSpotLight(position, direction, color, intensity, distance, decay, cosAngle, enable);
 }
 
 void Object3dBasic::CreateRootSignature()
@@ -91,25 +117,56 @@ void Object3dBasic::CreateRootSignature()
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
-	// RootParameterの設定。複数設定できるので配列
-	D3D12_ROOT_PARAMETER rootParameters[4] = {};
+	D3D12_DESCRIPTOR_RANGE descriptorRangeForPointLight[1] = {};
+	descriptorRangeForPointLight[0].BaseShaderRegister = 1; // レジスタ番号
+	descriptorRangeForPointLight[0].NumDescriptors = 1; // ディスクリプタ数
+	descriptorRangeForPointLight[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRVを使う
+	descriptorRangeForPointLight[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
+	// RootParameterの設定。複数設定できるので配列
+	D3D12_ROOT_PARAMETER rootParameters[8] = {};
+
+	// Material
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // 定数バッファビューを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // ピクセルシェーダーで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0; // レジスタ番号とバインド
 
+	// TransformationMatrix
 	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // 定数バッファビューを使う
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX; // 頂点シェーダーで使う
 	rootParameters[1].Descriptor.ShaderRegister = 0; // レジスタ番号とバインド 
 
+	// Texture
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // ディスクリプタテーブルを使う
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // ピクセルシェーダーで使う
 	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange; // ディスクリプタレンジを設定
 	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); // レンジの数
 
+	// DirectionalLight
 	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // 定数バッファビューを使う
 	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // ピクセルシェーダーで使う
 	rootParameters[3].Descriptor.ShaderRegister = 1; // レジスタ番号とバインド
+
+	// GPU Camera
+	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // 定数バッファビューを使う
+	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // ピクセルシェーダーで使う
+	rootParameters[4].Descriptor.ShaderRegister = 2; // レジスタ番号とバインド
+
+	// PointLight
+	rootParameters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // ディスクリプタテーブルを使う
+	rootParameters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // ピクセルシェーダーで使う
+	rootParameters[5].DescriptorTable.pDescriptorRanges = descriptorRangeForPointLight; // ディスクリプタレンジを設定
+	rootParameters[5].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeForPointLight); // レンジの数
+
+	// SpotLight
+	rootParameters[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // 定数バッファビューを使う
+	rootParameters[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // ピクセルシェーダーで使う
+	rootParameters[6].Descriptor.ShaderRegister = 4; // レジスタ番号とバインド
+
+	// LightNum
+	rootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // 定数バッファビューを使う
+	rootParameters[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // ピクセルシェーダーで使う
+	rootParameters[7].Descriptor.ShaderRegister = 3; // レジスタ番号とバインド
 
 	descriptionRootSignature.pParameters = rootParameters;
 	descriptionRootSignature.NumParameters = _countof(rootParameters);

@@ -157,6 +157,8 @@
       <Filter>ソースファイル\engine\func\commom</Filter>
     </ClCompile>
     <ClCompile Include="Skydome.cpp" />
+    <ClCompile Include="engine\3d\Light.cpp">
+      <Filter>ソースファイル\engine\3d</Filter>
     <ClCompile Include="FollowCamera.cpp" />
     <ClCompile Include="SelectScene.cpp" />
     <ClCompile Include="ClearScene.cpp" />
@@ -292,6 +294,9 @@
       <Filter>ヘッダーファイル\engine\func\common</Filter>
     </ClInclude>
     <ClInclude Include="Skydome.h" />
+    <ClInclude Include="engine\3d\Light.h">
+      <Filter>ヘッダーファイル\engine\3d</Filter>
+    </ClInclude>
     <ClInclude Include="FollowCamera.h" />
     <ClInclude Include="SelectScene.h" />
     <ClInclude Include="ClearScene.h" />
