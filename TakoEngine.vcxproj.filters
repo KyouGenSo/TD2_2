@@ -126,9 +126,6 @@
     <ClCompile Include="engine\scene\SceneManager.cpp">
       <Filter>ソースファイル\engine\scene</Filter>
     </ClCompile>
-    <ClCompile Include="engine\2d\Sprite.cpp">
-      <Filter>ソースファイル\engine\2d</Filter>
-    </ClCompile>
     <ClCompile Include="engine\2d\SpriteBasic.cpp">
       <Filter>ソースファイル\engine\2d</Filter>
     </ClCompile>
@@ -162,6 +159,11 @@
     <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="engine\3d\Light.cpp">
       <Filter>ソースファイル\engine\3d</Filter>
+    <ClCompile Include="FollowCamera.cpp" />
+    <ClCompile Include="SelectScene.cpp" />
+    <ClCompile Include="ClearScene.cpp" />
+    <ClCompile Include="engine\2d\Sprite.cpp">
+      <Filter>ソースファイル\engine\audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -295,6 +297,9 @@
     <ClInclude Include="engine\3d\Light.h">
       <Filter>ヘッダーファイル\engine\3d</Filter>
     </ClInclude>
+    <ClInclude Include="FollowCamera.h" />
+    <ClInclude Include="SelectScene.h" />
+    <ClInclude Include="ClearScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\FullScreen.hlsli">
