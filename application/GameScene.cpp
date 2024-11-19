@@ -92,7 +92,7 @@ void GameScene::Update()
 	// シーン遷移
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
 	{
-		SceneManager::GetInstance()->ChangeScene("title");
+		SceneManager::GetInstance()->ChangeScene("clear");
 	}
 }
 

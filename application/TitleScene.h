@@ -3,6 +3,7 @@
 #include"Sprite.h"
 #include <vector>
 #include"Vector2.h"
+#include <memory>
 
 class TitleScene : public BaseScene
 {
@@ -36,4 +37,6 @@ public: // メンバ関数
 private: // メンバ変数
 
 	bool isDebug_ = false;
+
+	//std::unique_ptr<Sprite> titleSprite_;  // 背景スプライト
 };
