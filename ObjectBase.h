@@ -48,7 +48,4 @@ protected:
 
 	// 3Dオブジェクト
 	std::unique_ptr<Object3d> object3d_;
-
-	// SRT
-	Transform transform_;
 };

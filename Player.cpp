@@ -42,6 +42,7 @@ void Player::Update() {
 
 
 	Vector3 test = transform_.translate + Vector3(0.0f, 32.0f, 0.0f);
+
 	ObjectBase::Update(transform_.translate, test);
 }
 
