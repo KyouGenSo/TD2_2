@@ -62,5 +62,15 @@ private:
 
 	std::unique_ptr<FollowCamera> followCamera_;
 
+	// light関連変数
+	Vector3 lightPos_;
+	Vector3 lightDir_;
+	Vector4 lightColor_;
+	float lightIntensity_;
+	float lightRange_;
+	float lightDecay_;
+	float lightSpotAngle_;
+	bool isSpotLight_;
+
 };
 
