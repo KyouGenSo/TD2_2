@@ -41,6 +41,11 @@ void Player::Update() {
 	object3d_->SetTranslate(transform_.translate);
 	object3d_->Update();
 
+	// ライト
+	lightPos_ = { transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z };
+	lightDir_ = boss_->GetTransform().translate - lightPos_;
+	Object3dBasic::GetInstance()->SetSpotLight(lightPos_, lightDir_.normalize(), lightColor_, lightIntensity_, lightRange_, lightDecay_, lightSpotAngle_, isSpotLight_);
+
 	// 追従カメラ
 	followCamera_->Update(transform_.translate, transform_.rotate);
 
