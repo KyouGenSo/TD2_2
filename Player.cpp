@@ -74,10 +74,10 @@ void Player::Update() {
 
 	// F3キーでライトを下に、F4キーでライトを上に移動
 	if (Input::GetInstance()->PushKey(DIK_F3)) {
-		currentLight_->lightPos.y -= 0.1f; // 下方向に移動
+		currentLight_->lightDir.y -= 0.1f; // 下方向に移動
 	}
 	if (Input::GetInstance()->PushKey(DIK_F4)) {
-		currentLight_->lightPos.y += 0.1f; // 上方向に移動
+		currentLight_->lightDir.y += 0.1f; // 上方向に移動
 	}
 
 	// 現在のライト設定を更新
