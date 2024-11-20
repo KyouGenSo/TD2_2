@@ -25,6 +25,25 @@ void Boss::Initialize() {
 }
 
 void Boss::Update() {
+	
+
+	// 状態に応じた処理を実行
+	// 現在のフェーズに対応する関数を呼び出す
+	(this->*spFuncTable[static_cast<int>(phase_)])();
+
+	// HPの更新
+	HPUpdate();
+
+
+	object3d_->SetScale(transform_.scale);
+	object3d_->SetRotate(transform_.rotate);
+	object3d_->SetTranslate(transform_.translate);
+
+	object3d_->Update();
+}
+
+void Boss::Move()
+{
 	// BossがPlayerの方向を向くための目標角度を計算
 	Vector3 directionToPlayer = playerPosition_ - transform_.translate;
 	float targetRotationY = atan2f(directionToPlayer.x, directionToPlayer.z);
@@ -52,22 +71,27 @@ void Boss::Update() {
 		// 角度差が小さい場合は目標角度に合わせる
 		transform_.rotate.y = targetRotationY;
 	}
+}
 
-	// 攻撃のステートパターン更新
-	if (state_)
-	{
-		state_->Update();
+void Boss::AttackPhase()
+{
+	// アタックフェーズの変更
+	float hpRatio = static_cast<float>(hp_) / 1000.0f;
+	if (hpRatio > 0.9f) {
+		ChangeState(std::make_unique<AttackPhase1>(this));
 	}
-
-	// HPの更新
-	HPUpdate();
-
-
-	object3d_->SetScale(transform_.scale);
-	object3d_->SetRotate(transform_.rotate);
-	object3d_->SetTranslate(transform_.translate);
-
-	object3d_->Update();
+	else if (hpRatio > 0.75f) {
+		ChangeState(std::make_unique<AttackPhase2>(this));
+	}
+	else if (hpRatio > 0.5f) {
+		ChangeState(std::make_unique<AttackPhase3>(this));
+	}
+	else if (hpRatio > 0.2f) {
+		ChangeState(std::make_unique<AttackPhase4>(this));
+	}
+	else {
+		ChangeState(std::make_unique<AttackPhase5>(this));
+	}
 }
 
 void Boss::Draw() {
@@ -77,8 +101,8 @@ void Boss::Draw() {
 void Boss::DrawImGui()
 {
 	ImGui::Begin("phase");
-	float hpRatio = static_cast<float>(hp_) / 1000.0f;
 	// フェーズの変更
+	float hpRatio = static_cast<float>(hp_) / 1000.0f;
 	if (hpRatio > 0.9f) {
 		ImGui::Text("phase1");
 	}
@@ -105,27 +129,22 @@ void Boss::HPUpdate() {
 		}
 	}
 
+	// HPバーの色を変更
 	float hpRatio = static_cast<float>(hp_) / 1000.0f;
-	// フェーズの変更とHPバーの色を変更
 	if (hpRatio > 0.9f) {
 		boxColor = Vector4(0.0f, 1.0f, 0.0f, 1.0f); // 緑
-		ChangeState(std::make_unique<AttackPhase1>(this));
 	}
 	else if (hpRatio > 0.75f) {
 		boxColor = Vector4(0.3f, 1.0f, 0.0f, 1.0f); // 黄緑
-		ChangeState(std::make_unique<AttackPhase2>(this));
 	}
 	else if (hpRatio > 0.5f) {
 		boxColor = Vector4(1.0f, 1.0f, 0.0f, 1.0f); // 黄色
-		ChangeState(std::make_unique<AttackPhase3>(this));
 	}
 	else if (hpRatio > 0.2f) {
 		boxColor = Vector4(1.0f, 0.5f, 0.0f, 1.0f); // オレンジ
-		ChangeState(std::make_unique<AttackPhase4>(this));
 	}
 	else {
 		boxColor = Vector4(1.0f, 0.0f, 0.0f, 1.0f); // 赤
-		ChangeState(std::make_unique<AttackPhase5>(this));
 	}
 }
 
@@ -159,4 +178,75 @@ void Boss::ChangeState(std::unique_ptr<BossAttackBaseState> state)
 {
 	state_ = std::move(state);
 }
+
+// メンバ関数ポインタのテーブルの実体
+void (Boss::* Boss::spFuncTable[])() = {
+	&Boss::Usually,
+	&Boss::Down
+};
+
+void Boss::Usually()
+{
+	// 通常の動き
+	Move();
+
+	// ステートの更新
+	if (state_) {
+		state_->Update();
+	}
+
+	// アタックのフェーズ変更
+	AttackPhase();
+
+	if (Input::GetInstance()->PushKey(DIK_V))
+	{
+		phase_ = Phase::Down;
+	}
+}
+
+void Boss::Down() {
+	// イージング用のタイマー
+	static float easingTime = 0.0f;     // 現在の時間
+	const float fallDuration = 2.0f;   // 倒れるまでの時間（秒）
+	const float bounceDuration = 1.0f; // バウンドの時間（秒）
+
+	const float maxRotation = static_cast<float>(M_PI) / 2.0f; // 最大回転角（90度）
+
+	// イージングタイマーの進行
+	if (easingTime < fallDuration + bounceDuration) {
+		easingTime += 0.02f; // 時間を進める（フレーム単位で調整）
+	}
+
+	if (easingTime <= fallDuration) {
+		// 正規化時間 t を計算（倒れる動きの進行）
+		float t = easingTime / fallDuration;
+		if (t > 1.0f) t = 1.0f;
+
+		// イージング値を取得（倒れる動き）
+		float easedT = EaseInExpo(t);
+
+		// 回転角の更新
+		transform_.rotate.x = maxRotation * easedT;
+	}
+	else {
+		// 正規化時間 t を計算（バウンドの進行）
+		float t = (easingTime - fallDuration) / bounceDuration;
+		if (t > 1.0f) t = 1.0f;
+
+		// イージング値を取得（バウンド）
+		float easedT = EaseOutBounce(t);
+
+		// 回転角の更新（バウンド）
+		transform_.rotate.x = maxRotation - (maxRotation * 0.1f * easedT); // 最大回転角から少し戻る動き
+	}
+
+	// 通常状態に戻す
+	if (Input::GetInstance()->PushKey(DIK_B)) {
+		transform_.rotate.x = 0.0f; // 回転をリセット
+		easingTime = 0.0f;          // タイマーをリセット
+		phase_ = Phase::Usually;    // 通常状態に戻す
+	}
+}
+
+
 
