@@ -33,7 +33,7 @@ void Player::Initialize(Boss* boss) {
 		boss->GetTransform().translate - Vector3(transform_.translate.x, transform_.translate.y + 5.0f, transform_.translate.z), // lightDir
 		{ 1.0f, 1.0f, 1.0f, 1.0f }, // lightColor
 		10.0f, // 光の強さ
-		30.0f, // ライト範囲
+		26.0f, // ライト範囲
 		0.1f, // 光減衰
 		std::cos(std::numbers::pi_v<float> / 20.0f), // ライトスポット角度
 		true // isSpotLightフラグ
@@ -59,11 +59,8 @@ void Player::Initialize(Boss* boss) {
 }
 
 void Player::Update() {
-
 	// Boss が存在しない場合、処理をスキップ
-	//（Boss の位置に依存した処理があるため、nullptr の場合にクラッシュを防ぐための安全対策）
 	if (boss_ == nullptr) return;
-
 
 	// ライト切り替え
 	if (Input::GetInstance()->TriggerKey(DIK_L)) {
@@ -75,28 +72,30 @@ void Player::Update() {
 		isLightProfileToggled_ = !isLightProfileToggled_;
 	}
 
-	// 照らす対象の位置を調整して上向きの角度を設定
-	//Vector3 targetPosition = boss_->GetTransform().translate;
-	//targetPosition.y += 15.0f;
+	// F3キーでライトを下に、F4キーでライトを上に移動
+	if (Input::GetInstance()->PushKey(DIK_F3)) {
+		currentLight_->lightPos.y -= 0.1f; // 下方向に移動
+	}
+	if (Input::GetInstance()->PushKey(DIK_F4)) {
+		currentLight_->lightPos.y += 0.1f; // 上方向に移動
+	}
 
 	// 現在のライト設定を更新
-	currentLight_->lightPos = { transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z };
-	// フラグがオンの場合のみ自動更新
+	currentLight_->lightPos = { transform_.translate.x, currentLight_->lightPos.y, transform_.translate.z };
 	if (autoUpdateLightDir_) {
 		currentLight_->lightDir = (boss_->GetTransform().translate - currentLight_->lightPos).normalize();
 	}
 
 	Object3dBasic::GetInstance()->SetSpotLight(
-    currentLight_->lightPos,
-    currentLight_->lightDir.normalize(), // 正規化
-    currentLight_->lightColor,
-    currentLight_->lightIntensity,
-    currentLight_->lightRange,
-    currentLight_->lightDecay,
-    currentLight_->lightSpotAngle,
-    currentLight_->isSpotLight
-);
-
+		currentLight_->lightPos,
+		currentLight_->lightDir.normalize(), // 正規化
+		currentLight_->lightColor,
+		currentLight_->lightIntensity,
+		currentLight_->lightRange,
+		currentLight_->lightDecay,
+		currentLight_->lightSpotAngle,
+		currentLight_->isSpotLight
+	);
 
 	// 移動処理
 	Move();
@@ -112,8 +111,8 @@ void Player::Update() {
 
 	// 追従カメラ
 	followCamera_->Update(transform_.translate, transform_.rotate);
-
 }
+
 
 void Player::Draw() {
 	// モデルの描画
