@@ -15,6 +15,8 @@ public: // メンバ関数
 
 	virtual void Update() = 0; // 状態ごとの更新処理
 
+	virtual void Draw() = 0;
+
 protected: // メンバ変数
 
 	//状態名

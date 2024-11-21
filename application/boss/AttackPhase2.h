@@ -8,6 +8,8 @@ public:
     AttackPhase2(Boss* boss);
 
     void Update() override;
+
+    void Draw() override;
     
 };
 

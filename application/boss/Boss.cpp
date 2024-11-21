@@ -84,27 +84,6 @@ void Boss::Move()
 	}
 }
 
-void Boss::AttackPhase()
-{
-	// アタックフェーズの変更
-	float hpRatio = static_cast<float>(hp_) / 1000.0f;
-	if (hpRatio > 0.9f) {
-		ChangeState(std::make_unique<AttackPhase1>(this));
-	}
-	else if (hpRatio > 0.75f) {
-		ChangeState(std::make_unique<AttackPhase2>(this));
-	}
-	else if (hpRatio > 0.5f) {
-		ChangeState(std::make_unique<AttackPhase3>(this));
-	}
-	else if (hpRatio > 0.2f) {
-		ChangeState(std::make_unique<AttackPhase4>(this));
-	}
-	else {
-		ChangeState(std::make_unique<AttackPhase5>(this));
-	}
-}
-
 void Boss::Draw() {
 	// 核の描画
 	for (auto& core : cores_) {
@@ -212,8 +191,8 @@ void Boss::Usually()
 		state_->Update();
 	}
 
-	// アタックのフェーズ変更
-	AttackPhase();
+	//// アタックのフェーズ変更
+	//AttackPhase();
 
 	if (Input::GetInstance()->PushKey(DIK_V))
 	{

@@ -22,9 +22,6 @@ public: // メンバ関数
     // 通常の動き
     void Move();
 
-    // アタックフェーズの更新
-    void AttackPhase();
-
     // 描画
     void Draw();
 
