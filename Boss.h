@@ -102,6 +102,7 @@ private: // メンバ関数
     enum class Phase {
         Usually,  //　通常状態
         Down, // ダウン状態
+        GettingUp,  // 起き上がり状態
     };
 
     Phase phase_ = Phase::Usually;
@@ -109,6 +110,7 @@ private: // メンバ関数
     // 各状態に対応するメンバ関数
     void Usually();
     void Down();
+    void GettingUp();
 
     // 状態のメンバ関数ポインタのテーブル
     static void (Boss::* spFuncTable[])();

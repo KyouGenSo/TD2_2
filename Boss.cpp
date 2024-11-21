@@ -182,7 +182,8 @@ void Boss::ChangeState(std::unique_ptr<BossAttackBaseState> state)
 // メンバ関数ポインタのテーブルの実体
 void (Boss::* Boss::spFuncTable[])() = {
 	&Boss::Usually,
-	&Boss::Down
+	&Boss::Down,
+	& Boss::GettingUp
 };
 
 void Boss::Usually()
@@ -206,9 +207,10 @@ void Boss::Usually()
 
 void Boss::Down() {
 	// イージング用のタイマー
-	static float easingTime = 0.0f;     // 現在の時間
-	const float fallDuration = 2.0f;   // 倒れるまでの時間（秒）
-	const float bounceDuration = 1.0f; // バウンドの時間（秒）
+	static float easingTime = 0.0f;      // 現在の時間
+	static int waitTimer = 0;            // バウンド後の待機タイマー
+	const float fallDuration = 2.0f;    // 倒れるまでの時間（秒）
+	const float bounceDuration = 1.0f;  // バウンドの時間（秒）
 
 	const float maxRotation = static_cast<float>(M_PI) / 2.0f; // 最大回転角（90度）
 
@@ -228,7 +230,7 @@ void Boss::Down() {
 		// 回転角の更新
 		transform_.rotate.x = maxRotation * easedT;
 	}
-	else {
+	else if (easingTime <= fallDuration + bounceDuration) {
 		// 正規化時間 t を計算（バウンドの進行）
 		float t = (easingTime - fallDuration) / bounceDuration;
 		if (t > 1.0f) t = 1.0f;
@@ -239,14 +241,59 @@ void Boss::Down() {
 		// 回転角の更新（バウンド）
 		transform_.rotate.x = maxRotation - (maxRotation * 0.1f * easedT); // 最大回転角から少し戻る動き
 	}
+	else {
+		// バウンドが終了後の待機
+		waitTimer++;
+		if (waitTimer >= 360) {
+			// 待機時間が経過したら起き上がりフェーズに移行
+			easingTime = 0.0f;
+			waitTimer = 0;
+			phase_ = Phase::GettingUp;
+		}
+	}
 
-	// 通常状態に戻す
+	// リセット（デバッグ用）
 	if (Input::GetInstance()->PushKey(DIK_B)) {
 		transform_.rotate.x = 0.0f; // 回転をリセット
 		easingTime = 0.0f;          // タイマーをリセット
+		waitTimer = 0;              // 待機タイマーをリセット
 		phase_ = Phase::Usually;    // 通常状態に戻す
 	}
 }
+
+
+void Boss::GettingUp() {
+	// イージング用のタイマー
+	static float easingTime = 0.0f; // 起き上がる時間
+	const float getUpDuration = 10.0f; // 起き上がりにかける時間（秒）
+
+	// イージングタイマーの進行
+	if (easingTime < getUpDuration) {
+		easingTime += 0.02f; // 時間を進める
+	}
+
+	// 正規化時間 t を計算（0.0f～1.0f）
+	float t = easingTime / getUpDuration;
+	if (t > 1.0f) t = 1.0f;
+
+	// イージング値を取得（起き上がる動き）
+	float easedT = EaseInOut(t);
+
+	// 回転角の更新（ゆっくり元に戻す）
+	transform_.rotate.x = (1.0f - easedT) * (static_cast<float>(M_PI) / 2.0f);
+
+	// 位置の更新（元の位置に戻す）
+	transform_.translate.x *= (1.0f - easedT);
+
+	// 起き上がりが完了したら通常状態に戻す
+	if (t >= 1.0f) {
+		transform_.rotate.x = 0.0f;  // 回転を完全にリセット
+		transform_.translate.x = 0.0f; // 位置を完全にリセット
+		easingTime = 0.0f;           // タイマーをリセット
+		phase_ = Phase::Usually;     // 通常状態に戻す
+	}
+}
+
 
 
 
