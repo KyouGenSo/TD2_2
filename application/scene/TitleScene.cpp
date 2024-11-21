@@ -5,6 +5,7 @@
 #include "SpriteBasic.h"
 #include "Input.h"
 #include "Draw2D.h"
+#include "Camera.h"
 
 #ifdef _DEBUG
 #include"ImGui.h"
@@ -15,7 +16,6 @@ void TitleScene::Initialize()
 {
 #ifdef _DEBUG
 	DebugCamera::GetInstance()->Initialize();
-	DebugCamera::GetInstance()->Set2D();
 #endif
 
 	/// ================================== ///
@@ -33,7 +33,7 @@ void TitleScene::Update()
 {
 #ifdef _DEBUG
 	if (Input::GetInstance()->TriggerKey(DIK_F1)) {
-		Draw2D::GetInstance()->SetDebug(!Draw2D::GetInstance()->GetDebug());
+		Object3dBasic::GetInstance()->SetDebug(!Object3dBasic::GetInstance()->GetDebug());
 		isDebug_ = !isDebug_;
 	}
 
@@ -88,7 +88,11 @@ void TitleScene::Draw()
 
 	//--------------------------------------------------//
 
-	Draw2D::GetInstance()->DrawBox(Vector2(500.0f, 500.0f), Vector2(100.0f, 100.0f), Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+	///　======================================================　///
+	///			  球の描画サンプルコード（消していい）               ///
+	/// ======================================================　///
+	Matrix4x4 viewProjectionMatrix = Object3dBasic::GetInstance()->GetCamera()->GetViewProjectionMatrix();
+	Draw2D::GetInstance()->DrawSphere(Vector3{ 1.0f, 1.0f, 1.0f }, 1.5f, Vector4(1.0f, 1.0f, 1.0f, 1.0f), viewProjectionMatrix);
 
 }
 

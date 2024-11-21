@@ -7,6 +7,7 @@
 #include "vector3.h"
 #include "vector4.h"
 #include "Mat4x4Func.h"
+#include "Transform.h"
 #include <memory>
 
 class Object3d;
