@@ -133,34 +133,58 @@ void Player::Move()
 	}
 }
 
-void Player::Light()
-{
+void Player::Light() {
+	static float verticalOffset = 0.0f; // ライトの位置オフセット
+	static float directionVerticalOffset = 0.0f; // lightDirの上下オフセット
+	static float directionHorizontalOffset = 0.0f; // lightDirの左右オフセット
+
 	// ライト切り替え
 	if (Input::GetInstance()->TriggerKey(DIK_L)) {
-		if (isLightProfileToggled_) {
-			currentLight_ = &narrowStrongLight_;
-		} else {
-			currentLight_ = &wideWeakLight_;
-		}
+		currentLight_ = isLightProfileToggled_ ? &narrowStrongLight_ : &wideWeakLight_;
 		isLightProfileToggled_ = !isLightProfileToggled_;
 	}
 
-	// F3キーでライトを下に、F4キーでライトを上に移動
-	if (Input::GetInstance()->PushKey(DIK_F3)) {
-		currentLight_->lightDir.y -= 0.1f; // 下方向に移動
+	// 上下移動
+	if (Input::GetInstance()->PushKey(DIK_DOWN)) {
+		directionVerticalOffset -= 0.2f; // 下方向に移動
 	}
-	if (Input::GetInstance()->PushKey(DIK_F4)) {
-		currentLight_->lightDir.y += 0.1f; // 上方向に移動
+	if (Input::GetInstance()->PushKey(DIK_UP)) {
+		directionVerticalOffset += 0.2f; // 上方向に移動
 	}
 
-	// ライトの位置と方向を常に更新
-	currentLight_->lightPos = { transform_.translate.x, currentLight_->lightPos.y, transform_.translate.z };
-	currentLight_->lightDir = (boss_->GetTransform().translate - currentLight_->lightPos).normalize();
+	// 左右移動
+	if (Input::GetInstance()->PushKey(DIK_LEFT)) {
+		directionHorizontalOffset -= 0.2f; // 左方向に移動
+	}
+	if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
+		directionHorizontalOffset += 0.2f; // 右方向に移動
+	}
+
+	// ライトの位置更新
+	currentLight_->lightPos = {
+		transform_.translate.x,                           // プレイヤーのX座標に基づく
+		transform_.translate.y + 2.0f + verticalOffset,   // プレイヤーのY座標にオフセットを追加
+		transform_.translate.z                            // プレイヤーのZ座標に基づく
+	};
+
+	// Boss を向く方向を計算
+	Vector3 directionToBoss = boss_->GetTransform().translate - currentLight_->lightPos;
+
+	// X軸とY軸オフセットを別々に扱う
+	directionToBoss.y += directionVerticalOffset; // lightDirのY軸オフセットを追加
+	Vector3 adjustedDirection = {
+		directionToBoss.x + directionHorizontalOffset,
+		directionToBoss.y,
+		directionToBoss.z
+	};
+
+	// 正規化された方向を計算して設定
+	currentLight_->lightDir = adjustedDirection.normalize();
 
 	// スポットライトの更新
 	Object3dBasic::GetInstance()->SetSpotLight(
 		currentLight_->lightPos,
-		currentLight_->lightDir.normalize(), // 正規化
+		currentLight_->lightDir,
 		currentLight_->lightColor,
 		currentLight_->lightIntensity,
 		currentLight_->lightRange,
@@ -169,6 +193,9 @@ void Player::Light()
 		currentLight_->isSpotLight
 	);
 }
+
+
+
 
 void Player::DrawImGui()
 {
