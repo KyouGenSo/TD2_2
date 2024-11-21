@@ -18,7 +18,6 @@ void GameScene::Initialize()
 {
 #ifdef _DEBUG
 	DebugCamera::GetInstance()->Initialize();
-	DebugCamera::GetInstance()->Set3D();
 #endif
 	/// ================================== ///
 	///              初期化処理              ///

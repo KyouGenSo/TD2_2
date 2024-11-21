@@ -3,15 +3,10 @@
 
 #include "Matrix4x4.h"
 #include "Vector3.h"
+#include "Quaternion.h"
 
 const int kRowHeight = 20;
 const int kColumnWidth = 60;
-
-struct Transform {
-	Vector3 scale;
-	Vector3 rotate;
-	Vector3 translate;
-};
 
 namespace Mat4x4 {
 	Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2);
@@ -41,6 +36,7 @@ namespace Mat4x4 {
 	Matrix4x4 MakeRotateXYZ(const Vector3& rotate);
 
 	Matrix4x4 MakeAffine(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+	Matrix4x4 MakeAffine(const Vector3& scale, const Quaternion& rotate, const Vector3& translate);
 
 	Vector3 TransForm(const Matrix4x4& m, const Vector3& v);
 
@@ -52,7 +48,3 @@ namespace Mat4x4 {
 
 	Matrix4x4 InverseTranspose(const Matrix4x4& m);
 }
-
-
-
-

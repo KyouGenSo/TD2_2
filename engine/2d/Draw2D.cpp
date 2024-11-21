@@ -19,9 +19,8 @@ void Draw2D::Initialize(DX12Basic* dx12)
 {
     m_dx12_ = dx12;
 
-    isDebug_ = false;
-
-    viewMatrix_ = Mat4x4::MakeIdentity();
+    projectionMatrix_ = Mat4x4::MakeOrtho(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 1.0f);
+    viewPortMatrix_ = Mat4x4::MakeViewport(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 1.0f);
 
     // パイプラインステートの生成
     CreatePSO(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE, trianglePipelineState_, triangleRootSignature_);
@@ -29,7 +28,7 @@ void Draw2D::Initialize(DX12Basic* dx12)
 
     // 座標変換行列データの生成
     CreateTransformMatData();
-    
+
     // 三角形の頂点データを生成
     triangleData_ = new TriangleData();
     CreateTriangleVertexData(triangleData_);
@@ -65,15 +64,7 @@ void Draw2D::Finalize()
 
 void Draw2D::Update()
 {
-    if (isDebug_)
-    {
-        Matrix4x4 viewMatrix = DebugCamera::GetInstance()->GetViewMat();
 
-        transformationMatrixData_->WVP = Mat4x4::Multiply(transformationMatrixData_->world, Mat4x4::Multiply(viewMatrix, Mat4x4::MakeOrtho(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f)));
-    } else
-    {
-        transformationMatrixData_->WVP = Mat4x4::Multiply(transformationMatrixData_->world, Mat4x4::Multiply(viewMatrix_, Mat4x4::MakeOrtho(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f)));
-    }
 }
 
 void Draw2D::ImGui()
@@ -194,8 +185,8 @@ void Draw2D::DrawBox(const Vector2& pos, const Vector2& size, const float angle,
     // 頂点データの設定
     boxData_->vertexData[boxVertexIndex_].position = Vector2(pos.x + vertexPos[0].x, pos.y + vertexPos[0].y);
     boxData_->vertexData[boxVertexIndex_ + 1].position = Vector2(pos.x + vertexPos[1].x, pos.y + vertexPos[1].y);
-    boxData_->vertexData[boxVertexIndex_ + 2].position = Vector2(pos.x + vertexPos[2].x, pos.y  + vertexPos[2].y);
-    boxData_->vertexData[boxVertexIndex_ + 3].position = Vector2(pos.x + vertexPos[3].x, pos.y  + vertexPos[3].y);
+    boxData_->vertexData[boxVertexIndex_ + 2].position = Vector2(pos.x + vertexPos[2].x, pos.y + vertexPos[2].y);
+    boxData_->vertexData[boxVertexIndex_ + 3].position = Vector2(pos.x + vertexPos[3].x, pos.y + vertexPos[3].y);
 
     // インデックスデータの設定
     boxData_->indexData[boxIndexIndex_] = 0;
@@ -267,6 +258,47 @@ void Draw2D::DrawLine(const Vector2& start, const Vector2& end, const Vector4& c
 
     lineIndex_ += kVertexCountLine + 1;
 
+}
+
+void Draw2D::DrawSphere(const Vector3& center, const float radius, const Vector4& color, const Matrix4x4& viewProjectionMatrix)
+{
+    const uint32_t kSubdivision = 20; // 1分割数
+    const float kLonEvery = 2.0f * 3.14159265359f / float(kSubdivision); // 経度の1分割の角度 phi
+    const float kLatEvery = 3.14159265359f / float(kSubdivision); // 緯度の1分割の角度 theta
+
+    // 緯度方向のループ
+    for (uint32_t latIndex = 0; latIndex < kSubdivision; latIndex++) {
+        float lat = -3.14159265359f / 2.0f + kLatEvery * float(latIndex);
+        // 経度方向のループ
+        for (uint32_t lonIndex = 0; lonIndex < kSubdivision; lonIndex++) {
+            float lon = kLonEvery * float(lonIndex);
+            // 球の表面上の点を求める
+            Vector3 a, b, c;
+            a.x = center.x + radius * cosf(lat) * cosf(lon);
+            a.y = center.y + radius * sinf(lat);
+            a.z = center.z + radius * cosf(lat) * sinf(lon);
+            b.x = center.x + radius * cosf(lat + kLatEvery) * cosf(lon);
+            b.y = center.y + radius * sinf(lat + kLatEvery);
+            b.z = center.z + radius * cosf(lat + kLatEvery) * sinf(lon);
+            c.x = center.x + radius * cosf(lat) * cosf(lon + kLonEvery);
+            c.y = center.y + radius * sinf(lat);
+            c.z = center.z + radius * cosf(lat) * sinf(lon + kLonEvery);
+
+            // 3D座標を2D座標に変換
+            Vector3 a2D = Mat4x4::TransForm(viewProjectionMatrix, a);
+            Vector3 b2D = Mat4x4::TransForm(viewProjectionMatrix, b);
+            Vector3 c2D = Mat4x4::TransForm(viewProjectionMatrix, c);
+
+            // ビューポ
+            a2D = Mat4x4::TransForm(viewPortMatrix_, a2D);
+            b2D = Mat4x4::TransForm(viewPortMatrix_, b2D);
+            c2D = Mat4x4::TransForm(viewPortMatrix_, c2D);
+
+            // ライン描画
+            DrawLine(Vector2(a2D.x, a2D.y), Vector2(b2D.x, b2D.y), color);
+            DrawLine(Vector2(b2D.x, b2D.y), Vector2(c2D.x, c2D.y), color);
+        }
+    }
 }
 
 void Draw2D::Reset()
@@ -433,7 +465,6 @@ void Draw2D::CreateLineVertexData(LineData* lineData)
 
     // 頂点リソースを生成
     lineData->vertexBuffer = m_dx12_->MakeBufferResource(vertexBufferSize);
-    //m_dx12_->CreateBufferResource(lineData->vertexBuffer, vertexBufferSize);
 
     // 頂点バッファビューを作成する
     lineData->vertexBufferView.BufferLocation = lineData->vertexBuffer->GetGPUVirtualAddress();
@@ -448,21 +479,9 @@ void Draw2D::CreateTransformMatData()
 {
     // 座標変換行列リソースを生成
     transformationMatrixBuffer_ = m_dx12_->MakeBufferResource(sizeof(TransformationMatrix));
-    //m_dx12_->CreateBufferResource(transformationMatrixBuffer_, sizeof(TransformationMatrix));
 
     // 座標変換行列リソースをマップ
     transformationMatrixBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData_));
 
-    // 座標変換行列データの初期値を書き込む
-    Matrix4x4 worldMatrix = Mat4x4::MakeIdentity();
-    Matrix4x4 viewMatrix = Mat4x4::MakeIdentity();
-    Matrix4x4 projectionMatrix = Mat4x4::MakeOrtho(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f);
-    Matrix4x4 wvpMatrix = Mat4x4::Multiply(worldMatrix, Mat4x4::Multiply(viewMatrix, projectionMatrix));
-
-    transformationMatrixData_->WVP = wvpMatrix;
-    transformationMatrixData_->world = worldMatrix;
+    transformationMatrixData_->WVP = projectionMatrix_;
 }
-
-
-
-
