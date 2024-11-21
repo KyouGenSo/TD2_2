@@ -187,3 +187,13 @@ void Player::DrawImGui()
 	ImGui::End();
 }
 
+///=============================================================================
+///						 衝突判定イベント
+void Player::OnCollision(ObjectBase* objectBase) {
+	//Bossとの衝突判定
+	if(dynamic_cast<Boss*>( objectBase ) != nullptr) {
+		// プレイヤーの位置を初期位置に戻す
+		
+	}
+}
+

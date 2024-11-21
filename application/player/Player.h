@@ -14,8 +14,9 @@
 #include "Input.h"
 #include "Boss.h"
 #include "FollowCamera.h"
+#include "ObjectBase.h"
 
-class Player {
+class Player :public ObjectBase {
 	///--------------------------------------------------------------
 	///							メンバ関数
 public:
@@ -36,6 +37,10 @@ public:
 
 	/// \brief ImGuiの描画
 	void DrawImGui();
+
+	/// @brief 衝突処理イベント
+	/// @param objectBase 衝突したオブジェクト
+	void OnCollision(ObjectBase* objectBase) override;
 
 
 	///--------------------------------------------------------------

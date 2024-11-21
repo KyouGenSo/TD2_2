@@ -52,6 +52,12 @@ void GameScene::Initialize()
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize();
 
+	//---------------------------------------
+	// コリジョンマネージャの初期化
+	collisionManager_ = std::make_unique<CollisionManager>();
+	collisionManager_->Initialize();
+
+
 }
 
 void GameScene::Finalize()
