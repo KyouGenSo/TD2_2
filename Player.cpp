@@ -44,7 +44,7 @@ void Player::Initialize(Boss* boss) {
 		{ transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z }, // lightPos
 		boss->GetTransform().translate - Vector3(transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z), // lightDir
 		{ 1.0f, 1.0f, 1.0f, 1.0f }, // lightColor
-		5.0f, // 光の強さ
+		1.0f, // 光の強さ
 		20.0f, // ライト範囲
 		1.0f, // 光減衰
 		std::cos(std::numbers::pi_v<float> / 5.0f), // ライトスポット角度
@@ -53,6 +53,10 @@ void Player::Initialize(Boss* boss) {
 
 	// 初期ライト設定
 	currentLight_ = &narrowStrongLight_;
+
+	// ライトの位置と方向を常に更新
+	//currentLight_->lightPos = { transform_.translate.x, currentLight_->lightPos.y, transform_.translate.z };
+	//currentLight_->lightDir = (boss_->GetTransform().translate - currentLight_->lightPos).normalize();
 
 	////-------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -146,7 +150,7 @@ void Player::Light()
 
 	// ライトの位置と方向を常に更新
 	currentLight_->lightPos = { transform_.translate.x, currentLight_->lightPos.y, transform_.translate.z };
-	//currentLight_->lightDir = (boss_->GetTransform().translate - currentLight_->lightPos).normalize();
+	currentLight_->lightDir = (boss_->GetTransform().translate - currentLight_->lightPos).normalize();
 
 	// スポットライトの更新
 	Object3dBasic::GetInstance()->SetSpotLight(
