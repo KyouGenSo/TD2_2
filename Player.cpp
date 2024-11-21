@@ -46,7 +46,7 @@ void Player::Initialize(Boss* boss) {
 		boss->GetTransform().translate - Vector3(transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z), // lightDir
 		{ 1.0f, 1.0f, 1.0f, 1.0f }, // lightColor
 		10.0f, // 光の強さ
-		20.0f, // ライト範囲
+		50.0f, // ライト範囲
 		1.0f, // 光減衰
 		std::cos(std::numbers::pi_v<float> / 5.0f), // ライトスポット角度
 		true // isSpotLightフラグ
