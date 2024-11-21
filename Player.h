@@ -32,6 +32,12 @@ public:
 	/// \brief 移動
 	void Move();
 
+	void Light();
+
+	/// \brief ImGuiの描画
+	void DrawImGui();
+
+
 	///--------------------------------------------------------------
 	///							入出力関数
 public:
@@ -56,13 +62,41 @@ private:
 
 	Boss* boss_ = nullptr; // Boss クラスへのポインタ
 	float angle_ = 0.0f;   // 現在の角度
-	const float radius_ = 12.5f; // Boss を中心とする円の半径
+	const float radius_ = 22.5f; // Boss を中心とする円の半径
 	const float rotationSpeed_ = 0.04f; // 回転速度
 
 
 	std::unique_ptr<FollowCamera> followCamera_;
 
+
+	////ライト関連のコード-------------------------
+
+	struct LightProfile {
+		Vector3 lightPos;
+		Vector3 lightDir;
+		Vector4 lightColor;
+		float lightIntensity;
+		float lightRange;
+		float lightDecay;
+		float lightSpotAngle;
+		bool isSpotLight;
+	};
+
+	// ライトプロファイル
+	LightProfile narrowStrongLight_;  // 範囲が狭く光が強い
+	LightProfile wideWeakLight_;      // 範囲が広く光が弱い
+	LightProfile* currentLight_;      // 現在のライト設定を指すポインタ
+
+	// キー切り替えフラグ
+	bool isLightProfileToggled_ = false;
+	// ライトの方向を自動更新するかどうかのフラグ
+	bool autoUpdateLightDir_ = true;
+
+	////----------------------------------------
+
+
 	int actionDelay_ = 180; // 行動制限時間（フレーム数）
 	bool canAct_ = false;  // プレイヤーが行動可能かどうか
+
 };
 
