@@ -65,6 +65,8 @@ void Player::Initialize(Boss* boss) {
 	actionDelay_ = 180; // 初期の制限時間を設定
 	canAct_ = false;   // 初期状態では行動不可
 
+	//プレイヤーの位置とColliderの位置を同期
+	ObjectBase::Init(transform_.translate, transform_.translate, 1.0f);
 }
 
 void Player::Update() {
@@ -88,6 +90,10 @@ void Player::Update() {
 
 	// 追従カメラ
 	followCamera_->Update(transform_.translate, transform_.rotate);
+
+	Vector3 test = transform_.translate + Vector3(0.0f, 3.0f, 0.0f);
+
+	ObjectBase::Update(transform_.translate, test);
 }
 
 
