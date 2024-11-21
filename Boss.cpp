@@ -25,8 +25,6 @@ void Boss::Initialize() {
 }
 
 void Boss::Update() {
-	
-
 	// 状態に応じた処理を実行
 	// 現在のフェーズに対応する関数を呼び出す
 	(this->*spFuncTable[static_cast<int>(phase_)])();
