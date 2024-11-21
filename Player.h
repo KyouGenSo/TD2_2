@@ -32,6 +32,8 @@ public:
 	/// \brief 移動
 	void Move();
 
+	void Light();
+
 	/// \brief ImGuiの描画
 	void DrawImGui();
 

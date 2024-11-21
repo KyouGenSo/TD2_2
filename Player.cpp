@@ -59,43 +59,11 @@ void Player::Initialize(Boss* boss) {
 }
 
 void Player::Update() {
-	// Boss が存在しない場合、処理をスキップ
+	// ボスが存在しない場合、処理をスキップ
 	if (boss_ == nullptr) return;
 
-	// ライト切り替え
-	if (Input::GetInstance()->TriggerKey(DIK_L)) {
-		if (isLightProfileToggled_) {
-			currentLight_ = &narrowStrongLight_;
-		} else {
-			currentLight_ = &wideWeakLight_;
-		}
-		isLightProfileToggled_ = !isLightProfileToggled_;
-	}
-
-	// F3キーでライトを下に、F4キーでライトを上に移動
-	if (Input::GetInstance()->PushKey(DIK_F3)) {
-		currentLight_->lightDir.y -= 0.1f; // 下方向に移動
-	}
-	if (Input::GetInstance()->PushKey(DIK_F4)) {
-		currentLight_->lightDir.y += 0.1f; // 上方向に移動
-	}
-
-	// 現在のライト設定を更新
-	currentLight_->lightPos = { transform_.translate.x, currentLight_->lightPos.y, transform_.translate.z };
-	if (autoUpdateLightDir_) {
-		currentLight_->lightDir = (boss_->GetTransform().translate - currentLight_->lightPos).normalize();
-	}
-
-	Object3dBasic::GetInstance()->SetSpotLight(
-		currentLight_->lightPos,
-		currentLight_->lightDir.normalize(), // 正規化
-		currentLight_->lightColor,
-		currentLight_->lightIntensity,
-		currentLight_->lightRange,
-		currentLight_->lightDecay,
-		currentLight_->lightSpotAngle,
-		currentLight_->isSpotLight
-	);
+	//ライト
+	Light();
 
 	// 移動処理
 	Move();
@@ -156,19 +124,49 @@ void Player::Move()
 	}
 }
 
+void Player::Light()
+{
+	// ライト切り替え
+	if (Input::GetInstance()->TriggerKey(DIK_L)) {
+		if (isLightProfileToggled_) {
+			currentLight_ = &narrowStrongLight_;
+		} else {
+			currentLight_ = &wideWeakLight_;
+		}
+		isLightProfileToggled_ = !isLightProfileToggled_;
+	}
+
+	// F3キーでライトを下に、F4キーでライトを上に移動
+	if (Input::GetInstance()->PushKey(DIK_F3)) {
+		currentLight_->lightDir.y -= 0.1f; // 下方向に移動
+	}
+	if (Input::GetInstance()->PushKey(DIK_F4)) {
+		currentLight_->lightDir.y += 0.1f; // 上方向に移動
+	}
+
+	// ライトの位置と方向を常に更新
+	currentLight_->lightPos = { transform_.translate.x, currentLight_->lightPos.y, transform_.translate.z };
+	//currentLight_->lightDir = (boss_->GetTransform().translate - currentLight_->lightPos).normalize();
+
+	// スポットライトの更新
+	Object3dBasic::GetInstance()->SetSpotLight(
+		currentLight_->lightPos,
+		currentLight_->lightDir.normalize(), // 正規化
+		currentLight_->lightColor,
+		currentLight_->lightIntensity,
+		currentLight_->lightRange,
+		currentLight_->lightDecay,
+		currentLight_->lightSpotAngle,
+		currentLight_->isSpotLight
+	);
+}
+
 void Player::DrawImGui()
 {
 	ImGui::Begin("Player SpotLight");
 
 	ImGui::Text("Current Light Profile: %s", isLightProfileToggled_ ? "Wide Weak" : "Narrow Strong");
-
-	// 自動更新のオン/オフ切り替え
-	ImGui::Checkbox("Auto Update Light Direction", &autoUpdateLightDir_);
-	// ライト方向の手動操作（自動更新がオフの場合のみ）
-	if (!autoUpdateLightDir_) {
-		ImGui::DragFloat3("Light Dir", &currentLight_->lightDir.x, 0.01f, -10.0f, 10.0f);
-	}
-
+	ImGui::DragFloat3("Light Dir", &currentLight_->lightDir.x, 0.01f, -10.0f, 10.0f);
 	ImGui::DragFloat3("Light Pos", &currentLight_->lightPos.x, 0.1f);
 	ImGui::ColorEdit4("Light Color", &currentLight_->lightColor.x);
 	ImGui::SliderFloat("Light Intensity", &currentLight_->lightIntensity, 0.0f, 10.0f);
@@ -178,6 +176,5 @@ void Player::DrawImGui()
 	ImGui::Checkbox("SpotLight", &currentLight_->isSpotLight);
 
 	ImGui::End();
-
-
 }
+
