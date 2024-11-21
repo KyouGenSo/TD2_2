@@ -20,6 +20,15 @@ void Boss::Initialize() {
 	transform_.rotate = { 0.0f,0.0f,0.0f };
 	transform_.translate = { 0.0f,0.0f,0.0f };
 
+	// 核の初期化（5つ）
+	cores_.resize(5);
+	for (size_t i = 0; i < cores_.size(); ++i) {
+		// 円形に配置するためのオフセット計算
+		float angle = static_cast<float>(i) * 2.0f * static_cast<float>(M_PI) / static_cast<float>(cores_.size());
+		Vector3 offset = { std::cos(angle) * 1.5f, 0.5f, std::sin(angle) * 1.5f };
+		cores_[i].Initialize(transform_.translate, offset);
+	}
+
 	ChangeState(std::make_unique<AttackPhase1>(this)); // 初期状態を設定
 
 }
@@ -32,6 +41,10 @@ void Boss::Update() {
 	// HPの更新
 	HPUpdate();
 
+	// 核の更新
+	for (auto& core : cores_) {
+		core.Update(transform_.translate);
+	}
 
 	object3d_->SetScale(transform_.scale);
 	object3d_->SetRotate(transform_.rotate);
@@ -93,6 +106,11 @@ void Boss::AttackPhase()
 }
 
 void Boss::Draw() {
+	// 核の描画
+	for (auto& core : cores_) {
+		core.Draw();
+	}
+
 	object3d_->Draw();
 }
 

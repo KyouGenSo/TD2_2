@@ -6,6 +6,7 @@
 #include "Mat4x4Func.h"
 #include "Draw2D.h"
 #include "BossAttackBaseState.h"
+#include "BossNuclear.h"
 
 class Object3d;
 
@@ -60,6 +61,9 @@ private:// メンバ変数
 
     // 現在の状態
     std::unique_ptr<BossAttackBaseState> state_;
+
+    std::vector<BossNuclear> cores_;  // 核のリスト
+
 
 private: // メンバ関数
 

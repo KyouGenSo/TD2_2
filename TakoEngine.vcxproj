@@ -111,6 +111,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="AttackPhase5.cpp" />
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="BossAttackBaseState.cpp" />
+    <ClCompile Include="BossNuclear.cpp" />
     <ClCompile Include="ClearScene.cpp" />
     <ClCompile Include="application\collision\Collider.cpp" />
     <ClCompile Include="application\collision\CollisionManager.cpp" />
@@ -163,6 +164,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="AttackPhase5.h" />
     <ClInclude Include="Boss.h" />
     <ClInclude Include="BossAttackBaseState.h" />
+    <ClInclude Include="BossNuclear.h" />
     <ClInclude Include="ClearScene.h" />
     <ClInclude Include="application\collision\Collider.h" />
     <ClInclude Include="application\collision\CollisionManager.h" />
