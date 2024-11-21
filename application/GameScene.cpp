@@ -147,6 +147,10 @@ void GameScene::Draw()
 void GameScene::DrawImGui()
 {
 #ifdef _DEBUG
+
 	player_->DrawImGui();
+
+	boss_->DrawImGui();
+
 #endif // DEBUG
 }

@@ -68,6 +68,7 @@ private:
 
 	std::unique_ptr<FollowCamera> followCamera_;
 
+
 	////ライト関連のコード-------------------------
 
 	struct LightProfile {
@@ -92,6 +93,10 @@ private:
 	bool autoUpdateLightDir_ = true;
 
 	////----------------------------------------
+
+
+	int actionDelay_ = 180; // 行動制限時間（フレーム数）
+	bool canAct_ = false;  // プレイヤーが行動可能かどうか
 
 };
 

@@ -25,6 +25,7 @@ void Player::Initialize(Boss* boss) {
 	followCamera_ = std::make_unique<FollowCamera>();
 
 
+
 	//// lightの初期設定-----------------------------------------------------------------------------------------------------------------------------
 
 	// 範囲が狭く光が強いライト設定
@@ -59,6 +60,10 @@ void Player::Initialize(Boss* boss) {
 	//currentLight_->lightDir = (boss_->GetTransform().translate - currentLight_->lightPos).normalize();
 
 	////-------------------------------------------------------------------------------------------------------------------------------------------
+
+
+	actionDelay_ = 180; // 初期の制限時間を設定
+	canAct_ = false;   // 初期状態では行動不可
 
 }
 
