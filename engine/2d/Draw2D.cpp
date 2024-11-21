@@ -301,6 +301,118 @@ void Draw2D::DrawSphere(const Vector3& center, const float radius, const Vector4
     }
 }
 
+
+void Draw2D::DrawCapsule(const float radius, const Vector3& startPos, const Vector3& endPos, const Vector4& color, const Matrix4x4& viewProjectionMatrix) {
+    const uint32_t kSubdivision = 8; // 1分割数
+    const float kLonEvery = 2.0f * 3.14159265359f / float(kSubdivision); // 経度の1分割の角度 phi
+    const float kLatEvery = 3.14159265359f / float(kSubdivision); // 緯度の1分割の角度 theta
+
+    // カプセルの中心軸方向ベクトル
+    Vector3 axis = endPos - startPos;
+    float length = sqrtf(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
+    if (length == 0.0f) {
+        return; // 長さが0の場合は描画しない
+    }
+    axis /= length;
+
+    // カプセルの中心軸に垂直なベクトルを求める
+    Vector3 perp = (axis.x != 0.0f || axis.z != 0.0f) ? Vector3(-axis.z, 0.0f, axis.x).normalize() : Vector3(1.0f, 0.0f, 0.0f);
+    Vector3 perp2 = Vector3(axis.y * perp.z - axis.z * perp.y, axis.z * perp.x - axis.x * perp.z, axis.x * perp.y - axis.y * perp.x).normalize();
+
+    // 半球の描画（startPos側）
+    for (uint32_t latIndex = 0; latIndex < kSubdivision / 2; latIndex++) {
+        float lat = -3.14159265359f / 2.0f + kLatEvery * float(latIndex);
+        for (uint32_t lonIndex = 0; lonIndex < kSubdivision; lonIndex++) {
+            float lon = kLonEvery * float(lonIndex);
+
+            // 球の表面上の点を求める
+            Vector3 a = startPos + (perp * cosf(lat) * cosf(lon) + perp2 * cosf(lat) * sinf(lon) + axis * sinf(lat)) * radius;
+            Vector3 b = startPos + (perp * cosf(lat + kLatEvery) * cosf(lon) + perp2 * cosf(lat + kLatEvery) * sinf(lon) + axis * sinf(lat + kLatEvery)) * radius;
+            Vector3 c = startPos + (perp * cosf(lat) * cosf(lon + kLonEvery) + perp2 * cosf(lat) * sinf(lon + kLonEvery) + axis * sinf(lat)) * radius;
+            Vector3 d = startPos + (perp * cosf(lat + kLatEvery) * cosf(lon + kLonEvery) + perp2 * cosf(lat + kLatEvery) * sinf(lon + kLonEvery) + axis * sinf(lat + kLatEvery)) * radius;
+
+            // 3D座標を2D座標に変換
+            Vector3 a2D = Mat4x4::TransForm(viewProjectionMatrix, a);
+            Vector3 b2D = Mat4x4::TransForm(viewProjectionMatrix, b);
+            Vector3 c2D = Mat4x4::TransForm(viewProjectionMatrix, c);
+            Vector3 d2D = Mat4x4::TransForm(viewProjectionMatrix, d);
+
+            // ビューポート変換
+            a2D = Mat4x4::TransForm(viewPortMatrix_, a2D);
+            b2D = Mat4x4::TransForm(viewPortMatrix_, b2D);
+            c2D = Mat4x4::TransForm(viewPortMatrix_, c2D);
+            d2D = Mat4x4::TransForm(viewPortMatrix_, d2D);
+
+            // ライン描画
+            DrawLine(Vector2(a2D.x, a2D.y), Vector2(b2D.x, b2D.y), color);
+            DrawLine(Vector2(b2D.x, b2D.y), Vector2(d2D.x, d2D.y), color);
+            DrawLine(Vector2(d2D.x, d2D.y), Vector2(c2D.x, c2D.y), color);
+            DrawLine(Vector2(c2D.x, c2D.y), Vector2(a2D.x, a2D.y), color);
+        }
+    }
+
+    // 円柱の描画
+    for (uint32_t lonIndex = 0; lonIndex < kSubdivision; lonIndex++) {
+        float lon = kLonEvery * float(lonIndex);
+
+        Vector3 a = startPos + (perp * cosf(lon) + perp2 * sinf(lon)) * radius;
+        Vector3 b = endPos + (perp * cosf(lon) + perp2 * sinf(lon)) * radius;
+        Vector3 c = startPos + (perp * cosf(lon + kLonEvery) + perp2 * sinf(lon + kLonEvery)) * radius;
+        Vector3 d = endPos + (perp * cosf(lon + kLonEvery) + perp2 * sinf(lon + kLonEvery)) * radius;
+
+        // 3D座標を2D座標に変換
+        Vector3 a2D = Mat4x4::TransForm(viewProjectionMatrix, a);
+        Vector3 b2D = Mat4x4::TransForm(viewProjectionMatrix, b);
+        Vector3 c2D = Mat4x4::TransForm(viewProjectionMatrix, c);
+        Vector3 d2D = Mat4x4::TransForm(viewProjectionMatrix, d);
+
+        // ビューポート変換
+        a2D = Mat4x4::TransForm(viewPortMatrix_, a2D);
+        b2D = Mat4x4::TransForm(viewPortMatrix_, b2D);
+        c2D = Mat4x4::TransForm(viewPortMatrix_, c2D);
+        d2D = Mat4x4::TransForm(viewPortMatrix_, d2D);
+
+        // ライン描画
+        DrawLine(Vector2(a2D.x, a2D.y), Vector2(b2D.x, b2D.y), color);
+        DrawLine(Vector2(b2D.x, b2D.y), Vector2(d2D.x, d2D.y), color);
+        DrawLine(Vector2(d2D.x, d2D.y), Vector2(c2D.x, c2D.y), color);
+        DrawLine(Vector2(c2D.x, c2D.y), Vector2(a2D.x, a2D.y), color);
+    }
+
+    // 半球の描画（endPos側）
+    for (uint32_t latIndex = 0; latIndex < kSubdivision / 2; latIndex++) {
+        float lat = 3.14159265359f / 2.0f - kLatEvery * float(latIndex);
+        for (uint32_t lonIndex = 0; lonIndex < kSubdivision; lonIndex++) {
+            float lon = kLonEvery * float(lonIndex);
+
+            // 球の表面上の点を求める
+            Vector3 a = endPos + (perp * cosf(lat) * cosf(lon) + perp2 * cosf(lat) * sinf(lon) + axis * sinf(lat)) * radius;
+            Vector3 b = endPos + (perp * cosf(lat - kLatEvery) * cosf(lon) + perp2 * cosf(lat - kLatEvery) * sinf(lon) + axis * sinf(lat - kLatEvery)) * radius;
+            Vector3 c = endPos + (perp * cosf(lat) * cosf(lon + kLonEvery) + perp2 * cosf(lat) * sinf(lon + kLonEvery) + axis * sinf(lat)) * radius;
+            Vector3 d = endPos + (perp * cosf(lat - kLatEvery) * cosf(lon + kLonEvery) + perp2 * cosf(lat - kLatEvery) * sinf(lon + kLonEvery) + axis * sinf(lat - kLatEvery)) * radius;
+
+            // 3D座標を2D座標に変換
+            Vector3 a2D = Mat4x4::TransForm(viewProjectionMatrix, a);
+            Vector3 b2D = Mat4x4::TransForm(viewProjectionMatrix, b);
+            Vector3 c2D = Mat4x4::TransForm(viewProjectionMatrix, c);
+            Vector3 d2D = Mat4x4::TransForm(viewProjectionMatrix, d);
+
+            // ビューポート変換
+            a2D = Mat4x4::TransForm(viewPortMatrix_, a2D);
+            b2D = Mat4x4::TransForm(viewPortMatrix_, b2D);
+            c2D = Mat4x4::TransForm(viewPortMatrix_, c2D);
+            d2D = Mat4x4::TransForm(viewPortMatrix_, d2D);
+
+            // ライン描画
+            DrawLine(Vector2(a2D.x, a2D.y), Vector2(b2D.x, b2D.y), color);
+            DrawLine(Vector2(b2D.x, b2D.y), Vector2(d2D.x, d2D.y), color);
+            DrawLine(Vector2(d2D.x, d2D.y), Vector2(c2D.x, c2D.y), color);
+            DrawLine(Vector2(c2D.x, c2D.y), Vector2(a2D.x, a2D.y), color);
+        }
+    }
+}
+
+
 void Draw2D::Reset()
 {
     triangleIndex_ = 0;

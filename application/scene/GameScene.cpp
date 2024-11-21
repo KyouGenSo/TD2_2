@@ -148,9 +148,6 @@ void GameScene::Draw()
 	// 天球の描画
 	skydome_->Draw();
 
-	//---------------------------------------
-	// コリジョンマネージャの描画
-	collisionManager_->Draw();
 
 	//-------------------Modelの描画-------------------//
 
@@ -159,8 +156,14 @@ void GameScene::Draw()
 	// スプライト共通描画設定
 	SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
+	//---------------------------------------
+	// コリジョンマネージャの描画
+	collisionManager_->Draw();
+
+
 	// ボスのHPバーの描画
 	boss_->HPDraw();
+
 
 	//--------------------------------------------------//
 }

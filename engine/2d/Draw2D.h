@@ -122,6 +122,11 @@ public: // メンバ関数
 	void DrawSphere(const Vector3& center, const float radius, const Vector4& color, const Matrix4x4& viewProjectionMatrix);
 
 	/// <summary>
+	/// カプセル形の描画
+	/// </summary>
+	void DrawCapsule(const float radius,const Vector3& startPos, const Vector3& endPos, const Vector4& color, const Matrix4x4& viewProjectionMatrix);
+
+	/// <summary>
 	/// リセット
 	/// </summary>
 	void Reset();

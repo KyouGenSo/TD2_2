@@ -91,7 +91,7 @@ void Player::Update() {
 	// 追従カメラ
 	followCamera_->Update(transform_.translate, transform_.rotate);
 
-	Vector3 test = transform_.translate + Vector3(0.0f, 3.0f, 0.0f);
+	Vector3 test = transform_.translate + Vector3(0.0f, 5.0f, 0.0f);
 
 	ObjectBase::Update(transform_.translate, test);
 }

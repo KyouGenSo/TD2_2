@@ -92,8 +92,11 @@ void TitleScene::Draw()
 	///			  球の描画サンプルコード（消していい）               ///
 	/// ======================================================　///
 	Matrix4x4 viewProjectionMatrix = Object3dBasic::GetInstance()->GetCamera()->GetViewProjectionMatrix();
-	Draw2D::GetInstance()->DrawSphere(Vector3{ 1.0f, 1.0f, 1.0f }, 1.5f, Vector4(1.0f, 1.0f, 1.0f, 1.0f), viewProjectionMatrix);
+	//Draw2D::GetInstance()->DrawSphere(Vector3{ 1.0f, 1.0f, 1.0f }, 1.5f, Vector4(1.0f, 1.0f, 1.0f, 1.0f), viewProjectionMatrix);
 
+
+	//Matrix4x4 viewProjectionMatrix = Object3dBasic::GetInstance()->GetCamera()->GetViewProjectionMatrix();
+	Draw2D::GetInstance()->DrawCapsule(1.0f, Vector3{ 1.0f, 1.0f, 1.0f }, Vector3{ 1.001f, 2.0f, 1.001f }, Vector4(1.0f, 1.0f, 1.0f, 1.0f), viewProjectionMatrix);
 }
 
 void TitleScene::DrawImGui()

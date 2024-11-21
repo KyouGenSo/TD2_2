@@ -1,13 +1,8 @@
-/*********************************************************************
- * \file   CollisionManager.cpp
- * \brief  
- * 
- * \author Harukichimaru
- * \date   November 2024
- * \note   
- *********************************************************************/
 #include "CollisionManager.h"
 #include "ModelManager.h"
+#include "Object3dBasic.h"
+#include "Draw2D.h"
+#include "Camera.h" // Add this include to resolve the incomplete type error
 
 void CollisionManager::Initialize() {
     // SRT
@@ -53,16 +48,22 @@ void CollisionManager::Draw() {
         Vector3 end = (*itr)->GetCollider()->GetEnd();
         //半径の取得
 		float radius = ( *itr )->GetCollider()->GetRadius();
+
+
+        //ワイヤーフレームの描画
+        Matrix4x4 viewProjectionMatrix = Object3dBasic::GetInstance()->GetCamera()->GetViewProjectionMatrix();
+		Draw2D::GetInstance()->DrawCapsule(radius, start, end, Vector4(1.0f, 1.0f, 1.0f, 1.0f), viewProjectionMatrix);
+
         
-        // 始点にオブジェクトを描画
-        object3dStart_->SetTranslate(start);
-		object3dStart_->SetScale({ radius, radius, radius });
-        object3dStart_->Draw();
-        
-        // 終点にオブジェクトを描画
-        object3dEnd_->SetTranslate(end);
-        object3dEnd_->SetScale({ radius, radius, radius });
-        object3dEnd_->Draw();
+  //      // 始点にオブジェクトを描画
+  //      object3dStart_->SetTranslate(start);
+		//object3dStart_->SetScale({ radius, radius, radius });
+  //      object3dStart_->Draw();
+  //      
+  //      // 終点にオブジェクトを描画
+  //      object3dEnd_->SetTranslate(end);
+  //      object3dEnd_->SetScale({ radius, radius, radius });
+  //      object3dEnd_->Draw();
     }
 }
 

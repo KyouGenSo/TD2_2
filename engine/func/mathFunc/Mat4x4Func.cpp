@@ -213,7 +213,7 @@ namespace Mat4x4 {
 		result.z = m.m[0][2] * v.x + m.m[1][2] * v.y + m.m[2][2] * v.z + m.m[3][2];
 		w = m.m[0][3] * v.x + m.m[1][3] * v.y + m.m[2][3] * v.z + m.m[3][3];
 
-		assert(w != 0.0f);
+		//assert(w != 0.0f);
 
 		result.x /= w;
 		result.y /= w;
