@@ -8,6 +8,7 @@
 #include "vector4.h"
 #include "Mat4x4Func.h"
 #include <memory>
+#include "ObjectBase.h"
 
 //class Model;
 class Object3d;

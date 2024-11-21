@@ -17,6 +17,27 @@ class CollisionManager {
     ///--------------------------------------------------------------
     ///						 メンバ変数
 public:
+
+	/**----------------------------------------------------------------------------
+	 * \brief  Initialize 
+	 * \note   
+	 */
+	void Initialize();
+
+    /**----------------------------------------------------------------------------
+     * \brief  Update  
+     * \note    
+     */
+	void Update();
+
+    /**----------------------------------------------------------------------------
+     * \brief  Draw 
+     * \note   
+     */
+	void Draw();
+
+    //void DrawCapsule();
+
     /**----------------------------------------------------------------------------
 	 * \brief  Reset リセット
      * \note   
@@ -49,4 +70,8 @@ public:
 private:
     /// ===コライダー=== ///
     std::list<ObjectBase*> Objects_;
+
+    // 3Dオブジェクト
+    std::unique_ptr<Object3d> object3dStart_;
+    std::unique_ptr<Object3d> object3dEnd_;
 };

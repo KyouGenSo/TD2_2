@@ -7,6 +7,8 @@
 #include "Boss.h"
 #include "Ground.h"
 #include "Skydome.h"
+#include "DebugCamera.h"
+#include "CollisionManager.h"
 
 class GameScene : public BaseScene {
 public: // メンバ関数
@@ -55,4 +57,9 @@ private: // メンバ変数
 	//---------------------------------------
 	// 天球
 	std::unique_ptr<Skydome> skydome_;
+
+	//---------------------------------------
+	// コリジョンマネージャ
+	std::unique_ptr<CollisionManager> collisionManager_;
+
 };

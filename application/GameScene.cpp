@@ -29,6 +29,11 @@ void GameScene::Initialize()
 	ModelManager::GetInstance()->LoadModel("skydome.obj");
 
 	//---------------------------------------
+	// コリジョンマネージャの初期化
+	collisionManager_ = std::make_unique<CollisionManager>();
+	collisionManager_->Initialize();
+
+	//---------------------------------------
 	// ボスの初期化
 	boss_ = new Boss();
 	boss_->Initialize();
@@ -89,6 +94,18 @@ void GameScene::Update()
 	// 天球の更新
 	skydome_->Update();
 
+	//---------------------------------------
+	// コリジョンマネージャの処理
+	//リセット
+	collisionManager_->Reset();
+	//追加
+	collisionManager_->AddCollider(player_.get());
+	//すべての当たり判定をチェック
+	collisionManager_->CheckAllCollisions();
+	//更新
+	collisionManager_->Update();
+
+
 	// シーン遷移
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
 	{
@@ -129,6 +146,10 @@ void GameScene::Draw()
 	//---------------------------------------
 	// 天球の描画
 	skydome_->Draw();
+
+	//---------------------------------------
+	// コリジョンマネージャの描画
+	collisionManager_->Draw();
 
 	//-------------------Modelの描画-------------------//
 
