@@ -51,25 +51,25 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="application\MyGame.cpp">
+    <ClCompile Include="application\scene\MyGame.cpp">
       <Filter>ソースファイル\application</Filter>
     </ClCompile>
-    <ClCompile Include="application\GameScene.cpp">
+    <ClCompile Include="application\scene\GameScene.cpp">
       <Filter>ソースファイル\application\scenes</Filter>
     </ClCompile>
-    <ClCompile Include="application\TitleScene.cpp">
+    <ClCompile Include="application\scene\TitleScene.cpp">
       <Filter>ソースファイル\application\scenes</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="application\SceneFactory.cpp">
+    <ClCompile Include="application\scene\SceneFactory.cpp">
       <Filter>ソースファイル\application\scenes</Filter>
     </ClCompile>
     <ClCompile Include="engine\audio\Audio.cpp">
       <Filter>ソースファイル\engine\audio</Filter>
     </ClCompile>
-    <ClCompile Include="Boss.cpp">
+    <ClCompile Include="application\boss\Boss.cpp">
       <Filter>ソースファイル\application</Filter>
     </ClCompile>
     <ClCompile Include="engine\3d\Camera.cpp">
@@ -90,7 +90,7 @@
     <ClCompile Include="engine\base\DX12\DX12Basic.cpp">
       <Filter>ソースファイル\engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="Ground.cpp">
+    <ClCompile Include="application\ground\Ground.cpp">
       <Filter>ソースファイル\application</Filter>
     </ClCompile>
     <ClCompile Include="engine\imgui\ImGuiManager.cpp">
@@ -117,7 +117,7 @@
     <ClCompile Include="engine\effect\ParticleManager.cpp">
       <Filter>ソースファイル\engine\effect</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
+    <ClCompile Include="application\player\Player.cpp">
       <Filter>ソースファイル\application</Filter>
     </ClCompile>
     <ClCompile Include="engine\effect\PostEffect.cpp">
@@ -159,52 +159,52 @@
     <ClCompile Include="engine\func\commonFunc\StringUtility.cpp">
       <Filter>ソースファイル\engine\func\commom</Filter>
     </ClCompile>
-    <ClCompile Include="ClearScene.cpp">
+    <ClCompile Include="application\scene\ClearScene.cpp">
       <Filter>ソースファイル\application</Filter>
     </ClCompile>
-    <ClCompile Include="FollowCamera.cpp">
+    <ClCompile Include="application\followCamera\FollowCamera.cpp">
       <Filter>ソースファイル\application</Filter>
     </ClCompile>
-    <ClCompile Include="Skydome.cpp">
+    <ClCompile Include="application\skydome\Skydome.cpp">
       <Filter>ソースファイル\application</Filter>
     </ClCompile>
-    <ClCompile Include="SelectScene.cpp">
+    <ClCompile Include="application\scene\SelectScene.cpp">
       <Filter>ソースファイル\application\scenes</Filter>
     </ClCompile>
     <ClCompile Include="engine\3d\Light.cpp">
       <Filter>ソースファイル\engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="BossAttackBaseState.cpp" />
-    <ClCompile Include="AttackPhase1.cpp" />
-    <ClCompile Include="AttackPhase2.cpp" />
-    <ClCompile Include="AttackPhase3.cpp" />
-    <ClCompile Include="AttackPhase4.cpp" />
-    <ClCompile Include="AttackPhase5.cpp" />
-    <ClCompile Include="BossNuclear.cpp" />
+    <ClCompile Include="application\boss\BossAttackBaseState.cpp" />
+    <ClCompile Include="application\boss\AttackPhase1.cpp" />
+    <ClCompile Include="application\boss\AttackPhase2.cpp" />
+    <ClCompile Include="application\boss\AttackPhase3.cpp" />
+    <ClCompile Include="application\boss\AttackPhase4.cpp" />
+    <ClCompile Include="application\boss\AttackPhase5.cpp" />
+    <ClCompile Include="application\boss\BossNuclear.cpp" />
     <ClCompile Include="application\collision\ObjectBase.cpp" />
     <ClCompile Include="application\collision\CollisionManager.cpp" />
     <ClCompile Include="application\collision\Collider.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="application\GameScene.h">
+    <ClInclude Include="application\scene\GameScene.h">
       <Filter>ヘッダーファイル\application\scenes</Filter>
     </ClInclude>
-    <ClInclude Include="application\TitleScene.h">
+    <ClInclude Include="application\scene\TitleScene.h">
       <Filter>ヘッダーファイル\application\scenes</Filter>
     </ClInclude>
-    <ClInclude Include="application\SceneFactory.h">
+    <ClInclude Include="application\scene\SceneFactory.h">
       <Filter>ヘッダーファイル\application\scenes</Filter>
     </ClInclude>
-    <ClInclude Include="application\MyGame.h">
+    <ClInclude Include="application\scene\MyGame.h">
       <Filter>ヘッダーファイル\application</Filter>
     </ClInclude>
-    <ClInclude Include="Boss.h">
+    <ClInclude Include="application\boss\Boss.h">
       <Filter>ヘッダーファイル\application</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
+    <ClInclude Include="application\player\Player.h">
       <Filter>ヘッダーファイル\application</Filter>
     </ClInclude>
-    <ClInclude Include="Ground.h">
+    <ClInclude Include="application\ground\Ground.h">
       <Filter>ヘッダーファイル\application</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\AbstractSceneFactory.h">
@@ -312,28 +312,28 @@
     <ClInclude Include="engine\func\commonFunc\StringUtility.h">
       <Filter>ヘッダーファイル\engine\func\common</Filter>
     </ClInclude>
-    <ClInclude Include="FollowCamera.h">
+    <ClInclude Include="application\followCamera\FollowCamera.h">
       <Filter>ヘッダーファイル\application</Filter>
     </ClInclude>
-    <ClInclude Include="Skydome.h">
+    <ClInclude Include="application\skydome\Skydome.h">
       <Filter>ヘッダーファイル\application</Filter>
     </ClInclude>
-    <ClInclude Include="ClearScene.h">
+    <ClInclude Include="application\scene\ClearScene.h">
       <Filter>ヘッダーファイル\application\scenes</Filter>
     </ClInclude>
-    <ClInclude Include="SelectScene.h">
+    <ClInclude Include="application\scene\SelectScene.h">
       <Filter>ヘッダーファイル\application\scenes</Filter>
     </ClInclude>
     <ClInclude Include="engine\3d\Light.h">
       <Filter>ヘッダーファイル\engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="BossAttackBaseState.h" />
-    <ClInclude Include="AttackPhase1.h" />
-    <ClInclude Include="AttackPhase2.h" />
-    <ClInclude Include="AttackPhase3.h" />
-    <ClInclude Include="AttackPhase4.h" />
-    <ClInclude Include="AttackPhase5.h" />
-    <ClInclude Include="BossNuclear.h" />
+    <ClInclude Include="application\boss\BossAttackBaseState.h" />
+    <ClInclude Include="application\boss\AttackPhase1.h" />
+    <ClInclude Include="application\boss\AttackPhase2.h" />
+    <ClInclude Include="application\boss\AttackPhase3.h" />
+    <ClInclude Include="application\boss\AttackPhase4.h" />
+    <ClInclude Include="application\boss\AttackPhase5.h" />
+    <ClInclude Include="application\boss\BossNuclear.h" />
     <ClInclude Include="application\collision\ObjectBase.h" />
     <ClInclude Include="application\collision\CollisionManager.h" />
     <ClInclude Include="application\collision\Collider.h" />
