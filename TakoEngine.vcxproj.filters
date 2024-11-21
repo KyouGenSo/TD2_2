@@ -180,6 +180,9 @@
     <ClCompile Include="AttackPhase3.cpp" />
     <ClCompile Include="AttackPhase4.cpp" />
     <ClCompile Include="AttackPhase5.cpp" />
+    <ClCompile Include="application\collision\ObjectBase.cpp" />
+    <ClCompile Include="application\collision\CollisionManager.cpp" />
+    <ClCompile Include="application\collision\Collider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\GameScene.h">
@@ -329,6 +332,9 @@
     <ClInclude Include="AttackPhase3.h" />
     <ClInclude Include="AttackPhase4.h" />
     <ClInclude Include="AttackPhase5.h" />
+    <ClInclude Include="application\collision\ObjectBase.h" />
+    <ClInclude Include="application\collision\CollisionManager.h" />
+    <ClInclude Include="application\collision\Collider.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\FullScreen.hlsli">
