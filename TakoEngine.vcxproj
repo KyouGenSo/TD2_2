@@ -111,6 +111,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="AttackPhase5.cpp" />
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="BossAttackBaseState.cpp" />
+    <ClCompile Include="BossNuclear.cpp" />
     <ClCompile Include="ClearScene.cpp" />
     <ClCompile Include="engine\2d\DebugCamera.cpp" />
     <ClCompile Include="engine\2d\Draw2D.cpp" />
@@ -160,6 +161,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="AttackPhase5.h" />
     <ClInclude Include="Boss.h" />
     <ClInclude Include="BossAttackBaseState.h" />
+    <ClInclude Include="BossNuclear.h" />
     <ClInclude Include="ClearScene.h" />
     <ClInclude Include="engine\2d\DebugCamera.h" />
     <ClInclude Include="engine\2d\Draw2D.h" />

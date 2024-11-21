@@ -27,6 +27,7 @@ void GameScene::Initialize()
 	ModelManager::GetInstance()->LoadModel("player.obj");
 	ModelManager::GetInstance()->LoadModel("Boss.obj");
 	ModelManager::GetInstance()->LoadModel("skydome.obj");
+	ModelManager::GetInstance()->LoadModel("axis.obj");
 
 	//---------------------------------------
 	// ボスの初期化

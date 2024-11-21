@@ -180,6 +180,7 @@
     <ClCompile Include="AttackPhase3.cpp" />
     <ClCompile Include="AttackPhase4.cpp" />
     <ClCompile Include="AttackPhase5.cpp" />
+    <ClCompile Include="BossNuclear.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\GameScene.h">
@@ -329,6 +330,7 @@
     <ClInclude Include="AttackPhase3.h" />
     <ClInclude Include="AttackPhase4.h" />
     <ClInclude Include="AttackPhase5.h" />
+    <ClInclude Include="BossNuclear.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\FullScreen.hlsli">
