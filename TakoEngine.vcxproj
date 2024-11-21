@@ -106,6 +106,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="ClearScene.cpp" />
+    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="engine\2d\DebugCamera.cpp" />
     <ClCompile Include="engine\2d\Draw2D.cpp" />
     <ClCompile Include="engine\3d\CameraManager.cpp" />
@@ -142,6 +144,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\scene\SceneManager.cpp" />
     <ClCompile Include="application\SceneFactory.cpp" />
     <ClCompile Include="engine\scene\Transition.cpp" />
+    <ClCompile Include="ObjectBase.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SelectScene.cpp" />
     <ClCompile Include="Skydome.cpp" />
@@ -149,6 +152,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="Boss.h" />
     <ClInclude Include="ClearScene.h" />
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="engine\2d\DebugCamera.h" />
     <ClInclude Include="engine\2d\Draw2D.h" />
     <ClInclude Include="engine\3d\CameraManager.h" />
@@ -191,6 +196,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\scene\Transition.h" />
     <ClInclude Include="FollowCamera.h" />
     <ClInclude Include="Ground.h" />
+    <ClInclude Include="ObjectBase.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SelectScene.h" />
     <ClInclude Include="Skydome.h" />
