@@ -25,7 +25,7 @@ void GameScene::Initialize()
 	/// ================================== ///
 
 	// 平行光源の設定
-	Object3dBasic::GetInstance()->SetDirectionalLightIntensity(0.05f);
+	Object3dBasic::GetInstance()->SetDirectionalLightIntensity(1.0f);
 
 	ModelManager::GetInstance()->LoadModel("player.obj");
 	ModelManager::GetInstance()->LoadModel("Boss.obj");

@@ -41,6 +41,11 @@ void Boss::Update() {
 	// HPの更新
 	HPUpdate();
 
+	// ステートの更新
+	if (state_) {
+		state_->Update();
+	}
+
 	// 核の更新
 	for (auto& core : cores_) {
 		core.Update(transform_.translate);
@@ -90,7 +95,13 @@ void Boss::Draw() {
 		core.Draw();
 	}
 
+	// ステートの更新
+	if (state_) {
+		state_->Draw();
+	}
+
 	object3d_->Draw();
+
 }
 
 void Boss::DrawImGui()
@@ -186,13 +197,10 @@ void Boss::Usually()
 	// 通常の動き
 	Move();
 
-	// ステートの更新
-	if (state_) {
-		state_->Update();
-	}
-
-	//// アタックのフェーズ変更
-	//AttackPhase();
+	//// ステートの更新
+	//if (state_) {
+	//	state_->Update();
+	//}
 
 	if (Input::GetInstance()->PushKey(DIK_V))
 	{
