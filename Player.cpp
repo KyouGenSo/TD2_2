@@ -134,13 +134,16 @@ void Player::Move()
 }
 
 void Player::Light() {
-	static float verticalOffset = 0.0f; // ライトの位置オフセット
-	static float directionVerticalOffset = 0.0f; // lightDirの上下オフセット
-	static float directionHorizontalOffset = 0.0f; // lightDirの左右オフセット
+	static float directionVerticalOffset = 0.0f;  // ライトの方向のY軸オフセット
+	static float directionHorizontalOffset = 0.0f; // ライトの方向のX軸オフセット
 
 	// ライト切り替え
 	if (Input::GetInstance()->TriggerKey(DIK_L)) {
-		currentLight_ = isLightProfileToggled_ ? &narrowStrongLight_ : &wideWeakLight_;
+		if (isLightProfileToggled_) {
+			currentLight_ = &narrowStrongLight_;
+		} else {
+			currentLight_ = &wideWeakLight_;
+		}
 		isLightProfileToggled_ = !isLightProfileToggled_;
 	}
 
@@ -162,24 +165,20 @@ void Player::Light() {
 
 	// ライトの位置更新
 	currentLight_->lightPos = {
-		transform_.translate.x,                           // プレイヤーのX座標に基づく
-		transform_.translate.y + 2.0f + verticalOffset,   // プレイヤーのY座標にオフセットを追加
-		transform_.translate.z                            // プレイヤーのZ座標に基づく
+		transform_.translate.x,                         // プレイヤーのX座標
+		transform_.translate.y + 2.0f,                  // プレイヤーのY座標
+		transform_.translate.z                          // プレイヤーのZ座標
 	};
 
-	// Boss を向く方向を計算
+	// ボスの方向を基準にライトの方向を計算
 	Vector3 directionToBoss = boss_->GetTransform().translate - currentLight_->lightPos;
 
-	// X軸とY軸オフセットを別々に扱う
-	directionToBoss.y += directionVerticalOffset; // lightDirのY軸オフセットを追加
-	Vector3 adjustedDirection = {
-		directionToBoss.x + directionHorizontalOffset,
-		directionToBoss.y,
-		directionToBoss.z
-	};
+	// 各オフセットを適用
+	directionToBoss.x += directionHorizontalOffset;  // X軸オフセットを適用
+	directionToBoss.y += directionVerticalOffset;    // Y軸オフセットを適用
 
 	// 正規化された方向を計算して設定
-	currentLight_->lightDir = adjustedDirection.normalize();
+	currentLight_->lightDir = directionToBoss.normalize();
 
 	// スポットライトの更新
 	Object3dBasic::GetInstance()->SetSpotLight(
@@ -193,6 +192,8 @@ void Player::Light() {
 		currentLight_->isSpotLight
 	);
 }
+
+
 
 
 
