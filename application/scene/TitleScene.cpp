@@ -21,7 +21,12 @@ void TitleScene::Initialize()
 	/// ================================== ///
 	///              初期化処理              ///
 	/// ================================== ///
+	
+	TextureManager::GetInstance()->LoadTexture("uvChecker.png");
 
+	titleSprite_ = std::make_unique<Sprite>();
+	titleSprite_->Initialize("uvChecker.png");
+	titleSprite_->SetPos(Vector2(0.0f, 0.0f));
 }
 
 void TitleScene::Finalize()
@@ -45,7 +50,7 @@ void TitleScene::Update()
 	///              更新処理               ///
 	/// ================================== ///
 
-
+	titleSprite_->Update();
 
 
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
@@ -82,7 +87,7 @@ void TitleScene::Draw()
 	SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
 	//タイトルスプライト
-	//titleSprite_->SetPos(Vector2(0.0f, 0.0f));
+	titleSprite_->Draw();
 
 
 

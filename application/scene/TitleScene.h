@@ -38,5 +38,5 @@ private: // メンバ変数
 
 	bool isDebug_ = false;
 
-	//std::unique_ptr<Sprite> titleSprite_;  // 背景スプライト
+	std::unique_ptr<Sprite> titleSprite_;  // 背景スプライト
 };
