@@ -23,17 +23,14 @@ void TitleScene::Initialize()
 	/// ================================== ///
 	
 	TextureManager::GetInstance()->LoadTexture("uvChecker.png");
+	TextureManager::GetInstance()->LoadTexture("ShockWave.png");
 
 	/*titleSprite_ = std::make_unique<Sprite>();
 	titleSprite_->Initialize("uvChecker.png");
 	titleSprite_->SetPos(Vector2(0.0f, 0.0f));*/
 
-	TextureManager::GetInstance()->LoadTexture("uvChecker.png");
-
 	DebugSprite_ = std::make_unique<Sprite>();
-	DebugSprite_->Initialize("uvChecker.png");
-	DebugSprite_->SetSize({ 1.0f,1.0f });
-	DebugSprite_->SetRotation({ 0.0f });
+	DebugSprite_->Initialize("ShockWave.png");
 	DebugSprite_->SetPos({ 0.0f,0.0f });
 
 }

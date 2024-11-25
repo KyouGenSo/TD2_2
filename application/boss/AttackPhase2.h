@@ -1,36 +1,37 @@
 #pragma once
 #include "Boss.h"
 #include "BossAttackBaseState.h"
-#include "Sprite.h"
+#include "Object3d.h"
 #include <vector>
 #include <memory>
 
-class AttackPhase2 : public BossAttackBaseState
-{
+enum class PhaseState {
+    Ascending,    // 上昇中
+    Descending,   // 下降中
+    ShockWave,    // 衝撃波生成
+    Reset         // 状態リセット
+};
+
+class AttackPhase2 : public BossAttackBaseState {
 public:
     AttackPhase2(Boss* boss);
 
     void Update() override;
-
     void Draw() override;
 
-    void Attack();
-
 private:
-    // スプライト生成と更新
-    void InitializeShockWaveSprites(size_t count);
-    void ResetShockWaveSprites(float centerX, float centerY);
-    void UpdateShockWaveSprites();
+    void InitializeShockWaveObjects(size_t count);
+    void ActivateShockWave();
+    void UpdateShockWaveObjects();
 
-private:
-    uint32_t JumpCounter_ = 0;
-    bool isAscending_ = true;        // 上昇中か下降中かを管理するフラグ
-    bool isCooldown_ = false;       // クールダウン中かを管理するフラグ
-    uint32_t cooldownTimer_ = 0;    // クールダウンのカウント
-    const uint32_t cooldownDuration_ = 120; // クールダウンの時間（フレーム数）
+    PhaseState state_ = PhaseState::Ascending; // 初期状態は上昇
+    float shockWaveRadius_ = 0.0f;
+    bool shockWaveActive_ = false;
 
-    // ShockWave関連
-    std::vector<std::unique_ptr<Sprite>> shockWaveSprites_; // 再利用可能なスプライトリスト
-    float shockWaveRadius_ = 0.0f;      // 円の半径
-    float shockWaveExpansionSpeed_ = 2.0f; // スプライトが広がる速度
+    const float ascendingSpeed_ = 0.06f;  // 上昇速度
+    const float descendingSpeed_ = 0.5f;  // 下降速度
+    const float maxRadius_ = 100.0f;      // 衝撃波の最大半径
+    const size_t shockWaveObjectCount_ = 30; // 衝撃波オブジェクト数
+    std::vector<std::unique_ptr<Object3d>> shockWaveObjects_;
 };
+
