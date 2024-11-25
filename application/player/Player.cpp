@@ -1,9 +1,6 @@
 #include "Player.h"
 #include "Input.h"
-#include "Model.h"
 #include "ModelManager.h"
-#include "Object3dBasic.h"
-#include "Camera.h"
 #include "ImGuiManager.h"
 #include <cmath>
 #include <numbers>
@@ -65,11 +62,15 @@ void Player::Initialize(Boss* boss) {
 	actionDelay_ = 180; // 初期の制限時間を設定
 	canAct_ = false;   // 初期状態では行動不可
 
+	//========================================
+	// プレイヤーの位置とColliderの位置を同期
+	ObjectBase::Init(transform_.translate, transform_.translate, 1.0f);
+
 }
 
 void Player::Update() {
 	// ボスが存在しない場合、処理をスキップ
-	if (boss_ == nullptr) return;
+	if(boss_ == nullptr) return;
 
 	//ライト
 	Light();
@@ -88,6 +89,12 @@ void Player::Update() {
 
 	// 追従カメラ
 	followCamera_->Update(transform_.translate, transform_.rotate);
+
+
+	//========================================
+	// 判定場所の処理
+	Vector3 endPos = transform_.translate + Vector3(0.0f, 1.0f, 0.0f);
+	ObjectBase::Update(transform_.translate, endPos);
 }
 
 
@@ -96,13 +103,12 @@ void Player::Draw() {
 	object3d_->Draw();
 }
 
-void Player::Move()
-{
+void Player::Move() {
 	// プレイヤーの左右移動 (Boss の周りを回転)
-	if (Input::GetInstance()->PushKey(DIK_A)) {
+	if(Input::GetInstance()->PushKey(DIK_A)) {
 		angle_ -= rotationSpeed_; // 左回転
 	}
-	if (Input::GetInstance()->PushKey(DIK_D)) {
+	if(Input::GetInstance()->PushKey(DIK_D)) {
 		angle_ += rotationSpeed_; // 右回転
 	}
 
@@ -116,16 +122,16 @@ void Player::Move()
 	transform_.rotate.y = atan2f(directionToBoss.x, directionToBoss.z);
 
 	// ジャンプ処理
-	if (Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
+	if(Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
 		isJumping_ = true;
 		jumpVelocity_ = jumpPower_;
 	}
 
-	if (isJumping_) {
+	if(isJumping_) {
 		transform_.translate.y += jumpVelocity_;
 		jumpVelocity_ += gravity_;
 
-		if (transform_.translate.y <= 0.0f) {
+		if(transform_.translate.y <= 0.0f) {
 			transform_.translate.y = 0.0f;
 			isJumping_ = false;
 			jumpVelocity_ = 0.0f;
@@ -138,8 +144,8 @@ void Player::Light() {
 	static float directionHorizontalOffset = 0.0f; // ライトの方向のX軸オフセット
 
 	// ライト切り替え
-	if (Input::GetInstance()->TriggerKey(DIK_L)) {
-		if (isLightProfileToggled_) {
+	if(Input::GetInstance()->TriggerKey(DIK_L)) {
+		if(isLightProfileToggled_) {
 			currentLight_ = &narrowStrongLight_;
 		} else {
 			currentLight_ = &wideWeakLight_;
@@ -220,5 +226,15 @@ void Player::DrawImGui()
 	ImGui::Checkbox("SpotLight", &currentLight_->isSpotLight);
 
 	ImGui::End();
+}
+
+///=============================================================================
+///						 衝突判定イベント
+void Player::OnCollision(ObjectBase* objectBase) {
+	//Bossとの衝突判定
+	if(dynamic_cast<Boss*>( objectBase ) != nullptr) {
+		//赤色に変更
+		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+	}
 }
 

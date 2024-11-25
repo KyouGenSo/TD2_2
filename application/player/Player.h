@@ -7,15 +7,15 @@
  * \note
  *********************************************************************/
 #pragma once
-#include"Sprite.h"
-#include"Object3d.h"
-#include"Vector3.h"
-#include <memory>
-#include "Input.h"
 #include "Boss.h"
+#include "Object3d.h"
 #include "FollowCamera.h"
+#include "Vector3.h"
+#include "Light.h"
+#include "ObjectBase.h"
+#include <memory>
 
-class Player {
+class Player :public ObjectBase {
 	///--------------------------------------------------------------
 	///							メンバ関数
 public:
@@ -36,6 +36,10 @@ public:
 
 	/// \brief ImGuiの描画
 	void DrawImGui();
+
+	/// @brief 衝突処理イベント
+	/// @param objectBase 衝突したオブジェクト
+	void OnCollision(ObjectBase* objectBase) override;
 
 
 	///--------------------------------------------------------------

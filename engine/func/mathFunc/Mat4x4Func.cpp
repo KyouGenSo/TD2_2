@@ -2,6 +2,7 @@
 #include"math.h"
 #include"cmath"
 #include"cassert"
+#include "QuatFunc.h"
 
 #define _USE_MATH_DEFINES
 
@@ -193,6 +194,16 @@ namespace Mat4x4 {
 		return result;
 	}
 
+	Matrix4x4 MakeAffine(const Vector3& scale, const Quaternion& rotate, const Vector3& translate)
+	{
+		Matrix4x4 result = MakeScale(scale);
+		result = Multiply(result, Quat::ToMatrix(rotate));
+		result = Multiply(result, MakeTranslate(translate));
+
+		return result;
+
+	}
+
 	Vector3 TransForm(const Matrix4x4& m, const Vector3& v) {
 		Vector3 result;
 		float w;
@@ -202,7 +213,7 @@ namespace Mat4x4 {
 		result.z = m.m[0][2] * v.x + m.m[1][2] * v.y + m.m[2][2] * v.z + m.m[3][2];
 		w = m.m[0][3] * v.x + m.m[1][3] * v.y + m.m[2][3] * v.z + m.m[3][3];
 
-		assert(w != 0.0f);
+		//assert(w != 0.0f);
 
 		result.x /= w;
 		result.y /= w;

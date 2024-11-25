@@ -67,6 +67,21 @@ public:
 	 */
 	void SetRadius(float radius) { radius_ = radius; }
 
+
+	/**----------------------------------------------------------------------------
+	 * \brief  GetColor
+	 * \return
+	 * \note
+	 */
+	Vector4 GetColor() { return color_; }
+
+	/**----------------------------------------------------------------------------
+	 * \brief  SetColor
+	 * \param  color
+	 * \note
+	 */
+	void SetColor(Vector4 color) { color_ = color; }
+
 	/**----------------------------------------------------------------------------
 	 * \brief  Intersects
 	 * \param  other
@@ -87,4 +102,7 @@ private:
 
 	/// ===衝突範囲=== ///
 	float radius_ = 1.0f;
+
+	// 色
+	Vector4 color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
 };

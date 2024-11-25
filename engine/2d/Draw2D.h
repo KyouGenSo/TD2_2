@@ -34,7 +34,6 @@ public: // 構造体
 	struct TransformationMatrix
 	{
 		Matrix4x4 WVP;
-		Matrix4x4 world;
 	};
 
 	// 三角形構造体
@@ -70,6 +69,11 @@ public: // 構造体
 		ComPtr<ID3D12Resource> vertexBuffer;
 		// 頂点バッファビュー
 		D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
+	};
+
+	struct Sphere {
+		Vector3 center;
+		float radius;
 	};
 
 public: // メンバ関数
@@ -115,25 +119,29 @@ public: // メンバ関数
 	/// </summary>
 	void DrawLine(const Vector2& start, const Vector2& end, const Vector4& color);
 
+	void DrawSphere(const Vector3& center, const float radius, const Vector4& color, const Matrix4x4& viewProjectionMatrix);
+
+	/// <summary>
+	/// カプセル形の描画
+	/// </summary>
+	void DrawCapsule(const float radius,const Vector3& startPos, const Vector3& endPos, const Vector4& color, const Matrix4x4& viewProjectionMatrix);
+
 	/// <summary>
 	/// リセット
 	/// </summary>
 	void Reset();
 
+	// -----------------------------------Getters-----------------------------------//
 	/// <summary>
-	/// デバッグフラグtrueでデバッグモード
+	/// デバッグ用ビューマトリックスを取得
 	/// <summary>
-	void SetDebug(bool isDebug) { isDebug_ = isDebug; }
+	const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix_; }
 
+	// -----------------------------------Setters-----------------------------------//
 	/// <summary>
-	/// ビューマトリックスを設定
+	/// プロジェクションマトリックスを設定
 	/// <summary>
-	void SetViewMatrix(const Matrix4x4& viewMatrix) { viewMatrix_ = viewMatrix; }
-
-	/// <summary>
-	/// デバッグフラグを取得
-	/// <summary>
-	const bool GetDebug() const { return isDebug_; }
+	void SetProjectionMatrix(const Matrix4x4& projectionMatrix) { projectionMatrix_ = projectionMatrix; }
 
 private: // プライベートメンバ関数
 	/// <summary>
@@ -191,6 +199,13 @@ private: // メンバ変数
 	// 線のインデクス
 	uint32_t lineIndex_ = 0;
 
+	// マトリックス
+	Matrix4x4 projectionMatrix_;
+	Matrix4x4 viewPortMatrix_;
+
+	Matrix4x4 debugViewMatrix_;
+	Matrix4x4 debugProjectionMatrix_;
+
 	// ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> triangleRootSignature_;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> lineRootSignature_;
@@ -205,9 +220,6 @@ private: // メンバ変数
 	// 座標変換行列データ
 	TransformationMatrix* transformationMatrixData_;
 
-	// ビューマトリックス
-	Matrix4x4 viewMatrix_;
-
 	// 三角形データ
 	TriangleData* triangleData_;
 
@@ -216,7 +228,4 @@ private: // メンバ変数
 
 	// 線データ
 	LineData* lineData_;
-
-	// debug用
-	bool isDebug_ = false;
 };

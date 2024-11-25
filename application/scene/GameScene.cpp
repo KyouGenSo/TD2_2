@@ -18,7 +18,6 @@ void GameScene::Initialize()
 {
 #ifdef _DEBUG
 	DebugCamera::GetInstance()->Initialize();
-	DebugCamera::GetInstance()->Set3D();
 #endif
 	/// ================================== ///
 	///              初期化処理              ///
@@ -31,6 +30,7 @@ void GameScene::Initialize()
 	ModelManager::GetInstance()->LoadModel("Boss.obj");
 	ModelManager::GetInstance()->LoadModel("skydome.obj");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
+	ModelManager::GetInstance()->LoadModel("Title.obj");
 
 	//---------------------------------------
 	// ボスの初期化
@@ -51,6 +51,12 @@ void GameScene::Initialize()
 	// 天球の初期化
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize();
+
+	//---------------------------------------
+	// コリジョンマネージャの初期化
+	collisionManager_ = std::make_unique<CollisionManager>();
+	collisionManager_->Initialize();
+
 
 }
 
@@ -93,6 +99,24 @@ void GameScene::Update()
 	// 天球の更新
 	skydome_->Update();
 
+	//---------------------------------------
+	// コリジョンマネージャの処理
+	//リセット
+	collisionManager_->Reset();
+	//追加
+	collisionManager_->AddCollider(player_.get());//プレイヤー
+	collisionManager_->AddCollider(boss_);		  //ボス
+	//ボスのコアの追加
+	std::vector<BossNuclear>& cores = boss_->GetCores();
+	for(auto& core : cores) {
+		collisionManager_->AddCollider(&core);
+	}
+
+	//すべての当たり判定をチェック
+	collisionManager_->CheckAllCollisions();
+	//更新
+	collisionManager_->Update();
+
 	// シーン遷移
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
 	{
@@ -132,6 +156,7 @@ void GameScene::Draw()
 	// 天球の描画
 	skydome_->Draw();
 
+
 	//-------------------Modelの描画-------------------//
 
 
@@ -139,8 +164,14 @@ void GameScene::Draw()
 	// スプライト共通描画設定
 	SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
+	//---------------------------------------
+	// コリジョンマネージャの描画
+	collisionManager_->Draw();
+
+
 	// ボスのHPバーの描画
 	boss_->HPDraw();
+
 
 	//--------------------------------------------------//
 }

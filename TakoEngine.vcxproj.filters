@@ -184,6 +184,9 @@
     <ClCompile Include="application\collision\ObjectBase.cpp" />
     <ClCompile Include="application\collision\CollisionManager.cpp" />
     <ClCompile Include="application\collision\Collider.cpp" />
+    <ClCompile Include="engine\func\mathFunc\QuatFunc.cpp">
+      <Filter>ソースファイル\engine\func\math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\GameScene.h">
@@ -337,6 +340,15 @@
     <ClInclude Include="application\collision\ObjectBase.h" />
     <ClInclude Include="application\collision\CollisionManager.h" />
     <ClInclude Include="application\collision\Collider.h" />
+    <ClInclude Include="engine\math\Transform.h">
+      <Filter>ヘッダーファイル\engine\math</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\Quaternion.h">
+      <Filter>ヘッダーファイル\engine\math</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\func\mathFunc\QuatFunc.h">
+      <Filter>ヘッダーファイル\engine\func\math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\FullScreen.hlsli">

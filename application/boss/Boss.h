@@ -4,13 +4,15 @@
 #include "vector3.h"
 #include "vector4.h"
 #include "Mat4x4Func.h"
+#include "Transform.h"
 #include "Draw2D.h"
 #include "BossAttackBaseState.h"
 #include "BossNuclear.h"
+#include "ObjectBase.h"
 
 class Object3d;
 
-class Boss {
+class Boss : public ObjectBase{
 public: // メンバ関数
 
     // 初期化
@@ -47,6 +49,13 @@ public: // メンバ関数
 
     Transform& GetTransform() { return transform_; }
     uint32_t GetHP() const { return hp_; }
+
+	//コアを取得
+	std::vector<BossNuclear>& GetCores() { return cores_; }
+
+    /// @brief 衝突処理イベント
+    /// @param objectBase 衝突したオブジェクト
+    void OnCollision(ObjectBase* objectBase) override;
 
 private:// メンバ変数
 
