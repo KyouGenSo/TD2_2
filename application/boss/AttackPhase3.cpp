@@ -12,7 +12,7 @@ void AttackPhase3::Update()
     fireCounter_++;
 
     // フレームごとに弾を発射
-    if (fireCounter_ >= 180) {
+    if (fireCounter_ >= 60) {
         FireBullets();
         fireCounter_ = 0; // カウンタをリセット
     }

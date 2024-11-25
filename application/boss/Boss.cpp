@@ -198,9 +198,9 @@ void Boss::Usually()
 	Move();
 
 	//// ステートの更新
-	//if (state_) {
-	//	state_->Update();
-	//}
+	/*if (state_) {
+		state_->Update();
+	}*/
 
 	if (Input::GetInstance()->PushKey(DIK_V))
 	{

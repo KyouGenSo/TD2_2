@@ -31,6 +31,7 @@ void GameScene::Initialize()
 	ModelManager::GetInstance()->LoadModel("Boss.obj");
 	ModelManager::GetInstance()->LoadModel("skydome.obj");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
+	TextureManager::GetInstance()->LoadTexture("ShockWave.png");
 
 	//---------------------------------------
 	// ボスの初期化
