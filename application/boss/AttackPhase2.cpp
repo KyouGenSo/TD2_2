@@ -6,7 +6,7 @@ constexpr float kPI = 3.14159265358979323846f;
 
 AttackPhase2::AttackPhase2(Boss* boss) : BossAttackBaseState("Phase2", boss)
 {
-    PrepareShockWaveSprites(12); // 必要なスプライト数を事前生成
+    InitializeShockWaveSprites(12); // 必要なスプライト数を事前生成
 }
 
 void AttackPhase2::Update()
@@ -45,7 +45,7 @@ void AttackPhase2::Update()
 
 void AttackPhase2::Draw()
 {
-    for (const auto& sprite : reusableShockWaveSprites_)
+    for (const auto& sprite : shockWaveSprites_)
     {
         sprite->Draw();
     }
@@ -72,52 +72,40 @@ void AttackPhase2::Attack()
             isAscending_ = true; // 次の動きで再び上昇できるようにする
             isCooldown_ = true; // クールダウン開始
 
-            // 着地時にスプライトを円状に広げる
-            CreateShockWaveSprites(transform.translate.x, transform.translate.y);
+            // 着地時にスプライトをリセットして円状に広げる
+            ResetShockWaveSprites(transform.translate.x, transform.translate.y);
         }
     }
 }
 
-void AttackPhase2::PrepareShockWaveSprites(size_t count)
+void AttackPhase2::InitializeShockWaveSprites(size_t count)
 {
-    reusableShockWaveSprites_.clear();
-    reusableShockWaveSprites_.reserve(count);
+    shockWaveSprites_.clear();
+    shockWaveSprites_.reserve(count);
 
     for (size_t i = 0; i < count; ++i)
     {
         std::unique_ptr<Sprite> sprite = std::make_unique<Sprite>();
-        sprite->Initialize("ShockWave.png");
-        reusableShockWaveSprites_.push_back(std::move(sprite));
+        sprite->Initialize("/resources/Texture/ShockWave.png"); // 初期化はここだけ
+        shockWaveSprites_.push_back(std::move(sprite));
     }
 }
 
-void AttackPhase2::CreateShockWaveSprites(float centerX, float centerY)
+void AttackPhase2::ResetShockWaveSprites(float centerX, float centerY)
 {
     constexpr int kNumSprites = 12; // スプライトの数
     constexpr float kRadius = 50.0f; // 初期の円の半径
 
-    // 必要な数のスプライトを確保して使用する
-    for (int i = 0; i < kNumSprites; ++i)
+    for (int i = 0; i < kNumSprites && i < shockWaveSprites_.size(); ++i)
     {
         float angle = (kPI * 2.0f / kNumSprites) * i;
         float x = centerX + std::cos(angle) * kRadius;
         float y = centerY + std::sin(angle) * kRadius;
 
-        if (i < reusableShockWaveSprites_.size())
-        {
-            Sprite* sprite = reusableShockWaveSprites_[i].get();
-            sprite->SetPos({ x, y });
-            sprite->SetSize({ 32.0f, 32.0f }); // スプライトのサイズを設定
-        }
-        else
-        {
-            // 必要以上のスプライトがない場合は新たに追加
-            std::unique_ptr<Sprite> sprite = std::make_unique<Sprite>();
-            //sprite->Initialize("ShockWave.png");
-            sprite->SetPos({ x, y });
-            sprite->SetSize({ 32.0f, 32.0f });
-            reusableShockWaveSprites_.push_back(std::move(sprite));
-        }
+        Sprite* sprite = shockWaveSprites_[i].get();
+        sprite->SetPos({ x, y });
+        sprite->SetSize({ 32.0f, 32.0f }); // スプライトのサイズをリセット
+        sprite->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f }); // 完全に不透明にリセット
     }
 
     shockWaveRadius_ = kRadius;
@@ -128,24 +116,22 @@ void AttackPhase2::UpdateShockWaveSprites()
 {
     shockWaveRadius_ += shockWaveExpansionSpeed_;
 
-    for (auto it = reusableShockWaveSprites_.begin(); it != reusableShockWaveSprites_.end(); )
+    for (auto& sprite : shockWaveSprites_)
     {
-        Sprite* sprite = it->get();
-        float angle = (kPI * 2.0f / reusableShockWaveSprites_.size()) * std::distance(reusableShockWaveSprites_.begin(), it);
+        float angle = (kPI * 2.0f / shockWaveSprites_.size()) * (&sprite - &shockWaveSprites_[0]);
         float x = boss_->GetTransform().translate.x + std::cos(angle) * shockWaveRadius_;
         float y = boss_->GetTransform().translate.y + std::sin(angle) * shockWaveRadius_;
 
         sprite->SetPos({ x, y });
         sprite->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f - (shockWaveRadius_ / 200.0f) }); // 徐々に透明に
+    }
 
-        // 一定距離を超えたらスプライトを削除
-        if (shockWaveRadius_ > 200.0f)
+    // 一定距離を超えたら透明にする
+    if (shockWaveRadius_ > 200.0f)
+    {
+        for (auto& sprite : shockWaveSprites_)
         {
-            it = reusableShockWaveSprites_.erase(it);
-        }
-        else
-        {
-            ++it;
+            sprite->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f }); // 完全に透明化
         }
     }
 }
