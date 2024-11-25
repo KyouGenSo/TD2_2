@@ -2,8 +2,9 @@
 #include "vector3.h"
 #include <memory>
 #include <Object3d.h>
+#include "ObjectBase.h"
 
-class BossNuclear
+class BossNuclear : public ObjectBase
 {
 public:
     // 核の初期化
@@ -14,6 +15,9 @@ public:
 
     // 核の描画
     void Draw();
+
+	// 衝突処理イベント
+	void OnCollision(ObjectBase* objectBase);
 
     // 核の位置を取得
     Transform& GetTransform() { return transform_; }

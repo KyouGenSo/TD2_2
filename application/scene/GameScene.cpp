@@ -30,6 +30,7 @@ void GameScene::Initialize()
 	ModelManager::GetInstance()->LoadModel("Boss.obj");
 	ModelManager::GetInstance()->LoadModel("skydome.obj");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
+	ModelManager::GetInstance()->LoadModel("Title.obj");
 
 	//---------------------------------------
 	// ボスの初期化
@@ -103,7 +104,14 @@ void GameScene::Update()
 	//リセット
 	collisionManager_->Reset();
 	//追加
-	collisionManager_->AddCollider(player_.get());
+	collisionManager_->AddCollider(player_.get());//プレイヤー
+	collisionManager_->AddCollider(boss_);		  //ボス
+	//ボスのコアの追加
+	std::vector<BossNuclear>& cores = boss_->GetCores();
+	for(auto& core : cores) {
+		collisionManager_->AddCollider(&core);
+	}
+
 	//すべての当たり判定をチェック
 	collisionManager_->CheckAllCollisions();
 	//更新

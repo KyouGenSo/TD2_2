@@ -7,14 +7,13 @@
  * \note
  *********************************************************************/
 #pragma once
-#include"Sprite.h"
-#include"Object3d.h"
-#include"Vector3.h"
-#include <memory>
-#include "Input.h"
 #include "Boss.h"
+#include "Object3d.h"
 #include "FollowCamera.h"
+#include "Vector3.h"
+#include "Light.h"
 #include "ObjectBase.h"
+#include <memory>
 
 class Player :public ObjectBase {
 	///--------------------------------------------------------------

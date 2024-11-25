@@ -10,6 +10,7 @@
 #include "ObjectBase.h"
 #include "Collider.h"
 #include <list>
+#include <unordered_set>
 
  ///=============================================================================
  ///						クラス定義　
@@ -70,8 +71,5 @@ public:
 private:
     /// ===コライダー=== ///
     std::list<ObjectBase*> Objects_;
-
-    // 3Dオブジェクト
-    std::unique_ptr<Object3d> object3dStart_;
-    std::unique_ptr<Object3d> object3dEnd_;
+    std::unordered_set<ObjectBase*> collidedObjects_; // 衝突したオブジェクトを追跡するセット
 };

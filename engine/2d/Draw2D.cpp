@@ -303,7 +303,7 @@ void Draw2D::DrawSphere(const Vector3& center, const float radius, const Vector4
 
 
 void Draw2D::DrawCapsule(const float radius, const Vector3& startPos, const Vector3& endPos, const Vector4& color, const Matrix4x4& viewProjectionMatrix) {
-    const uint32_t kSubdivision = 8; // 1分割数
+    const uint32_t kSubdivision = 6; // 1分割数
     const float kLonEvery = 2.0f * 3.14159265359f / float(kSubdivision); // 経度の1分割の角度 phi
     const float kLatEvery = 3.14159265359f / float(kSubdivision); // 緯度の1分割の角度 theta
 

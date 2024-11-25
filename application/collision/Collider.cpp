@@ -21,10 +21,6 @@ using namespace Mat4x4;
 void Collider::Initialize() {
 }
 
-///--------------------------------------------------------------
-/// \brief カプセル同士の衝突判定を行う関数
-/// \param other 衝突判定を行う対象のColliderオブジェクト
-/// \return 衝突している場合はtrue、そうでない場合はfalse
 bool Collider::Intersects(const Collider& other) const {
 	// カプセル同士の衝突判定
 	Vector3 closestPoint1 = start_;
@@ -37,6 +33,14 @@ bool Collider::Intersects(const Collider& other) const {
 	else if(start_.y > other.end_.y) closestPoint1.y = other.end_.y;
 	if(start_.z < other.start_.z) closestPoint1.z = other.start_.z;
 	else if(start_.z > other.end_.z) closestPoint1.z = other.end_.z;
+
+	// closestPoint2を更新する
+	if(other.start_.x < start_.x) closestPoint2.x = start_.x;
+	else if(other.start_.x > end_.x) closestPoint2.x = end_.x;
+	if(other.start_.y < start_.y) closestPoint2.y = start_.y;
+	else if(other.start_.y > end_.y) closestPoint2.y = end_.y;
+	if(other.start_.z < start_.z) closestPoint2.z = start_.z;
+	else if(other.start_.z > end_.z) closestPoint2.z = end_.z;
 
 	// closestPoint1とclosestPoint2の距離を計算する
 	float distance = std::sqrt(
