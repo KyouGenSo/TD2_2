@@ -21,6 +21,12 @@ void TitleScene::Initialize()
 	/// ================================== ///
 	///              初期化処理              ///
 	/// ================================== ///
+	
+	TextureManager::GetInstance()->LoadTexture("uvChecker.png");
+
+	titleSprite_ = std::make_unique<Sprite>();
+	titleSprite_->Initialize("uvChecker.png");
+	titleSprite_->SetPos(Vector2(0.0f, 0.0f));
 
 	TextureManager::GetInstance()->LoadTexture("uvChecker.png");
 
@@ -90,7 +96,7 @@ void TitleScene::Draw()
 	SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
 	//タイトルスプライト
-	//titleSprite_->SetPos(Vector2(0.0f, 0.0f));
+	titleSprite_->Draw();
 
 	DebugSprite_->Draw();
 
