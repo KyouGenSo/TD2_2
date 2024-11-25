@@ -38,7 +38,7 @@ void BossNuclear::Update(const Vector3& bossPosition)
 
 void BossNuclear::Draw()
 {
-	 核の描画
+	//核の描画
 	if (object3d_) {
 		object3d_->Draw();
 	}
