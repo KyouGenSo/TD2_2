@@ -149,18 +149,18 @@ void Player::Light() {
 
 	// 上下移動
 	if (Input::GetInstance()->PushKey(DIK_DOWN)) {
-		directionVerticalOffset -= 0.2f; // 下方向に移動
+		directionVerticalOffset -= 0.02f; // 下方向に移動
 	}
 	if (Input::GetInstance()->PushKey(DIK_UP)) {
-		directionVerticalOffset += 0.2f; // 上方向に移動
+		directionVerticalOffset += 0.02f; // 上方向に移動
 	}
 
 	// 左右移動
 	if (Input::GetInstance()->PushKey(DIK_LEFT)) {
-		directionHorizontalOffset -= 0.2f; // 左方向に移動
+		directionHorizontalOffset -= 0.02f; // 左方向に回転
 	}
 	if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
-		directionHorizontalOffset += 0.2f; // 右方向に移動
+		directionHorizontalOffset += 0.02f; // 右方向に回転
 	}
 
 	// ライトの位置更新
@@ -173,12 +173,19 @@ void Player::Light() {
 	// ボスの方向を基準にライトの方向を計算
 	Vector3 directionToBoss = boss_->GetTransform().translate - currentLight_->lightPos;
 
-	// 各オフセットを適用
-	directionToBoss.x += directionHorizontalOffset;  // X軸オフセットを適用
-	directionToBoss.y += directionVerticalOffset;    // Y軸オフセットを適用
+	// ライトの方向をリセットし、プレイヤーからボスへ向かう方向を初期値とする
+	Vector3 initialDirection = directionToBoss.normalize();
+
+	// 各オフセットを適用する
+	// Y軸回転による左右方向のオフセットを回転行列で適用
+	Matrix4x4 rotationMatrix = Mat4x4::MakeRotateY(directionHorizontalOffset);
+	Vector3 rotatedDirection = Mat4x4::TransForm(rotationMatrix, initialDirection);
+
+	// 垂直方向のオフセットを適用
+	rotatedDirection.y += directionVerticalOffset;
 
 	// 正規化された方向を計算して設定
-	currentLight_->lightDir = directionToBoss.normalize();
+	currentLight_->lightDir = rotatedDirection.normalize();
 
 	// スポットライトの更新
 	Object3dBasic::GetInstance()->SetSpotLight(
