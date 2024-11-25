@@ -165,9 +165,9 @@ void Player::Light() {
 
 	// ライトの位置更新
 	currentLight_->lightPos = {
-		transform_.translate.x,                         // プレイヤーのX座標
-		transform_.translate.y + 2.0f,                  // プレイヤーのY座標
-		transform_.translate.z                          // プレイヤーのZ座標
+		transform_.translate.x,       // プレイヤーのX座標
+		transform_.translate.y + 2.0f,// プレイヤーのY座標
+		transform_.translate.z        // プレイヤーのZ座標
 	};
 
 	// ボスの方向を基準にライトの方向を計算
