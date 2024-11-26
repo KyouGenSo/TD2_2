@@ -63,6 +63,11 @@ void Player::Initialize(Boss* boss) {
 	canAct_ = false;   // 初期状態では行動不可
 
 	//========================================
+	// ライト用当たり判定の初期化
+	lightCollision_ = std::make_unique<LightCollision>();
+	lightCollision_->Initialize();
+
+	//========================================
 	// プレイヤーの位置とColliderの位置を同期
 	ObjectBase::Init(transform_.translate, transform_.translate, 1.0f);
 
@@ -93,8 +98,20 @@ void Player::Update() {
 
 	//========================================
 	// 判定場所の処理
+	//プレイヤー
 	Vector3 endPos = transform_.translate + Vector3(0.0f, 1.0f, 0.0f);
 	ObjectBase::Update(transform_.translate, endPos);
+
+	//ライトの判定
+	// NOTE:ここではライトの開始位置をプレイヤーの位置に設定している
+	lightCollision_->SetStart(transform_.translate);
+	// ライトの終了位置を設定
+	// NOTE:endPosは仮の値なので、実際にはプレイヤーの位置からライトの方向に伸ばした先の位置を設定する
+	endPos = transform_.translate + Vector3(0.0f, 0.0f, 10.0f);
+	lightCollision_->SetEnd(endPos);
+	// ライトの更新
+	// NOTE:更新前には必ず開始位置と終了位置を設定する
+	lightCollision_->Update();
 }
 
 

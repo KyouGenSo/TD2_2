@@ -18,7 +18,6 @@ void BossNuclear::Initialize(const Vector3& position, const Vector3& offset)
 	//========================================
 	// Bossの位置とColliderの位置を同期
 	ObjectBase::Init(transform_.translate, transform_.translate, 1.0f);
-	collider_->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void BossNuclear::Update(const Vector3& bossPosition)

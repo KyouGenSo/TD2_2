@@ -14,6 +14,7 @@
 #include "Light.h"
 #include "ObjectBase.h"
 #include <memory>
+#include "LightCollision.h"
 
 class Player :public ObjectBase {
 	///--------------------------------------------------------------
@@ -50,6 +51,10 @@ public:
 
 	// プレイヤーの現在位置を取得
 	Vector3 GetPosition() const { return transform_.translate; }
+
+	//ライトの当たり判定のゲッター
+	LightCollision* GetLightCollision() { return lightCollision_.get(); }
+
 
 
 	///--------------------------------------------------------------
@@ -106,6 +111,9 @@ private:
 
 	int actionDelay_ = 180; // 行動制限時間（フレーム数）
 	bool canAct_ = false;  // プレイヤーが行動可能かどうか
+
+	//ライトの当たり判定(ユニークポインタ)
+	std::unique_ptr<LightCollision> lightCollision_ = nullptr;
 
 };
 

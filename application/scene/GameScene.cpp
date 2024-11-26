@@ -109,6 +109,8 @@ void GameScene::Update()
 	collisionManager_->Reset();
 	//追加
 	collisionManager_->AddCollider(player_.get());//プレイヤー
+	//プレイヤーのライトの当たり判定の追加
+	collisionManager_->AddCollider(player_->GetLightCollision());
 	collisionManager_->AddCollider(boss_);		  //ボス
 	//ボスのコアの追加
 	std::vector<BossNuclear>& cores = boss_->GetCores();

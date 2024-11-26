@@ -194,6 +194,7 @@
       <Filter>ソースファイル\engine\func\math</Filter>
     </ClCompile>
     <ClCompile Include="BossBullet.cpp" />
+    <ClCompile Include="LightCollision.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\GameScene.h">
@@ -357,6 +358,7 @@
       <Filter>ヘッダーファイル\engine\func\math</Filter>
     </ClInclude>
     <ClInclude Include="BossBullet.h" />
+    <ClInclude Include="LightCollision.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\FullScreen.hlsli">
