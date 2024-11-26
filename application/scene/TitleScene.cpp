@@ -107,6 +107,7 @@ void TitleScene::DrawImGui()
 {
 #ifdef _DEBUG
 
+	ShowFPS();
 
 #endif // _DEBUG
 }

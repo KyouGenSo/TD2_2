@@ -112,9 +112,6 @@ void AttackPhase2::ActivateShockWave() {
 }
 
 
-
-
-
 void AttackPhase2::UpdateShockWaveObjects() {
     // 内側と外側の広がる速度
     shockWaveRadius_ += 0.1f; // 広がる速度

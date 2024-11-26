@@ -157,5 +157,7 @@ void GameScene::DrawImGui()
 
 	boss_->DrawImGui();
 
+	ShowFPS();
+
 #endif // DEBUG
 }
