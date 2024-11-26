@@ -75,7 +75,7 @@ void Player::Initialize(Boss* boss) {
 
 void Player::Update() {
 	// ボスが存在しない場合、処理をスキップ
-	if(boss_ == nullptr) return;
+	if (boss_ == nullptr) return;
 
 	//ライト
 	Light();
@@ -102,16 +102,30 @@ void Player::Update() {
 	Vector3 endPos = transform_.translate + Vector3(0.0f, 1.0f, 0.0f);
 	ObjectBase::Update(transform_.translate, endPos);
 
-	//ライトの判定
-	// NOTE:ここではライトの開始位置をプレイヤーの位置に設定している
-	lightCollision_->SetStart(transform_.translate);
-	// ライトの終了位置を設定
-	// NOTE:endPosは仮の値なので、実際にはプレイヤーの位置からライトの方向に伸ばした先の位置を設定する
-	endPos = transform_.translate + Vector3(0.0f, 0.0f, 10.0f);
-	lightCollision_->SetEnd(endPos);
-	// ライトの更新
-	// NOTE:更新前には必ず開始位置と終了位置を設定する
+	// ライト判定の開始位置を設定
+	// ライトの現在位置 (currentLight_->lightPos) を判定のスタート地点として指定する
+	lightCollision_->SetStart(currentLight_->lightPos);
+
+	// ライト判定の終了位置を設定
+	// 現在のライトの位置から、ライトが向いている方向 (currentLight_->lightDir) に
+	// 射程範囲 (currentLight_->lightRange) だけ延ばした位置を終了地点として指定する
+	lightCollision_->SetEnd(currentLight_->lightPos + currentLight_->lightDir * currentLight_->lightRange);
+
+	// ライト判定を更新
+	// 上記で設定した開始位置と終了位置に基づいて判定の処理を再計算する
 	lightCollision_->Update();
+
+
+	////ライトの判定
+	//// NOTE:ここではライトの開始位置をプレイヤーの位置に設定している
+	//lightCollision_->SetStart(transform_.translate);
+	//// ライトの終了位置を設定
+	//// NOTE:endPosは仮の値なので、実際にはプレイヤーの位置からライトの方向に伸ばした先の位置を設定する
+	//endPos = transform_.translate + Vector3(0.0f, 0.0f, 10.0f);
+	//lightCollision_->SetEnd(endPos);
+	//// ライトの更新
+	//// NOTE:更新前には必ず開始位置と終了位置を設定する
+	//lightCollision_->Update();
 }
 
 
@@ -122,10 +136,10 @@ void Player::Draw() {
 
 void Player::Move() {
 	// プレイヤーの左右移動 (Boss の周りを回転)
-	if(Input::GetInstance()->PushKey(DIK_A)) {
+	if (Input::GetInstance()->PushKey(DIK_A)) {
 		angle_ -= rotationSpeed_; // 左回転
 	}
-	if(Input::GetInstance()->PushKey(DIK_D)) {
+	if (Input::GetInstance()->PushKey(DIK_D)) {
 		angle_ += rotationSpeed_; // 右回転
 	}
 
@@ -139,16 +153,16 @@ void Player::Move() {
 	transform_.rotate.y = atan2f(directionToBoss.x, directionToBoss.z);
 
 	// ジャンプ処理
-	if(Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
+	if (Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
 		isJumping_ = true;
 		jumpVelocity_ = jumpPower_;
 	}
 
-	if(isJumping_) {
+	if (isJumping_) {
 		transform_.translate.y += jumpVelocity_;
 		jumpVelocity_ += gravity_;
 
-		if(transform_.translate.y <= 0.0f) {
+		if (transform_.translate.y <= 0.0f) {
 			transform_.translate.y = 0.0f;
 			isJumping_ = false;
 			jumpVelocity_ = 0.0f;
@@ -161,8 +175,8 @@ void Player::Light() {
 	static float directionHorizontalOffset = 0.0f; // ライトの方向のX軸オフセット
 
 	// ライト切り替え
-	if(Input::GetInstance()->TriggerKey(DIK_L)) {
-		if(isLightProfileToggled_) {
+	if (Input::GetInstance()->TriggerKey(DIK_L)) {
+		if (isLightProfileToggled_) {
 			currentLight_ = &narrowStrongLight_;
 		} else {
 			currentLight_ = &wideWeakLight_;
@@ -249,7 +263,7 @@ void Player::DrawImGui()
 ///						 衝突判定イベント
 void Player::OnCollision(ObjectBase* objectBase) {
 	//Bossとの衝突判定
-	if(dynamic_cast<Boss*>( objectBase ) != nullptr) {
+	if (dynamic_cast<Boss*>(objectBase) != nullptr) {
 		//赤色に変更
 		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 	}
