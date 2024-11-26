@@ -111,6 +111,7 @@ void Player::Update() {
 	// 射程範囲 (currentLight_->lightRange) だけ延ばした位置を終了地点として指定する
 	lightCollision_->SetEnd(currentLight_->lightPos + currentLight_->lightDir * currentLight_->lightRange);
 
+
 	// ライト判定を更新
 	// 上記で設定した開始位置と終了位置に基づいて判定の処理を再計算する
 	lightCollision_->Update();
