@@ -46,6 +46,11 @@ public:
 	///							入出力関数
 public:
 
+	Transform& GetTransform() { return transform_; }
+
+	// プレイヤーの現在位置を取得
+	Vector3 GetPosition() const { return transform_.translate; }
+
 
 	///--------------------------------------------------------------
 	///							メンバ変数

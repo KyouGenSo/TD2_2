@@ -47,6 +47,11 @@ void Boss::Update() {
 	// HPの更新
 	HPUpdate();
 
+	// ステートの更新
+	if (state_) {
+		state_->Update();
+	}
+
 	// 核の更新
 	for(auto& core : cores_) {
 		core.Update(transform_.translate);
@@ -91,29 +96,19 @@ void Boss::Move() {
 	}
 }
 
-void Boss::AttackPhase() {
-	// アタックフェーズの変更
-	float hpRatio = static_cast<float>( hp_ ) / 1000.0f;
-	if(hpRatio > 0.9f) {
-		ChangeState(std::make_unique<AttackPhase1>(this));
-	} else if(hpRatio > 0.75f) {
-		ChangeState(std::make_unique<AttackPhase2>(this));
-	} else if(hpRatio > 0.5f) {
-		ChangeState(std::make_unique<AttackPhase3>(this));
-	} else if(hpRatio > 0.2f) {
-		ChangeState(std::make_unique<AttackPhase4>(this));
-	} else {
-		ChangeState(std::make_unique<AttackPhase5>(this));
-	}
-}
-
 void Boss::Draw() {
 	// 核の描画
 	for (auto& core : cores_) {
 		core.Draw();
 	}
 
+	// ステートの更新
+	if (state_) {
+		state_->Draw();
+	}
+
 	object3d_->Draw();
+
 }
 
 void Boss::DrawImGui() {
@@ -146,7 +141,8 @@ void Boss::HPUpdate() {
 	float hpRatio = static_cast<float>( hp_ ) / 1000.0f;
 	if(hpRatio > 0.9f) {
 		boxColor = Vector4(0.0f, 1.0f, 0.0f, 1.0f); // 緑
-	} else if(hpRatio > 0.75f) {
+	}
+	else if (hpRatio > 0.7f) {
 		boxColor = Vector4(0.3f, 1.0f, 0.0f, 1.0f); // 黄緑
 	} else if(hpRatio > 0.5f) {
 		boxColor = Vector4(1.0f, 1.0f, 0.0f, 1.0f); // 黄色
@@ -207,13 +203,10 @@ void Boss::Usually() {
 	// 通常の動き
 	Move();
 
-	// ステートの更新
-	if(state_) {
+	//// ステートの更新
+	/*if (state_) {
 		state_->Update();
-	}
-
-	// アタックのフェーズ変更
-	AttackPhase();
+	}*/
 
 	if(Input::GetInstance()->PushKey(DIK_V)) {
 		phase_ = Phase::Down;

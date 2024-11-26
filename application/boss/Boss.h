@@ -24,9 +24,6 @@ public: // メンバ関数
     // 通常の動き
     void Move();
 
-    // アタックフェーズの更新
-    void AttackPhase();
-
     // 描画
     void Draw();
 
@@ -46,6 +43,8 @@ public: // メンバ関数
     void SetPlayerPosition(const Vector3& playerPosition) {
         playerPosition_ = playerPosition;
     }
+
+    void SetTransform(const Transform& transform) { transform_ = transform; }
 
     Transform& GetTransform() { return transform_; }
     uint32_t GetHP() const { return hp_; }

@@ -24,13 +24,17 @@ void GameScene::Initialize()
 	/// ================================== ///
 
 	// 平行光源の設定
-	Object3dBasic::GetInstance()->SetDirectionalLightIntensity(0.05f);
+	Object3dBasic::GetInstance()->SetDirectionalLightIntensity(1.0f);
 
 	ModelManager::GetInstance()->LoadModel("player.obj");
 	ModelManager::GetInstance()->LoadModel("Boss.obj");
 	ModelManager::GetInstance()->LoadModel("skydome.obj");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
 	ModelManager::GetInstance()->LoadModel("Title.obj");
+	ModelManager::GetInstance()->LoadModel("Nuclear.obj");
+	ModelManager::GetInstance()->LoadModel("ShockWave.obj");
+	TextureManager::GetInstance()->LoadTexture("Nuclear.png");
+	TextureManager::GetInstance()->LoadTexture("ShockWave.png");
 
 	//---------------------------------------
 	// ボスの初期化
@@ -183,6 +187,8 @@ void GameScene::DrawImGui()
 	player_->DrawImGui();
 
 	boss_->DrawImGui();
+
+	ShowFPS();
 
 #endif // DEBUG
 }

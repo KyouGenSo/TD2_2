@@ -8,3 +8,7 @@ void AttackPhase5::Update()
 	Transform& transform = boss_->GetTransform();
 	transform.scale = { 2.0f,2.0f,2.0f };
 }
+
+void AttackPhase5::Draw()
+{
+}

@@ -9,5 +9,7 @@ public:
     AttackPhase5(Boss* boss);
    
     void Update() override;
+
+    void Draw() override;
 };
 
