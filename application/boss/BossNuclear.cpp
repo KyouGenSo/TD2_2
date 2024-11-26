@@ -1,6 +1,7 @@
 #include "BossNuclear.h"
 #include "Boss.h"
 #include "ModelManager.h"
+#include "LightCollision.h"
 
 
 void BossNuclear::Initialize(const Vector3& position, const Vector3& offset)
@@ -45,8 +46,8 @@ void BossNuclear::Draw()
 
 void BossNuclear::OnCollision(ObjectBase* objectBase) {
 	// 衝突処理
-	//Bossとの衝突判定
-	if(dynamic_cast<Boss*>( objectBase ) != nullptr) {
+	//Bossとの衝突判
+	if(dynamic_cast<LightCollision*>( objectBase ) != nullptr) {
 		//赤色に変更
 		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 	}

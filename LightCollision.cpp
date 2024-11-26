@@ -1,5 +1,6 @@
 #include "LightCollision.h"
 #include "Boss.h"
+#include "BossNuclear.h"
 
 ///=============================================================================
 ///						初期化
@@ -13,7 +14,7 @@ void LightCollision::Initialize() {
 
 	//========================================
 	// ライトの位置とColliderの位置を同期
-	ObjectBase::Init(transformStart_, transformEnd_, 3.0f);
+	ObjectBase::Init(transformStart_, transformEnd_, 1.0f);
 }
 
 ///=============================================================================
@@ -26,7 +27,7 @@ void LightCollision::Update() {
 ///						当たり判定イベント
 void LightCollision::OnCollision(ObjectBase* objectBase) {
 	//Bossとの衝突判定
-	if(dynamic_cast<Boss*>( objectBase ) != nullptr) {
+	if(dynamic_cast<BossNuclear*>( objectBase ) != nullptr) {
 		//赤色に変更
 		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 	}
