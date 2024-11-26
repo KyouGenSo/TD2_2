@@ -95,6 +95,12 @@ void Player::Update() {
 	// 判定場所の処理
 	Vector3 endPos = transform_.translate + Vector3(0.0f, 1.0f, 0.0f);
 	ObjectBase::Update(transform_.translate, endPos);
+
+	Vector3 lightDir = currentLight_->lightDir.normalize(); // 必ず正規化
+	lightEndPos_ = transform_.translate + lightDir * currentLight_->lightRange;
+
+	// 当たり判定用の更新
+	ObjectBase::Update(transform_.translate, lightEndPos_);
 }
 
 
@@ -235,6 +241,12 @@ void Player::OnCollision(ObjectBase* objectBase) {
 	if(dynamic_cast<Boss*>( objectBase ) != nullptr) {
 		//赤色に変更
 		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+
+	// Bossとの衝突判定
+	if (dynamic_cast<Boss*>(objectBase) != nullptr) {
+		// ライトラインを赤色に変更
+		lightLineColor_ = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	}
 }
 

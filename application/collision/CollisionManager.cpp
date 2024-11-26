@@ -3,6 +3,7 @@
 #include "Object3dBasic.h"
 #include "Draw2D.h"
 #include "Camera.h" // Add this include to resolve the incomplete type error
+#include <Player.h>
 
 void CollisionManager::Initialize() {
 }
@@ -11,23 +12,27 @@ void CollisionManager::Update() {
 }
 
 void CollisionManager::Draw() {
-	// 登録されているObjectBaseの描画
 	std::list<ObjectBase*>::iterator itr = Objects_.begin();
-	for(; itr != Objects_.end(); ++itr) {
-		// 始点と終点を取得
-		Vector3 start = ( *itr )->GetCollider()->GetStart();
-		Vector3 end = ( *itr )->GetCollider()->GetEnd();
-		//半径の取得
-		float radius = ( *itr )->GetCollider()->GetRadius();
-		Vector4 color = ( *itr )->GetCollider()->GetColor();
+	for (; itr != Objects_.end(); ++itr) {
+		Vector3 start = (*itr)->GetCollider()->GetStart();
+		Vector3 end = (*itr)->GetCollider()->GetEnd();
+		float radius = (*itr)->GetCollider()->GetRadius();
+		Vector4 color = (*itr)->GetCollider()->GetColor();
 
-
-		//ワイヤーフレームの描画
+		// ワイヤーフレーム描画
 		Matrix4x4 viewProjectionMatrix = Object3dBasic::GetInstance()->GetCamera()->GetViewProjectionMatrix();
 		Draw2D::GetInstance()->DrawCapsule(radius, start, end, color, viewProjectionMatrix);
 
-		//白色に変更
-		( *itr )->GetCollider()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+		// Playerのライトラインを描画
+		if (Player* player = dynamic_cast<Player*>(*itr)) {
+			Vector2 start2D = { player->GetTransform().translate.x, player->GetTransform().translate.y };
+			Vector2 end2D = { player->GetLightEndPos().x, player->GetLightEndPos().y };
+			Draw2D::GetInstance()->DrawLine(start2D, end2D, player->GetLightLineColor());
+
+
+		}
+
+		(*itr)->GetCollider()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f)); // 白色に戻す
 	}
 }
 

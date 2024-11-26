@@ -41,6 +41,10 @@ public:
 	/// @param objectBase 衝突したオブジェクト
 	void OnCollision(ObjectBase* objectBase) override;
 
+	Vector3 GetLightEndPos() const { return lightEndPos_; }
+	Vector4 GetLightLineColor() const { return lightLineColor_; }
+	const Transform& GetTransform() const { return transform_; }
+
 
 	///--------------------------------------------------------------
 	///							入出力関数
@@ -95,6 +99,9 @@ private:
 	bool isLightProfileToggled_ = false;
 	// ライトの方向を自動更新するかどうかのフラグ
 	bool autoUpdateLightDir_ = true;
+
+	Vector3 lightEndPos_; // ライトの終点位置
+	Vector4 lightLineColor_; // ライトラインの色（初期は白）
 
 	////----------------------------------------
 
