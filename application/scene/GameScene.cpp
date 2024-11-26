@@ -184,5 +184,7 @@ void GameScene::DrawImGui()
 
 	boss_->DrawImGui();
 
+	collisionManager_->DrawImGui();
+
 #endif // DEBUG
 }

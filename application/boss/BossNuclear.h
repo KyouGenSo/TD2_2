@@ -19,8 +19,13 @@ public:
 	// 衝突処理イベント
 	void OnCollision(ObjectBase* objectBase);
 
+    ///--------------------------------------------------------------
+    ///						 
     // 核の位置を取得
     Transform& GetTransform() { return transform_; }
+
+    // 核の位置を設定
+	void SetTransform(const Transform& transform) { transform_ = transform; }
 
 private:
     Transform transform_;    // 核の現在位置

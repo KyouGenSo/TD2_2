@@ -10,6 +10,7 @@
 #include "AttackPhase5.h"
 #include <memory>
 #include "Player.h"
+#include <random>
 
 void Boss::Initialize() {
 	object3d_ = std::make_unique<Object3d>();
@@ -23,11 +24,19 @@ void Boss::Initialize() {
 
 	// 核の初期化（5つ）
 	cores_.resize(5);
-	for(size_t i = 0; i < cores_.size(); ++i) {
-		// 円形に配置するためのオフセット計算
-		float angle = static_cast<float>( i ) * 2.0f * static_cast<float>( M_PI ) / static_cast<float>( cores_.size() );
-		Vector3 offset = { std::cos(angle) * 1.5f, 0.5f, std::sin(angle) * 1.5f };
-		cores_[i].Initialize(transform_.translate, offset);
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> distRadius(0.0f, 10.0f);
+	std::uniform_real_distribution<float> distAngle(0.0f, 2 * static_cast<float>( M_PI ));
+	std::uniform_real_distribution<float> distHeight(0.0f, 20.0f);
+
+	// 核のランダムな配置
+	for(auto& core : cores_) {
+		float radius = distRadius(gen);
+		float angle = distAngle(gen);
+		float height = distHeight(gen);
+		Vector3 offset = { radius * cos(angle), height, radius * sin(angle) };
+		core.Initialize(transform_.translate, offset);
 	}
 
 	ChangeState(std::make_unique<AttackPhase1>(this)); // 初期状態を設定
@@ -36,7 +45,6 @@ void Boss::Initialize() {
 	// Bossの位置とColliderの位置を同期
 	ObjectBase::Init(transform_.translate, transform_.translate, 10.0f);
 	collider_->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-
 }
 
 void Boss::Update() {
@@ -306,7 +314,3 @@ void Boss::GettingUp() {
 		phase_ = Phase::Usually;     // 通常状態に戻す
 	}
 }
-
-
-
-
