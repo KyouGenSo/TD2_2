@@ -42,6 +42,8 @@ public: // メンバ関数
         playerPosition_ = playerPosition;
     }
 
+    void SetTransform(const Transform& transform) { transform_ = transform; }
+
     Transform& GetTransform() { return transform_; }
     uint32_t GetHP() const { return hp_; }
 

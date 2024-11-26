@@ -2,6 +2,7 @@
 #include <AttackPhase4.h>
 #include <cmath>
 #include <algorithm>
+#include <random>
 
 AttackPhase3::AttackPhase3(Boss* boss)
 	: BossAttackBaseState("Phase3", boss){}
@@ -11,15 +12,25 @@ void AttackPhase3::Update()
 {
     fireCounter_++;
 
-    // フレームごとに弾を発射
-    if (fireCounter_ >= 60) {
-        FireBullets();
-        fireCounter_ = 0; // カウンタをリセット
+    // 弾発射中のみボスを回転させる
+    if (bulletsFired_ < 60) {
+        RotateBoss();
     }
 
+    // 3秒間（180フレーム）で弾を60発発射
+    if (bulletsFired_ < 60 && fireCounter_ % 3 == 0) { // 3フレームに1回発射
+        FireBullets();
+        bulletsFired_++;
+    }
+
+    // 全弾発射後はクールタイム
+    if (bulletsFired_ >= 60 && fireCounter_ >= 360) {
+        bulletsFired_ = 0;   // 弾発射カウントをリセット
+        fireCounter_ = 0;   // カウンタをリセット
+    }
 
     // 各弾の位置を更新
-    for (auto it = bullets_.begin(); it != bullets_.end(); ) {
+    for (auto it = bullets_.begin(); it != bullets_.end();) {
         it->Update();
 
         // 弾が画面外に出たら削除
@@ -47,19 +58,35 @@ void AttackPhase3::Draw()
 }
 
 void AttackPhase3::FireBullets() {
-    const int bulletCount = 12;
-    const float angleStep = 2.0f * static_cast<float>(M_PI) / bulletCount;
     const float bulletSpeed = 0.5f;
 
     // ボスの位置を取得
     Vector3 bossPosition = boss_->GetTransform().translate;
+    bossPosition.y += 5.0f; // 発射位置のy軸を5.0f上げる
 
-    for (int i = 0; i < bulletCount; ++i) {
-        float angle = i * angleStep;
-        Vector3 direction = { std::cos(angle), 0.0f, std::sin(angle) };
-        BossBullet bullet(bossPosition, direction, bulletSpeed);
-        bullet.Initialize();
-        bullets_.push_back(std::move(bullet));
+    // ランダムな方向を生成
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
+
+    Vector3 direction = { dist(gen), dist(gen), dist(gen) };
+    Normalize(direction); // ランダム方向を正規化
+
+    BossBullet bullet(bossPosition, direction, bulletSpeed);
+    bullet.Initialize();
+    bullets_.push_back(std::move(bullet));
+}
+
+void AttackPhase3::RotateBoss()
+{
+    // ボスの回転を更新
+    Transform bossTransform = boss_->GetTransform();
+    bossTransform.rotate.y += 0.1f; // 毎フレーム Y軸方向に回転（値は調整可能）
+
+    // 角度が360度を超えないようにする
+    if (bossTransform.rotate.y >= 360.0f) {
+        bossTransform.rotate.y -= 360.0f;
     }
+    //boss_->SetTransform(bossTransform);
 }
 

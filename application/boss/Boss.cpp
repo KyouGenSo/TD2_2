@@ -140,7 +140,7 @@ void Boss::HPUpdate() {
 	if (hpRatio > 0.9f) {
 		boxColor = Vector4(0.0f, 1.0f, 0.0f, 1.0f); // 緑
 	}
-	else if (hpRatio > 0.75f) {
+	else if (hpRatio > 0.7f) {
 		boxColor = Vector4(0.3f, 1.0f, 0.0f, 1.0f); // 黄緑
 	}
 	else if (hpRatio > 0.5f) {

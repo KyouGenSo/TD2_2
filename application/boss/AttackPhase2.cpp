@@ -2,6 +2,7 @@
 #include <cmath>
 constexpr float kPI = 3.14159265358979323846f;
 #include <random>
+#include <AttackPhase3.h>
 
 AttackPhase2::AttackPhase2(Boss* boss) : BossAttackBaseState("Phase2", boss) {
     InitializeShockWaveObjects(shockWaveObjectCount_);
@@ -39,6 +40,11 @@ void AttackPhase2::Update() {
     case PhaseState::Reset:
         state_ = PhaseState::Ascending; // 次の上昇に戻る
         break;
+    }
+
+    // フェーズ終了条件: HPが70%以下
+    if (boss_->GetHP() <= 700) {
+        boss_->ChangeState(std::make_unique<AttackPhase3>(boss_));
     }
 }
 
@@ -85,7 +91,8 @@ void AttackPhase2::ActivateShockWave() {
 
         Object3d* object = shockWaveObjects_[i].get();
         object->SetScale({ randomScale, randomScale, randomScale });
-        object->SetTranslate({ x, boss_->GetTransform().translate.y + 0.5f, z });
+        object->SetTranslate({ x, boss_->GetTransform().translate.y - 0.2f, z });
+        object->SetRotate({ -45.0f, 45.0f, 0.0f }); // Y軸を45度回転
         object->Update();
     }
 
@@ -98,7 +105,8 @@ void AttackPhase2::ActivateShockWave() {
 
         Object3d* object = shockWaveObjects_[i].get();
         object->SetScale({ randomScale, randomScale, randomScale });
-        object->SetTranslate({ x, boss_->GetTransform().translate.y + 0.5f, z });
+        object->SetTranslate({ x, boss_->GetTransform().translate.y - 0.2f, z });
+        object->SetRotate({ 45.0f, -45.0f, 0.0f }); // Y軸を-45度回転
         object->Update();
     }
 }
@@ -109,31 +117,33 @@ void AttackPhase2::ActivateShockWave() {
 
 void AttackPhase2::UpdateShockWaveObjects() {
     // 内側と外側の広がる速度
-    shockWaveRadius_ += 0.2f; // 広がる速度
+    shockWaveRadius_ += 0.1f; // 広がる速度
 
     size_t halfSize = shockWaveObjects_.size() / 2;
     float innerBaseRadius = shockWaveRadius_ * 1.5f; // 内側の半径
     float outerBaseRadius = shockWaveRadius_ * 2.5f; // 外側の半径
 
-    // 内側の円の更新
+    // 内側の円の更新（45度回転）
     for (size_t i = 0; i < halfSize; ++i) {
         float angle = (kPI * 2.0f / halfSize) * i;
         float x = boss_->GetTransform().translate.x + std::cos(angle) * innerBaseRadius;
         float z = boss_->GetTransform().translate.z + std::sin(angle) * innerBaseRadius;
 
         Object3d* object = shockWaveObjects_[i].get();
-        object->SetTranslate({ x, boss_->GetTransform().translate.y + 0.5f, z });
+        object->SetTranslate({ x, boss_->GetTransform().translate.y - 0.2f, z });
+        object->SetRotate({ -45.0f, 45.0f, 0.0f }); // Y軸を45度回転
         object->Update();
     }
 
-    // 外側の円の更新
+    // 外側の円の更新（-45度回転）
     for (size_t i = halfSize; i < shockWaveObjects_.size(); ++i) {
         float angle = (kPI * 2.0f / (shockWaveObjects_.size() - halfSize)) * (i - halfSize);
         float x = boss_->GetTransform().translate.x + std::cos(angle) * outerBaseRadius;
         float z = boss_->GetTransform().translate.z + std::sin(angle) * outerBaseRadius;
 
         Object3d* object = shockWaveObjects_[i].get();
-        object->SetTranslate({ x, boss_->GetTransform().translate.y + 0.5f, z });
+        object->SetTranslate({ x, boss_->GetTransform().translate.y - 0.2f, z });
+        object->SetRotate({ 45.0f, -45.0f, 0.0f }); // Y軸を-45度回転
         object->Update();
     }
 
@@ -142,6 +152,7 @@ void AttackPhase2::UpdateShockWaveObjects() {
         shockWaveActive_ = false; // 衝撃波終了
     }
 }
+
 
 
 

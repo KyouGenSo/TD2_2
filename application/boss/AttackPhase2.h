@@ -30,7 +30,7 @@ private:
 
     const float ascendingSpeed_ = 0.06f;  // 上昇速度
     const float descendingSpeed_ = 0.5f;  // 下降速度
-    const float maxRadius_ = 100.0f;      // 衝撃波の最大半径
+    const float maxRadius_ = 20.0f;      // 衝撃波の最大半径
     const size_t shockWaveObjectCount_ = 30; // 衝撃波オブジェクト数
     std::vector<std::unique_ptr<Object3d>> shockWaveObjects_;
 };

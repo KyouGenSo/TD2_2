@@ -7,7 +7,7 @@ void BossNuclear::Initialize(const Vector3& position, const Vector3& offset)
 
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize();
-	object3d_->SetModel("axis.obj");
+	object3d_->SetModel("Nuclear.obj");
 }
 
 void BossNuclear::Update(const Vector3& bossPosition)

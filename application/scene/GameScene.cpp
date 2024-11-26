@@ -31,7 +31,9 @@ void GameScene::Initialize()
 	ModelManager::GetInstance()->LoadModel("Boss.obj");
 	ModelManager::GetInstance()->LoadModel("skydome.obj");
 	ModelManager::GetInstance()->LoadModel("axis.obj");
+	ModelManager::GetInstance()->LoadModel("Nuclear.obj");
 	ModelManager::GetInstance()->LoadModel("ShockWave.obj");
+	TextureManager::GetInstance()->LoadTexture("Nuclear.png");
 	TextureManager::GetInstance()->LoadTexture("ShockWave.png");
 
 	//---------------------------------------
