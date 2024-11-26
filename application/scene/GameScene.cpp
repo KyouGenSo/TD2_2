@@ -188,6 +188,8 @@ void GameScene::DrawImGui()
 
 	boss_->DrawImGui();
 
+	collisionManager_->DrawImGui();
+
 	ShowFPS();
 
 #endif // DEBUG

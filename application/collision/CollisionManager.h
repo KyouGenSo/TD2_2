@@ -37,7 +37,11 @@ public:
      */
 	void Draw();
 
-    //void DrawCapsule();
+    /**----------------------------------------------------------------------------
+	 * \brief  DrawImGui ImGuiの描画
+     * \note   
+     */
+	void DrawImGui();
 
     /**----------------------------------------------------------------------------
 	 * \brief  Reset リセット
@@ -72,4 +76,6 @@ private:
     /// ===コライダー=== ///
     std::list<ObjectBase*> Objects_;
     std::unordered_set<ObjectBase*> collidedObjects_; // 衝突したオブジェクトを追跡するセット
+
+	bool isDrawCapsule_ = true; // カプセルの描画フラグ
 };

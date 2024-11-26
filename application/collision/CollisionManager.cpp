@@ -2,7 +2,8 @@
 #include "ModelManager.h"
 #include "Object3dBasic.h"
 #include "Draw2D.h"
-#include "Camera.h" // Add this include to resolve the incomplete type error
+#include "Camera.h"
+#include "ImGuiManager.h"
 
 void CollisionManager::Initialize() {
 }
@@ -11,24 +12,36 @@ void CollisionManager::Update() {
 }
 
 void CollisionManager::Draw() {
-	// 登録されているObjectBaseの描画
-	std::list<ObjectBase*>::iterator itr = Objects_.begin();
-	for(; itr != Objects_.end(); ++itr) {
-		// 始点と終点を取得
-		Vector3 start = ( *itr )->GetCollider()->GetStart();
-		Vector3 end = ( *itr )->GetCollider()->GetEnd();
-		//半径の取得
-		float radius = ( *itr )->GetCollider()->GetRadius();
-		Vector4 color = ( *itr )->GetCollider()->GetColor();
+	// Capsuleワイヤーの描画有無
+	if(isDrawCapsule_) {
+		// 登録されているObjectBaseの描画
+		std::list<ObjectBase*>::iterator itr = Objects_.begin();
+		for(; itr != Objects_.end(); ++itr) {
+			// 始点と終点を取得
+			Vector3 start = ( *itr )->GetCollider()->GetStart();
+			Vector3 end = ( *itr )->GetCollider()->GetEnd();
+			//半径の取得
+			float radius = ( *itr )->GetCollider()->GetRadius();
+			Vector4 color = ( *itr )->GetCollider()->GetColor();
 
 
-		//ワイヤーフレームの描画
-		Matrix4x4 viewProjectionMatrix = Object3dBasic::GetInstance()->GetCamera()->GetViewProjectionMatrix();
-		Draw2D::GetInstance()->DrawCapsule(radius, start, end, color, viewProjectionMatrix);
+			//ワイヤーフレームの描画
+			Matrix4x4 viewProjectionMatrix = Object3dBasic::GetInstance()->GetCamera()->GetViewProjectionMatrix();
+			Draw2D::GetInstance()->DrawCapsule(radius, start, end, color, viewProjectionMatrix);
 
-		//白色に変更
-		( *itr )->GetCollider()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			//白色に変更
+			( *itr )->GetCollider()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+		}
 	}
+}
+
+///=============================================================================
+///						Imguiの描画
+void CollisionManager::DrawImGui() {
+	ImGui::Begin("Collision MGR");
+	//ワイヤーフレームの描画
+	ImGui::Checkbox("DrawCapsule", &isDrawCapsule_);
+	ImGui::End();
 }
 
 ///-------------------------------------------///
