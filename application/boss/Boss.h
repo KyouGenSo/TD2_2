@@ -11,6 +11,7 @@
 #include "ObjectBase.h"
 
 class Object3d;
+class Player;
 
 class Boss : public ObjectBase{
 public: // メンバ関数
@@ -49,6 +50,12 @@ public: // メンバ関数
     Transform& GetTransform() { return transform_; }
     uint32_t GetHP() const { return hp_; }
 
+    // Player セッター
+    void SetPlayer(Player* player) { player_ = player; }
+
+    // Player ゲッター
+    Player* GetPlayer() const { return player_; }
+
 	//コアを取得
 	std::vector<BossNuclear>& GetCores() { return cores_; }
 
@@ -71,6 +78,8 @@ private:// メンバ変数
     std::unique_ptr<BossAttackBaseState> state_;
 
     std::vector<BossNuclear> cores_;  // 核のリスト
+
+    Player* player_ = nullptr;
 
 
 private: // メンバ関数
