@@ -52,9 +52,9 @@ void Player::Initialize(Boss* boss) {
 	// 初期ライト設定
 	currentLight_ = &narrowStrongLight_;
 
-	// ライトの位置と方向を常に更新
-	//currentLight_->lightPos = { transform_.translate.x, currentLight_->lightPos.y, transform_.translate.z };
-	//currentLight_->lightDir = (boss_->GetTransform().translate - currentLight_->lightPos).normalize();
+	// ライトの当たり判定用ライン初期化
+	lightStart_ = transform_.translate;
+	lightEnd_ = boss_->GetTransform().translate;
 
 	////-------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ void Player::Initialize(Boss* boss) {
 
 void Player::Update() {
 	// ボスが存在しない場合、処理をスキップ
-	if(boss_ == nullptr) return;
+	if (boss_ == nullptr) return;
 
 	//ライト
 	Light();
@@ -95,6 +95,13 @@ void Player::Update() {
 	// 判定場所の処理
 	Vector3 endPos = transform_.translate + Vector3(0.0f, 1.0f, 0.0f);
 	ObjectBase::Update(transform_.translate, endPos);
+
+	// ライトの当たり判定ラインを更新
+	lightStart_ = transform_.translate; // ライトの開始位置（プレイヤーの位置）
+	lightEnd_ = lightStart_ + currentLight_->lightDir.normalize() * currentLight_->lightRange; // ライトの方向と範囲を考慮した終点
+
+	// オブジェクトベースの当たり判定更新
+	ObjectBase::Update(lightStart_, lightEnd_);
 }
 
 
@@ -105,10 +112,10 @@ void Player::Draw() {
 
 void Player::Move() {
 	// プレイヤーの左右移動 (Boss の周りを回転)
-	if(Input::GetInstance()->PushKey(DIK_A)) {
+	if (Input::GetInstance()->PushKey(DIK_A)) {
 		angle_ -= rotationSpeed_; // 左回転
 	}
-	if(Input::GetInstance()->PushKey(DIK_D)) {
+	if (Input::GetInstance()->PushKey(DIK_D)) {
 		angle_ += rotationSpeed_; // 右回転
 	}
 
@@ -122,16 +129,16 @@ void Player::Move() {
 	transform_.rotate.y = atan2f(directionToBoss.x, directionToBoss.z);
 
 	// ジャンプ処理
-	if(Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
+	if (Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
 		isJumping_ = true;
 		jumpVelocity_ = jumpPower_;
 	}
 
-	if(isJumping_) {
+	if (isJumping_) {
 		transform_.translate.y += jumpVelocity_;
 		jumpVelocity_ += gravity_;
 
-		if(transform_.translate.y <= 0.0f) {
+		if (transform_.translate.y <= 0.0f) {
 			transform_.translate.y = 0.0f;
 			isJumping_ = false;
 			jumpVelocity_ = 0.0f;
@@ -144,8 +151,8 @@ void Player::Light() {
 	static float directionHorizontalOffset = 0.0f; // ライトの方向のX軸オフセット
 
 	// ライト切り替え
-	if(Input::GetInstance()->TriggerKey(DIK_L)) {
-		if(isLightProfileToggled_) {
+	if (Input::GetInstance()->TriggerKey(DIK_L)) {
+		if (isLightProfileToggled_) {
 			currentLight_ = &narrowStrongLight_;
 		} else {
 			currentLight_ = &wideWeakLight_;
@@ -193,6 +200,9 @@ void Player::Light() {
 	// 正規化された方向を計算して設定
 	currentLight_->lightDir = rotatedDirection.normalize();
 
+	//lightEnd_ = lightStart_ + currentLight_->lightDir.normalize() * currentLight_->lightRange;
+
+
 	// スポットライトの更新
 	Object3dBasic::GetInstance()->SetSpotLight(
 		currentLight_->lightPos,
@@ -232,9 +242,21 @@ void Player::DrawImGui()
 ///						 衝突判定イベント
 void Player::OnCollision(ObjectBase* objectBase) {
 	//Bossとの衝突判定
-	if(dynamic_cast<Boss*>( objectBase ) != nullptr) {
+	if (dynamic_cast<Boss*>(objectBase) != nullptr) {
 		//赤色に変更
 		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+
+	// ライトラインとの衝突判定
+	if (dynamic_cast<Boss*>(objectBase) != nullptr) {
+		// ライトによる衝突時の処理（緑色に変更）
+		Vector3 directionToBoss = lightEnd_ - lightStart_; // ラインの方向
+		float distance = directionToBoss.Length();        // ラインの長さ
+
+		// Bossがライン上にいるかどうか（簡易判定）
+		if (objectBase->GetCollider()->IntersectsLine(lightStart_, directionToBoss, distance)) {
+			collider_->SetColor(Vector4(0.0f, 1.0f, 0.0f, 1.0f)); // 緑色に変更
+		}
 	}
 }
 

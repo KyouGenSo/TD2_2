@@ -6,6 +6,7 @@
  * \date   November 2024
  * \note
  *********************************************************************/
+#define NOMINMAX
 #include "Collider.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -19,6 +20,33 @@
 using namespace Mat4x4;
 
 void Collider::Initialize() {
+}
+
+bool Collider::IntersectsLine(const Vector3& lineStart, const Vector3& lineDirection, float lineLength) const
+{
+	// ラインの終了点を計算
+	Vector3 lineEnd = lineStart + lineDirection.normalize() * lineLength;
+
+	// ラインの方向ベクトルと長さ
+	Vector3 lineDir = (lineEnd - lineStart).normalize();
+
+	// カプセルの中心線方向ベクトルと長さ
+	Vector3 capsuleDir = (end_ - start_).normalize();
+	float capsuleLength = (end_ - start_).Length();
+
+	// ラインの最近接点を計算
+	float t = std::clamp((start_ - lineStart).dot(lineDir), 0.0f, lineLength);
+	Vector3 closestPointOnLine = lineStart + lineDir * t;
+
+	// カプセルの最近接点を計算
+	float u = std::clamp((closestPointOnLine - start_).dot(capsuleDir), 0.0f, capsuleLength);
+	Vector3 closestPointOnCapsule = start_ + capsuleDir * u;
+
+	// 最近接点間の距離を計算
+	float distanceSquared = (closestPointOnLine - closestPointOnCapsule).LengthSquared();
+
+	// 距離がカプセルの半径以下なら衝突している
+	return distanceSquared <= (radius_ * radius_);
 }
 
 bool Collider::Intersects(const Collider& other) const {

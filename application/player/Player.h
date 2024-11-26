@@ -96,6 +96,9 @@ private:
 	// ライトの方向を自動更新するかどうかのフラグ
 	bool autoUpdateLightDir_ = true;
 
+	Vector3 lightStart_; // ライトの始点（プレイヤー位置）
+	Vector3 lightEnd_;   // ライトの終点（ボス位置）
+
 	////----------------------------------------
 
 

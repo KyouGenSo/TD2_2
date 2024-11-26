@@ -24,6 +24,9 @@ public:
 	 */
 	void Initialize();
 
+	// ラインとの衝突判定を追加
+	bool IntersectsLine(const Vector3& lineStart, const Vector3& lineDirection, float lineLength) const;
+
 	///--------------------------------------------------------------
 	///						 入出力関数　
 public:
