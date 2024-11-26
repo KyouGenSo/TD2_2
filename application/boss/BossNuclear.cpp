@@ -1,3 +1,6 @@
+#define NOMINMAX
+#include <cmath>
+#include <algorithm> 
 #include "BossNuclear.h"
 #include "Boss.h"
 #include "ModelManager.h"
@@ -15,6 +18,8 @@ void BossNuclear::Initialize(const Vector3& position, const Vector3& offset)
 	object3d_ = std::make_unique<Object3d>();
 	object3d_->Initialize();
 	object3d_->SetModel("Core.obj");
+
+	alpha_ = 1.0f; // アルファ値を初期化
 
 	//========================================
 	// Bossの位置とColliderの位置を同期
@@ -38,8 +43,9 @@ void BossNuclear::Update(const Vector3& bossPosition)
 
 void BossNuclear::Draw()
 {
-	//核の描画
 	if (object3d_) {
+		// アルファ値を反映
+		object3d_->SetAlpha(alpha_);
 		object3d_->Draw();
 	}
 }
@@ -50,5 +56,11 @@ void BossNuclear::OnCollision(ObjectBase* objectBase) {
 	if(dynamic_cast<LightCollision*>( objectBase ) != nullptr) {
 		//赤色に変更
 		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+
+	// lightとの衝突判定
+	if (dynamic_cast<LightCollision*>(objectBase) != nullptr) {
+		// アルファ値を減少（最小値は0.0）
+		alpha_ = std::max(0.0f, alpha_ - 0.1f);
 	}
 }
