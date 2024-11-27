@@ -50,6 +50,12 @@ void Boss::Initialize() {
 	// Bossの位置とColliderの位置を同期
 	ObjectBase::Init(transform_.translate, transform_.translate, 10.0f);
 	collider_->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+	//particle->Initialize(dxCommon_);
+	/*particle = std::make_unique<ParticleManager>();
+	particle->CreateParticleGroup("particle", "resources/circle.png", ParticleManager::BlendMode::kBlendModeAdd);*/
+	//ParticleManager::GetInstance()->CreateParticleGroup("particle", "circle.png", ParticleManager::BlendMode::kBlendModeAdd);
+	//particle->CreateParticleGroup("particle", "circle.png", ParticleManager::BlendMode::kBlendModeAdd);
 }
 
 void Boss::Update() {
@@ -92,6 +98,9 @@ void Boss::Update() {
 	if (state_) {
 		state_->Update();
 	}
+
+	// パーティクルの更新
+	UpdateParticles();
 
 	// コアの状態チェック
 	allCoresDestroyed_ = std::all_of(cores_.begin(), cores_.end(), [](const std::unique_ptr<BossNuclear>& core) {
@@ -164,6 +173,11 @@ void Boss::Draw() {
 	}
 
 	object3d_->Draw();
+
+	// パーティクルの描画
+	DrawParticles();
+
+	//ParticleManager::GetInstance()->Draw();
 
 }
 
@@ -331,8 +345,13 @@ void Boss::Down() {
 	}
 	// アニメーション終了後のフェードアウト処理
 	else {
-		waitTimer++;
-		if (waitTimer >= 60) { // 待機後に透明化開始
+		// 待機タイマーを進行
+		waitTimer_++;
+		if (waitTimer_ >= 60) { // 60フレーム後にパーティクル生成
+			for (int i = 0; i < 5; ++i) { // 5つのパーティクルを生成
+				CreateParticle(transform_.translate);
+			}
+
 			alpha_ -= 0.01f;
 			if (alpha_ <= 0.0f) {
 				alpha_ = 0.0f;
@@ -375,4 +394,58 @@ void Boss::GettingUp() {
 	//	easingTime = 0.0f;           // タイマーをリセット
 	//	phase_ = Phase::Usually;     // 通常状態に戻す
 	//}
+}
+
+// パーティクルを生成
+void Boss::CreateParticle(const Vector3& basePosition) {
+	// ランダムな移動量を生成
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> distX(-2.1f, 2.1f); // X軸のランダム範囲
+	std::uniform_real_distribution<float> distZ(-2.1f, 2.1f); // Z軸のランダム範囲
+	std::uniform_real_distribution<float> distY(0.5f, 20.8f);  // Y軸の上方向範囲
+
+	// パーティクルの位置
+	Vector3 position = basePosition;
+	position.x += distX(gen); // X軸をランダムに
+	position.z += distZ(gen); // Z軸をランダムに
+	position.y += distY(gen); // Y軸はプラス方向
+
+	// パーティクルオブジェクトを生成
+	std::unique_ptr<Object3d> particleObject = std::make_unique<Object3d>();
+	particleObject->Initialize();
+	particleObject->SetModel("Particle.obj"); // パーティクル用モデル
+	particleObject->SetTranslate(position);
+	particleObject->SetScale({ 0.2f, 0.2f, 0.2f }); // スケール調整
+	particleObject->Update();
+
+	// 最大個数を超えた場合は古いパーティクルを削除
+	if (particles_.size() >= kMaxParticles) {
+		particles_.erase(particles_.begin());
+	}
+
+	// パーティクルをリストに追加
+	particles_.emplace_back(std::move(particleObject));
+}
+
+// パーティクルの更新処理
+void Boss::UpdateParticles() {
+	for (auto it = particles_.begin(); it != particles_.end(); ) {
+		Vector3 position = (*it)->GetTranslate();
+		position.y += 0.1f; // Y軸方向に徐々に下がる
+
+		// パーティクルの更新
+		(*it)->SetTranslate(position);
+		(*it)->Update();
+
+		// パーティクルが画面外または条件を満たさない場合は削除（今回は削除しない）
+		++it;
+	}
+}
+
+// パーティクルの描画処理
+void Boss::DrawParticles() {
+	for (const auto& particle : particles_) {
+		particle->Draw();
+	}
 }

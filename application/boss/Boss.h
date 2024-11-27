@@ -9,6 +9,7 @@
 #include "BossAttackBaseState.h"
 #include "BossNuclear.h"
 #include "ObjectBase.h"
+#include "ParticleManager.h"
 
 class Object3d;
 class Player;
@@ -154,5 +155,22 @@ private: // メンバ関数
 	bool isFading_ = false;    // フェード中かどうかを判定
 	//bool isVisible_ = true;    // 描画するかどうかを判定
 	bool hasBounced_ = false;  // バウンドが終了したかどうかを判定
+
+	//std::unique_ptr<ParticleManager> particle = nullptr;
+
+
+	//struct ParticleBoss {
+	//	Vector3 position;    // パーティクルの現在位置
+	//	Vector3 velocity;    // パーティクルの速度
+	//	float lifetime;      // 寿命（フレーム単位）
+	//	float size;          // パーティクルのサイズ
+	//};
+
+	std::vector<std::unique_ptr<Object3d>> particles_;
+	static const int kMaxParticles = 20;              // パーティクルの最大個数
+	// パーティクルの生成、更新、描画
+	void CreateParticle(const Vector3& basePosition);
+	void UpdateParticles();
+	void DrawParticles();
 
 };
