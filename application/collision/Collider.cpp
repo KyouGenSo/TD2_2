@@ -14,7 +14,7 @@
 #include "Draw2D.h"
 #include "DebugCamera.h"
 #include "WinApp.h"
-#include "Object3dbasic.h"
+#include "Object3dbasic.h"  
 #include "ModelManager.h"
 #include "Mat4x4Func.h" 
 using namespace Mat4x4;
