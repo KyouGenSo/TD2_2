@@ -12,6 +12,7 @@
 #include "FollowCamera.h"
 #include "Vector3.h"
 #include "Light.h"
+#include "Sprite.h"
 #include "ObjectBase.h"
 #include <memory>
 #include "LightCollision.h"
@@ -135,6 +136,9 @@ private:
 	std::unique_ptr<LightCollision> lightCollision_ = nullptr;
 
 	bool lightVisible_ = false; // ライト表示フラグ
+
+	std::unique_ptr<Sprite> phaseSprite_; // フェーズ表示用のスプライト
+	bool showPhaseSprite_ = false;        // スプライト表示フラグ
 
 private:
 	// パーティクル管理用の構造体

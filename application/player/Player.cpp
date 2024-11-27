@@ -361,15 +361,15 @@ void Player::HandleMoveJumpPhase()
 
 void Player::HandleLightAndDestroyPhase()
 {
-	// ライトを有効化
-	Light();
+	  // ライトを有効化
+    Light();
 
-	// ボスの全コアが破壊されているか確認
-	if (boss_->AreAllCoresDestroyed()) {
-		boss_->SetHP(1000); // ボスのHPを1000に設定
-		boss_->SetHPBarVisible(true); // HPバーを表示する
-		tutorialPhase = TutorialPhase::End;
-	}
+    // ボスの全コアが破壊されているか確認
+    if (boss_->AreAllCoresDestroyed()) {
+        boss_->SetHP(1000); // ボスのHPを1000に設定
+        boss_->SetHPBarVisible(true); // HPバーを表示する
+        tutorialPhase = TutorialPhase::End;
+    }
 }
 
 void Player::GenerateDust() {
