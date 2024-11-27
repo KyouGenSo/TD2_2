@@ -11,6 +11,7 @@
 #include <memory>
 #include "Player.h"
 #include <random>
+#include <SceneManager.h>
 
 void Boss::Initialize() {
 	object3d_ = std::make_unique<Object3d>();
@@ -79,6 +80,12 @@ void Boss::Update() {
 
 	// HPの更新
 	HPUpdate();
+
+	// HPが0以下の場合、ClearSceneに移行
+	if (hp_ <= 0) {
+		SceneManager::GetInstance()->ChangeScene("clear");
+		return; // 処理を中断して早期リターン
+	}
 
 	// ステートの更新
 	if (state_) {
@@ -187,7 +194,7 @@ void Boss::HPUpdate() {
 void Boss::HPDraw() {
 	// 背景用の薄い黒色のボックスを描画
 	Vector4 backgroundColor = Vector4(0.0f, 0.0f, 0.0f, 0.5f); // 薄い黒色
-	Vector2 backgroundSize = Vector2(1000.0f, boxSize.y);       // 初期サイズの幅と現在の高さ
+	Vector2 backgroundSize = Vector2(1000.0f, boxSize.y);      // 初期サイズの幅と現在の高さ
 	Draw2D::GetInstance()->DrawBox(boxPosition, backgroundSize, backgroundColor);
 
 	// HPバーを描画
