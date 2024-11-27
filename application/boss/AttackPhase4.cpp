@@ -7,8 +7,63 @@
 AttackPhase4::AttackPhase4(Boss* boss)
     : BossAttackBaseState("Phase4", boss), meteor_(nullptr), meteorDropCounter_(0), coolDownCounter_(0) {}
 
+void AttackPhase4::GenerateParticles(const Vector3& position)
+{
+    // ランダムな速度を生成
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> distX(-1.0f, 1.0f);
+    std::uniform_real_distribution<float> distZ(-1.0f, 1.0f);
+    std::uniform_real_distribution<float> distY(0.8f, 1.2f); // Y方向の速度
+
+    for (int i = 0; i < 10; ++i) {
+        // パーティクルオブジェクトの初期化
+        auto particleObject = std::make_unique<Object3d>();
+        particleObject->Initialize();
+        particleObject->SetModel("Meteor.obj");
+        particleObject->SetTranslate(position);
+        particleObject->SetScale({ 0.4f, 0.4f, 0.4f });
+        particleObject->Update();
+
+        // パーティクルデータを追加
+        Vector3 velocity = { distX(gen), distY(gen), distZ(gen) };
+        Particle particle = { std::move(particleObject), velocity, 180 }; // 寿命を100フレームに設定
+        particles_.emplace_back(std::move(particle));
+    }
+}
+
 void AttackPhase4::Update()
 {
+    // パーティクルの更新
+    for (auto it = particles_.begin(); it != particles_.end(); ) {
+        Particle& particle = *it;
+
+        // パーティクルの位置を更新
+        Vector3 position = particle.object->GetTranslate();
+        position.x += particle.velocity.x;
+        position.y += particle.velocity.y;
+        position.z += particle.velocity.z;
+
+        // 空気抵抗を追加して徐々に速度を減少
+        /*particle.velocity.x *= 0.98f;
+        particle.velocity.y *= 0.98f;
+        particle.velocity.z *= 0.98f;*/
+
+        // 簡易的な重力処理
+        particle.velocity.y -= 0.06f;
+        particle.object->SetTranslate(position);
+        particle.object->Update();
+
+        // 寿命を減らし、寿命切れまたは地面に到達したら削除
+        particle.lifetime--;
+        if (particle.lifetime <= 0 || position.y < 0.0f) {
+            it = particles_.erase(it);
+        }
+        else {
+            ++it;
+        }
+    }
+
     // クールタイム中はカウンタを進める
     if (coolDownCounter_ > 0) {
         coolDownCounter_--;
@@ -35,12 +90,13 @@ void AttackPhase4::Update()
         meteor_->Update(); // 位置と回転の変更を反映
 
         if (position.y < 0.0f) { // 地面に到達したら隕石を削除
+            GenerateParticles(position);
             meteor_.reset();
             coolDownCounter_ = 120; // クールタイムを設定
         }
     }
 
-    // 次のフェーズに移行
+    // フェーズ遷移の条件
     if (boss_->GetHP() <= 50) {
         boss_->ChangeState(std::make_unique<AttackPhase5>(boss_));
     }
@@ -52,6 +108,11 @@ void AttackPhase4::Draw()
     if (meteor_) {
         meteor_->Draw();
     }
+
+    // パーティクルの描画
+    for (const auto& particle : particles_) {
+        particle.object->Draw();
+    }
 }
 
 void AttackPhase4::DropMeteor()
@@ -59,17 +120,17 @@ void AttackPhase4::DropMeteor()
     // ランダムな位置を生成
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<float> dist(-15.0f, 15.0f); // 2.0f ～ 10.0f の範囲
+    std::uniform_real_distribution<float> dist(-15.0f, 15.0f);
 
     float x = dist(gen);
     float z = dist(gen);
-    Vector3 meteorPosition = { x, 20.0f, z }; // ランダムな位置で隕石を生成
+    Vector3 meteorPosition = { x, 20.0f, z };
 
-    // 隕石オブジェクトを作成
+    // 隕石オブジェクトを初期化
     meteor_ = std::make_unique<Object3d>();
     meteor_->Initialize();
     meteor_->SetModel("Meteor.obj");
     meteor_->SetTranslate(meteorPosition);
     meteor_->SetScale({ 5.0f, 5.0f, 5.0f });
-    meteor_->Update(); // 初期状態を反映
+    meteor_->Update();
 }
