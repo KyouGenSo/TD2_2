@@ -7,32 +7,33 @@ class AttackPhase3 : public BossAttackBaseState
 {
 public:
 
-    AttackPhase3(Boss* boss);
+	AttackPhase3(Boss* boss);
 
-    void Update() override;
+	void Update() override;
 
-    void Draw() override;
+	void Draw() override;
 
-private:
-
-    void Normalize(Vector3& vec)
-    {
-        float length = std::sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
-        if (length > 0.0f) {
-            vec.x /= length;
-            vec.y /= length;
-            vec.z /= length;
-        }
-    }
-    
-    void FireBullets();
-
-    void RotateBoss();
-
-    std::list<BossBullet> bullets_; // 弾のリストで管理
+	const std::list<BossBullet>& GetBullets() const { return bullets_; }
 
 private:
-    int fireCounter_ = 0; // 弾発射用のカウンタ
-    int bulletsFired_ = 0;          // 発射された弾の数を管理
+
+	void Normalize(Vector3& vec) {
+		float length = std::sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+		if(length > 0.0f) {
+			vec.x /= length;
+			vec.y /= length;
+			vec.z /= length;
+		}
+	}
+
+	void FireBullets();
+
+	void RotateBoss();
+
+	std::list<BossBullet> bullets_; // 弾のリストで管理
+
+private:
+	int fireCounter_ = 0; // 弾発射用のカウンタ
+	int bulletsFired_ = 0;          // 発射された弾の数を管理
 };
 

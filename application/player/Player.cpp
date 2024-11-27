@@ -5,6 +5,7 @@
 #include <cmath>
 #include <numbers>
 #include <random>
+#include "BossBullet.h"
 
 void Player::Initialize(Boss* boss) {
 	// プレイヤーモデルの読み込みと設定
@@ -17,12 +18,10 @@ void Player::Initialize(Boss* boss) {
 	transform_.scale = { 5.0f, 5.0f, 5.0f };
 	transform_.rotate = { 0.0f, 0.0f, 0.0f };
 	transform_.translate = { 0.0f, 0.0f, -13.0f };
-	
+
 	boss_ = boss; // Boss のポインタを設定
 
 	followCamera_ = std::make_unique<FollowCamera>();
-
-
 
 	//// lightの初期設定-----------------------------------------------------------------------------------------------------------------------------
 
@@ -76,7 +75,7 @@ void Player::Initialize(Boss* boss) {
 
 void Player::Update() {
 	// ボスが存在しない場合、処理をスキップ
-	if (boss_ == nullptr) return;
+	if(boss_ == nullptr) return;
 
 	//ライト
 	Light();
@@ -85,7 +84,7 @@ void Player::Update() {
 	Move();
 
 	// 砂埃パーティクルの更新
-	for (auto it = dustParticles_.begin(); it != dustParticles_.end(); ) {
+	for(auto it = dustParticles_.begin(); it != dustParticles_.end(); ) {
 		DustParticle& particle = *it;
 
 		// パーティクルの位置を更新（Y軸の移動なし）
@@ -98,10 +97,9 @@ void Player::Update() {
 
 		// 寿命を減らし、寿命切れのパーティクルを削除
 		particle.lifetime--;
-		if (particle.lifetime <= 0) {
+		if(particle.lifetime <= 0) {
 			it = dustParticles_.erase(it);
-		}
-		else {
+		} else {
 			++it;
 		}
 	}
@@ -160,7 +158,7 @@ void Player::Draw() {
 	object3d_->Draw();
 
 	// 砂埃パーティクルの描画
-	for (const auto& particle : dustParticles_) {
+	for(const auto& particle : dustParticles_) {
 		particle.object->Draw();
 	}
 
@@ -168,11 +166,11 @@ void Player::Draw() {
 
 void Player::Move() {
 	// プレイヤーの左右移動 (Boss の周りを回転)
-	if (Input::GetInstance()->PushKey(DIK_A)) {
+	if(Input::GetInstance()->PushKey(DIK_A)) {
 		angle_ -= rotationSpeed_; // 左回転
 		GenerateDust();
 	}
-	if (Input::GetInstance()->PushKey(DIK_D)) {
+	if(Input::GetInstance()->PushKey(DIK_D)) {
 		angle_ += rotationSpeed_; // 右回転
 		GenerateDust();
 	}
@@ -187,17 +185,17 @@ void Player::Move() {
 	transform_.rotate.y = atan2f(directionToBoss.x, directionToBoss.z);
 
 	// ジャンプ処理
-	if (Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
+	if(Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
 		isJumping_ = true;
 		jumpVelocity_ = jumpPower_;
 		GenerateDust();
 	}
 
-	if (isJumping_) {
+	if(isJumping_) {
 		transform_.translate.y += jumpVelocity_;
 		jumpVelocity_ += gravity_;
 
-		if (transform_.translate.y <= 0.0f) {
+		if(transform_.translate.y <= 0.0f) {
 			transform_.translate.y = 0.0f;
 			isJumping_ = false;
 			jumpVelocity_ = 0.0f;
@@ -212,8 +210,8 @@ void Player::Light() {
 	static float directionHorizontalOffset = 0.0f; // ライトの方向のX軸オフセット
 
 	// ライト切り替え
-	if (Input::GetInstance()->TriggerKey(DIK_L)) {
-		if (isLightProfileToggled_) {
+	if(Input::GetInstance()->TriggerKey(DIK_L)) {
+		if(isLightProfileToggled_) {
 			currentLight_ = &narrowStrongLight_;
 		} else {
 			currentLight_ = &wideWeakLight_;
@@ -228,24 +226,28 @@ void Player::Light() {
 	const float minHorizontalOffset = -1.0f;
 
 	// 上下移動
-	if (Input::GetInstance()->PushKey(DIK_DOWN)) {
+	if(Input::GetInstance()->PushKey(DIK_DOWN)) {
 		directionVerticalOffset -= 0.02f; // 下方向に移動
 	}
-	if (Input::GetInstance()->PushKey(DIK_UP)) {
+	if(Input::GetInstance()->PushKey(DIK_UP)) {
 		directionVerticalOffset += 0.02f; // 上方向に移動
 	}
 	// 制限を適用
 	directionVerticalOffset = std::clamp(directionVerticalOffset, minVerticalOffset, maxVerticalOffset);
 
 	// 左右移動
-	if (Input::GetInstance()->PushKey(DIK_LEFT)) {
+	if(Input::GetInstance()->PushKey(DIK_LEFT)) {
 		directionHorizontalOffset -= 0.02f; // 左方向に回転
 	}
-	if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
+	if(Input::GetInstance()->PushKey(DIK_RIGHT)) {
 		directionHorizontalOffset += 0.02f; // 右方向に回転
 	}
 	// 制限を適用
 	directionHorizontalOffset = std::clamp(directionHorizontalOffset, minHorizontalOffset, maxHorizontalOffset);
+
+	//ライトの位置修正
+	directionVerticalOffset = std::sin(directionVerticalOffset);
+	directionHorizontalOffset = std::sin(directionHorizontalOffset);
 
 	// ライトの位置更新
 	currentLight_->lightPos = {
@@ -255,8 +257,8 @@ void Player::Light() {
 	};
 
 	// ボスの方向を基準にライトの方向を計算
-	Vector3 directionToBoss = { 
-		  boss_->GetTransform().translate.x - currentLight_->lightPos.x 
+	Vector3 directionToBoss = {
+		  boss_->GetTransform().translate.x - currentLight_->lightPos.x
 		, currentLight_->lightPos.y
 		, boss_->GetTransform().translate.z - currentLight_->lightPos.z };
 
@@ -295,8 +297,7 @@ void Player::Light() {
 
 
 
-void Player::DrawImGui()
-{
+void Player::DrawImGui() {
 	ImGui::Begin("Player SpotLight");
 
 	ImGui::Text("Current Light Profile: %s", isLightProfileToggled_ ? "Wide Weak" : "Narrow Strong");
@@ -316,7 +317,13 @@ void Player::DrawImGui()
 ///						 衝突判定イベント
 void Player::OnCollision(ObjectBase* objectBase) {
 	//Bossとの衝突判定
-	if (dynamic_cast<Boss*>(objectBase) != nullptr) {
+	if(dynamic_cast<Boss*>( objectBase ) != nullptr) {
+		//赤色に変更
+		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+
+	//ボスの弾との接触
+	if(dynamic_cast<BossBullet*>( objectBase ) != nullptr) {
 		//赤色に変更
 		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 	}

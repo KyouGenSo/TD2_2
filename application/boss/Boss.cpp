@@ -203,7 +203,7 @@ void Boss::HPUpdate() {
 	} else {
 		boxColor = Vector4(1.0f, 0.0f, 0.0f, 1.0f); // 赤
 	}
-}
+}	
 
 
 void Boss::HPDraw() {
@@ -252,9 +252,9 @@ void Boss::RespawnCores()
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> distRadius(0.0f, 10.0f);
+	std::uniform_real_distribution<float> distRadius(0.0f, 12.0f);
 	std::uniform_real_distribution<float> distAngle(0.0f, 2 * static_cast<float>(M_PI));
-	std::uniform_real_distribution<float> distHeight(0.0f, 20.0f);
+	std::uniform_real_distribution<float> distHeight(0.0f, 12.0f);
 
 	cores_.clear(); // 既存のコアをクリア
 

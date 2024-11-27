@@ -16,6 +16,9 @@
 #include <memory>
 #include "LightCollision.h"
 #include <vector>
+//コントローラー操作
+#include "XInput.h"
+
 
 class Player :public ObjectBase {
 	///--------------------------------------------------------------

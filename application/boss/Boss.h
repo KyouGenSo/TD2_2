@@ -17,7 +17,7 @@ class Boss : public ObjectBase {
 public: // メンバ関数
 
 	void DecreaseHP(uint32_t damage) {
-		if (hp_ > damage) {
+		if(hp_ > damage) {
 			hp_ -= damage;
 		} else {
 			hp_ = 0; // HPが0未満にならないようにする
@@ -74,6 +74,15 @@ public: // メンバ関数
 	//コア再生成関数
 	void RespawnCores();
 
+	//現在のステートを取得
+	BossAttackBaseState* GetCurrentState() {
+		return state_.get();
+	}
+
+
+
+
+
 private:// メンバ変数
 
 	std::unique_ptr<Object3d> object3d_ = nullptr;
@@ -101,7 +110,7 @@ private: // メンバ関数
 
 	// イージング関数 (Ease-In-Out)
 	float EaseInOut(float t) {
-		if (t < 0.5f) {
+		if(t < 0.5f) {
 			return 2.0f * t * t; // 前半: 加速
 		} else {
 			return 1.0f - pow(-2.0f * t + 2.0f, 2.0f) / 2.0f; // 後半: 減速
@@ -110,17 +119,17 @@ private: // メンバ関数
 
 	// イージング関数 (Ease-In-Expo)
 	float EaseInExpo(float t) {
-		return t == 0.0f ? 0.0f : pow(2.0f, 10.0f * (t - 1.0f)); // 最初はゆっくり、途中から急激に加速
+		return t == 0.0f ? 0.0f : pow(2.0f, 10.0f * ( t - 1.0f )); // 最初はゆっくり、途中から急激に加速
 	}
 
 	// イージング関数 (Ease-Out-Bounce)
 	float EaseOutBounce(float t) {
-		if (t < 1.0f / 2.75f) {
+		if(t < 1.0f / 2.75f) {
 			return 7.5625f * t * t;
-		} else if (t < 2.0f / 2.75f) {
+		} else if(t < 2.0f / 2.75f) {
 			t -= 1.5f / 2.75f;
 			return 7.5625f * t * t + 0.75f;
-		} else if (t < 2.5f / 2.75f) {
+		} else if(t < 2.5f / 2.75f) {
 			t -= 2.25f / 2.75f;
 			return 7.5625f * t * t + 0.9375f;
 		} else {
@@ -145,7 +154,7 @@ private: // メンバ関数
 	void GettingUp();
 
 	// 状態のメンバ関数ポインタのテーブル
-	static void (Boss::* spFuncTable[])();
+	static void ( Boss::* spFuncTable[] )( );
 
 	bool isVisible_ = false; // 核の可視性フラグ
 
