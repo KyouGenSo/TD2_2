@@ -131,8 +131,8 @@ private:
 	std::vector<DustParticle> dustParticles_; // 砂埃パーティクルのリスト
 	void GenerateDust();                     // 砂埃を生成する関数
 
-#ifdef _DEBUG
+
 	XINPUT_STATE controllerState_{}; 
-#endif // _DEBUG
+
 };
 

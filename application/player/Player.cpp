@@ -290,7 +290,7 @@ void Player::Light() {
 	const float minVerticalOffset = -1.0f;
 	const float maxHorizontalOffset = 1.0f; // 左右の制限
 	const float minHorizontalOffset = -1.0f;
-#ifdef _DEBUG
+
 	//コントローラでのライトの方向の変更
 	// 右スティックの入力値を取得
 	float RX = controllerState_.Gamepad.sThumbRX;
@@ -319,7 +319,7 @@ void Player::Light() {
 		directionVerticalOffset = std::clamp(directionVerticalOffset, minVerticalOffset, maxVerticalOffset);
 		directionHorizontalOffset = std::clamp(directionHorizontalOffset, minHorizontalOffset, maxHorizontalOffset);
 	}
-#endif // _DEBUG
+
 	//ライトの向きの変更
 	// ライトの方向オフセットを更新
 	if(Input::GetInstance()->PushKey(DIK_UP)) {
