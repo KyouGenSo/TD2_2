@@ -38,6 +38,7 @@ void Boss::Initialize() {
 		float height = distHeight(gen);
 		Vector3 offset = { radius * cos(angle), height, radius * sin(angle) };
 		core->Initialize(transform_.translate, offset);
+		core->SetBoss(this); // Bossの参照を設定
 	}
 
 	ChangeState(std::make_unique<AttackPhase1>(this)); // 初期状態を設定
@@ -139,23 +140,19 @@ void Boss::DrawImGui() {
 }
 
 void Boss::HPUpdate() {
-	if(Input::GetInstance()->PushKey(DIK_SPACE)) {
-		if(hp_ > 0) {
-			hp_ -= 1;
-			boxSize.x = static_cast<float>( hp_ );
-		}
-	}
+	// HPバーの幅を更新（HPの最大値を1000と仮定）
+	const float maxHP = 1000.0f;
+	boxSize.x = (static_cast<float>(hp_) / maxHP) * 1000.0f;
 
 	// HPバーの色を変更
-	float hpRatio = static_cast<float>( hp_ ) / 1000.0f;
-	if(hpRatio > 0.9f) {
+	float hpRatio = static_cast<float>(hp_) / maxHP;
+	if (hpRatio > 0.9f) {
 		boxColor = Vector4(0.0f, 1.0f, 0.0f, 1.0f); // 緑
-	}
-	else if (hpRatio > 0.7f) {
+	} else if (hpRatio > 0.7f) {
 		boxColor = Vector4(0.3f, 1.0f, 0.0f, 1.0f); // 黄緑
-	} else if(hpRatio > 0.5f) {
+	} else if (hpRatio > 0.5f) {
 		boxColor = Vector4(1.0f, 1.0f, 0.0f, 1.0f); // 黄色
-	} else if(hpRatio > 0.2f) {
+	} else if (hpRatio > 0.2f) {
 		boxColor = Vector4(1.0f, 0.5f, 0.0f, 1.0f); // オレンジ
 	} else {
 		boxColor = Vector4(1.0f, 0.0f, 0.0f, 1.0f); // 赤

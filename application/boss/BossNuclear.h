@@ -4,6 +4,7 @@
 #include <Object3d.h>
 #include "ObjectBase.h"
 
+class Boss;
 
 class BossNuclear : public ObjectBase
 {
@@ -24,6 +25,7 @@ public:
 	///						 
 	// 核の位置を取得
 	Transform& GetTransform() { return transform_; }
+	void SetBoss(Boss* boss) { boss_ = boss; }
 
 	// 核の位置を設定
 	void SetTransform(const Transform& transform) { transform_ = transform; }
@@ -35,6 +37,10 @@ private:
 	std::unique_ptr<Object3d> object3d_; // 核の描画用オブジェクト
 
 	float alpha_ = 1.0f;     // 核の透明度（0.0～1.0）
+
+	Boss* boss_ = nullptr; // Bossへの参照
+
+	bool isDestroyed_ = false; // 核が壊れたかどうかを示すフラグ
 
 };
 

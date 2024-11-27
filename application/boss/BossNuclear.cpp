@@ -68,6 +68,11 @@ void BossNuclear::OnCollision(ObjectBase* objectBase) {
 
 		if (alpha_ <= 0.0f) {
 			// 透明になった後の処理を追加（必要に応じて）
-		}
+		}	
+	}
+
+	if (alpha_ <= 0.0f && !isDestroyed_ && boss_ != nullptr) {
+		isDestroyed_ = true; // 核が壊れた状態を記録
+		boss_->DecreaseHP(50); // HPを減らす
 	}
 }
