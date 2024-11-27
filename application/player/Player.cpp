@@ -30,10 +30,10 @@ void Player::Initialize(Boss* boss) {
 	isTutorial_ = true; // チュートリアル開始
 	tutorialElapsedTime_ = 0.0f; // 経過時間を初期化
 
-	TextureManager::GetInstance()->LoadTexture("Core.png");
+	TextureManager::GetInstance()->LoadTexture("phase1.png");
 
 	tutorialSprite_ = std::make_unique<Sprite>();
-	tutorialSprite_->Initialize("Core.png"); // テクスチャファイル名を指定
+	tutorialSprite_->Initialize("phase1.png"); // テクスチャファイル名を指定
 	tutorialSprite_->SetPos({ 300, 250 });      // 描画位置を指定 (画面中央)
 	tutorialSprite_->SetSize({ 256, 256 });     // スプライトサイズを指定
 
