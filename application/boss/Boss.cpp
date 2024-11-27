@@ -11,6 +11,7 @@
 #include <memory>
 #include "Player.h"
 #include <random>
+#include <SceneManager.h>
 
 void Boss::Initialize() {
 	object3d_ = std::make_unique<Object3d>();
@@ -80,9 +81,30 @@ void Boss::Update() {
 	// HPの更新
 	HPUpdate();
 
+	// HPが0以下の場合、ClearSceneに移行
+	if (hp_ <= 0) {
+		SceneManager::GetInstance()->ChangeScene("clear");
+		return; // 処理を中断して早期リターン
+	}
+
 	// ステートの更新
 	if (state_) {
 		state_->Update();
+	}
+
+	// コアの状態チェック
+	allCoresDestroyed_ = std::all_of(cores_.begin(), cores_.end(), [](const std::unique_ptr<BossNuclear>& core) {
+		return core->IsVisible() == false;
+		});
+
+	// 全てのコアが破壊された場合の再生成処理
+	if (allCoresDestroyed_) {
+		coreRespawnTimer_ += 1.0f / 60.0f; // フレーム単位でタイマー進行
+		if (coreRespawnTimer_ >= 3.0f) {
+			RespawnCores();
+			coreRespawnTimer_ = 0.0f; // タイマーリセット
+			allCoresDestroyed_ = false; // 状態リセット
+		}
 	}
 
 	// 核の更新
@@ -187,7 +209,7 @@ void Boss::HPUpdate() {
 void Boss::HPDraw() {
 	// 背景用の薄い黒色のボックスを描画
 	Vector4 backgroundColor = Vector4(0.0f, 0.0f, 0.0f, 0.5f); // 薄い黒色
-	Vector2 backgroundSize = Vector2(1000.0f, boxSize.y);       // 初期サイズの幅と現在の高さ
+	Vector2 backgroundSize = Vector2(1000.0f, boxSize.y);      // 初期サイズの幅と現在の高さ
 	Draw2D::GetInstance()->DrawBox(boxPosition, backgroundSize, backgroundColor);
 
 	// HPバーを描画
@@ -226,10 +248,33 @@ void Boss::OnCollision(ObjectBase* objectBase) {
 	}
 }
 
+void Boss::RespawnCores()
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> distRadius(0.0f, 10.0f);
+	std::uniform_real_distribution<float> distAngle(0.0f, 2 * static_cast<float>(M_PI));
+	std::uniform_real_distribution<float> distHeight(0.0f, 20.0f);
+
+	cores_.clear(); // 既存のコアをクリア
+
+	for (int i = 0; i < 5; ++i) {
+		auto core = std::make_unique<BossNuclear>();
+		float radius = distRadius(gen);
+		float angle = distAngle(gen);
+		float height = distHeight(gen);
+		Vector3 offset = { radius * cos(angle), height, radius * sin(angle) };
+		core->Initialize(transform_.translate, offset);
+		core->SetBoss(this);
+		core->SetVisible(true); // 再生成時は表示
+		cores_.push_back(std::move(core));
+	}
+}
+
 // メンバ関数ポインタのテーブルの実体
 void (Boss::* Boss::spFuncTable[])() = {
 	&Boss::Usually,
-	&Boss::Down,
+	&Boss::Down,	
 	&Boss::GettingUp
 };
 

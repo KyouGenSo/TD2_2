@@ -195,6 +195,7 @@
     </ClCompile>
     <ClCompile Include="BossBullet.cpp" />
     <ClCompile Include="LightCollision.cpp" />
+    <ClCompile Include="OverScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\GameScene.h">
@@ -359,6 +360,7 @@
     </ClInclude>
     <ClInclude Include="BossBullet.h" />
     <ClInclude Include="LightCollision.h" />
+    <ClInclude Include="OverScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\FullScreen.hlsli">

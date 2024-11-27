@@ -32,6 +32,9 @@ public:
 	// 核の位置を設定
 	void SetTransform(const Transform& transform) { transform_ = transform; }
 
+	bool IsDestroyed() const { return isDestroyed_; } // 核が破壊されているか取得
+	void ResetCore(); // 核をリセットするメソッド
+
 private:
 	Transform transform_;    // 核の現在位置
 	Vector3 offset_;      // ボスからのオフセット位置
@@ -45,6 +48,9 @@ private:
 	bool isDestroyed_ = false; // 核が壊れたかどうかを示すフラグ
 
 	bool isVisible_ = false; // 核の可視性
+
+	float destructionTimer_ = 0.0f; // 破壊後のタイマー
+	const float destructionDuration_ = 3.0f; // 核が消えるまでの時間（秒）
 
 };
 
