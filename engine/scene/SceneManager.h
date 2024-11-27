@@ -53,6 +53,11 @@ public: // メンバ関数
 	/// </summary>
 	void SetSceneFactory(AbstractSceneFactory* sceneFactory) { m_sceneFactory_ = sceneFactory; }
 
+	/// <summary>
+	/// シーンの取得
+	/// </summary>
+	uint32_t GetSceneIndex() { return m_sceneFactory_->GetSceneType(); }
+
 private: // メンバ変数
 
 	// シーン

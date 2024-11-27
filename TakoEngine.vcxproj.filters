@@ -55,6 +55,9 @@
     <FxCompile Include="resources\shaders\Sprite.VS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="resources\shaders\BloomFog.PS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application\scene\MyGame.cpp">
@@ -194,6 +197,8 @@
       <Filter>ソースファイル\engine\func\math</Filter>
     </ClCompile>
     <ClCompile Include="BossBullet.cpp" />
+    <ClCompile Include="LightCollision.cpp" />
+    <ClCompile Include="OverScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\GameScene.h">
@@ -357,6 +362,8 @@
       <Filter>ヘッダーファイル\engine\func\math</Filter>
     </ClInclude>
     <ClInclude Include="BossBullet.h" />
+    <ClInclude Include="LightCollision.h" />
+    <ClInclude Include="OverScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\FullScreen.hlsli">

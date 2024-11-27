@@ -58,6 +58,7 @@ public: // メンバー関数
 	void SetScale(const Vector3& scale) { transform_.scale = scale; }
 	void SetRotate(const Vector3& rotate) { transform_.rotate = rotate; }
 	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
+	void SetAlpha(float alpha);
 
 	// ライトの設定
 	void SetShininess(float shininess);
@@ -92,4 +93,6 @@ private: // メンバー変数
 	// バッファリソース内のデータを指すポインタ
 	TransformationMatrix* transformationMatData_ = nullptr;
 	CameraForGPU* cameraForGPUData_ = nullptr;
+
+	Vector4 material_ = { 1.0f, 1.0f, 1.0f, 1.0f }; // RGBA 色データ（初期値を設定）
 };

@@ -9,7 +9,7 @@ void BossBullet::Initialize()
 {
     object3d_ = std::make_unique<Object3d>();
     object3d_->Initialize();
-    object3d_->SetModel("player.obj"); // 弾用のモデルを設定
+    object3d_->SetModel("Meteor.obj"); // 弾用のモデルを設定
     object3d_->SetScale({ 1.0f, 1.0f, 1.0f }); // 弾のサイズを小さく設定
 }
 

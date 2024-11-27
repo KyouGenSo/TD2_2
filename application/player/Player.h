@@ -14,6 +14,8 @@
 #include "Light.h"
 #include "ObjectBase.h"
 #include <memory>
+#include "LightCollision.h"
+#include <vector>
 
 class Player :public ObjectBase {
 	///--------------------------------------------------------------
@@ -50,6 +52,10 @@ public:
 
 	// プレイヤーの現在位置を取得
 	Vector3 GetPosition() const { return transform_.translate; }
+
+	//ライトの当たり判定のゲッター
+	LightCollision* GetLightCollision() { return lightCollision_.get(); }
+
 
 
 	///--------------------------------------------------------------
@@ -106,6 +112,20 @@ private:
 
 	int actionDelay_ = 180; // 行動制限時間（フレーム数）
 	bool canAct_ = false;  // プレイヤーが行動可能かどうか
+
+	//ライトの当たり判定(ユニークポインタ)
+	std::unique_ptr<LightCollision> lightCollision_ = nullptr;
+
+private:
+	// パーティクル管理用の構造体
+	struct DustParticle {
+		std::unique_ptr<Object3d> object; // パーティクルオブジェクト
+		Vector3 velocity;                // 速度
+		int lifetime;                    // 寿命（フレーム数）
+	};
+
+	std::vector<DustParticle> dustParticles_; // 砂埃パーティクルのリスト
+	void GenerateDust();                     // 砂埃を生成する関数
 
 };
 

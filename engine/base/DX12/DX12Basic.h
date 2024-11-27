@@ -102,7 +102,7 @@ public: // メンバー関数
 	ID3D12Device* GetDevice() {
 		return device_.Get();
 	}
-	
+
 	/// <summary>
 	/// コマンドリストの取得
 	/// </summary>
@@ -136,6 +136,13 @@ public: // メンバー関数
 	///	</summary>
 	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVHeapHandleStart() {
 		return dsvHeap_->GetCPUDescriptorHandleForHeapStart();
+	}
+
+	/// <summary>
+	/// 深度バッファのリソースの取得
+	///	</summary>
+	ID3D12Resource* GetDepthStencilResource() {
+		return depthStencilResource_.Get();
 	}
 
 private: // プライベートメンバー関数
@@ -218,7 +225,7 @@ private: // プライベートメンバー関数
 	/// バリアの設定
 	/// </summary>
 	void SetBarrier(D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter);
-
+	void SetBarrier(D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter, ID3D12Resource* resource);
 
 private: // メンバ変数
 
@@ -294,10 +301,5 @@ private: // メンバ変数
 
 	// デフォルトインクルードハンドラー
 	ComPtr<IDxcIncludeHandler> includeHandler_ = nullptr;
-
-	
-	//ComPtr<ID3D12Resource> bufferResource_;
-
-	//ComPtr<ID3D12Resource> textureResource_;
 
 };

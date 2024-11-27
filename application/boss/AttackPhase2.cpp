@@ -3,8 +3,9 @@
 constexpr float kPI = 3.14159265358979323846f;
 #include <random>
 #include <AttackPhase3.h>
+#include "FollowCamera.h"
 
-AttackPhase2::AttackPhase2(Boss* boss) : BossAttackBaseState("Phase2", boss) {
+AttackPhase2::AttackPhase2(Boss* boss) : BossAttackBaseState("Phase2", boss), followCamera_(std::make_unique<FollowCamera>()) {
     InitializeShockWaveObjects(shockWaveObjectCount_);
 }
 
@@ -25,6 +26,11 @@ void AttackPhase2::Update() {
             transform.translate.y = 0.0f;
             state_ = PhaseState::ShockWave;
             ActivateShockWave();
+
+            //followCamera_ = std::make_unique<FollowCamera>();
+            followCamera_->StartShake(80, 10.5f);
+            //followCamera_->UpdateShake();
+            
         }
         break;
 
@@ -42,10 +48,19 @@ void AttackPhase2::Update() {
         break;
     }
 
-    // フェーズ終了条件: HPが70%以下
-    if (boss_->GetHP() <= 700) {
+    if (followCamera_) {
+        followCamera_->UpdateShake();
+    }
+
+    // フェーズ終了条件: y軸が0.0fでHPが700以下
+    if (transform.translate.y == 0.0f && boss_->GetHP() <= 700) {
         boss_->ChangeState(std::make_unique<AttackPhase3>(boss_));
     }
+
+    //// フェーズ終了条件: HPが70%以下
+    //if (boss_->GetHP() <= 700) {
+    //    boss_->ChangeState(std::make_unique<AttackPhase3>(boss_));
+    //}
 }
 
 void AttackPhase2::Draw() {

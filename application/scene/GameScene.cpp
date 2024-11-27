@@ -24,7 +24,7 @@ void GameScene::Initialize()
 	/// ================================== ///
 
 	// 平行光源の設定
-	Object3dBasic::GetInstance()->SetDirectionalLightIntensity(1.0f);
+	Object3dBasic::GetInstance()->SetDirectionalLightIntensity(0.18f);
 
 	ModelManager::GetInstance()->LoadModel("player.obj");
 	ModelManager::GetInstance()->LoadModel("Boss.obj");
@@ -33,6 +33,8 @@ void GameScene::Initialize()
 	ModelManager::GetInstance()->LoadModel("Title.obj");
 	ModelManager::GetInstance()->LoadModel("Nuclear.obj");
 	ModelManager::GetInstance()->LoadModel("ShockWave.obj");
+	ModelManager::GetInstance()->LoadModel("Meteor.obj");
+	ModelManager::GetInstance()->LoadModel("Prediction.obj");
 	TextureManager::GetInstance()->LoadTexture("Nuclear.png");
 	TextureManager::GetInstance()->LoadTexture("ShockWave.png");
 
@@ -109,11 +111,13 @@ void GameScene::Update()
 	collisionManager_->Reset();
 	//追加
 	collisionManager_->AddCollider(player_.get());//プレイヤー
+	//プレイヤーのライトの当たり判定の追加
+	collisionManager_->AddCollider(player_->GetLightCollision());
 	collisionManager_->AddCollider(boss_);		  //ボス
 	//ボスのコアの追加
-	std::vector<BossNuclear>& cores = boss_->GetCores();
-	for(auto& core : cores) {
-		collisionManager_->AddCollider(&core);
+	std::vector<std::unique_ptr<BossNuclear>>& cores = boss_->GetCores();
+	for (auto& core : cores) {
+		collisionManager_->AddCollider(core.get()); // unique_ptrから生のポインタを取得
 	}
 
 	//すべての当たり判定をチェック
