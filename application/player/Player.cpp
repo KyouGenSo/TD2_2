@@ -185,6 +185,12 @@ void Player::Light() {
 		isLightProfileToggled_ = !isLightProfileToggled_;
 	}
 
+	// オフセットの制限値
+	const float maxVerticalOffset = 1.0f; // 上下の制限
+	const float minVerticalOffset = -1.0f;
+	const float maxHorizontalOffset = 1.0f; // 左右の制限
+	const float minHorizontalOffset = -1.0f;
+
 	// 上下移動
 	if (Input::GetInstance()->PushKey(DIK_DOWN)) {
 		directionVerticalOffset -= 0.02f; // 下方向に移動
@@ -192,6 +198,8 @@ void Player::Light() {
 	if (Input::GetInstance()->PushKey(DIK_UP)) {
 		directionVerticalOffset += 0.02f; // 上方向に移動
 	}
+	// 制限を適用
+	directionVerticalOffset = std::clamp(directionVerticalOffset, minVerticalOffset, maxVerticalOffset);
 
 	// 左右移動
 	if (Input::GetInstance()->PushKey(DIK_LEFT)) {
@@ -200,6 +208,8 @@ void Player::Light() {
 	if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
 		directionHorizontalOffset += 0.02f; // 右方向に回転
 	}
+	// 制限を適用
+	directionHorizontalOffset = std::clamp(directionHorizontalOffset, minHorizontalOffset, maxHorizontalOffset);
 
 	// ライトの位置更新
 	currentLight_->lightPos = {
