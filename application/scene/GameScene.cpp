@@ -68,11 +68,17 @@ void GameScene::Initialize() {
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
 
+	// スプライトの初期化
+	TextureManager::GetInstance()->LoadTexture("tutorial.png");
 
+	sprite_ = new Sprite();
+	sprite_->Initialize("tutorial.png");
+	sprite_->SetPos(Vector2(140.0f, 140.0f));
 }
 
 void GameScene::Finalize() {
 	delete boss_;
+	delete sprite_;
 }
 
 void GameScene::Update() {
@@ -105,6 +111,9 @@ void GameScene::Update() {
 	//---------------------------------------
 	// 天球の更新
 	skydome_->Update();
+
+	// spriteの更新
+	sprite_->Update();
 
 	//---------------------------------------
 	// コリジョンマネージャの処理
@@ -193,7 +202,8 @@ void GameScene::Draw() {
 	//---------------------------------------
 
 	// チュートリアル中のスプライト描画
-	player_->DrawSprite();
+	if (player_->GetisTutorial())
+	sprite_->Draw();
 
 	// コリジョンマネージャの描画
 	collisionManager_->Draw();

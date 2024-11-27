@@ -48,7 +48,7 @@ public:
 	/// @param objectBase 衝突したオブジェクト
 	void OnCollision(ObjectBase* objectBase) override;
 
-	// スプライト描画関数
+	/// スプライト描画関数
 	void DrawSprite();
 
 
@@ -64,7 +64,7 @@ public:
 	//ライトの当たり判定のゲッター
 	LightCollision* GetLightCollision() { return lightCollision_.get(); }
 
-
+	bool GetisTutorial() { return isTutorial_; }
 
 	///--------------------------------------------------------------
 	///							メンバ変数

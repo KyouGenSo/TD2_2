@@ -97,6 +97,8 @@ void TitleScene::Initialize() {
 
 	// 初期ライト設定
 	currentLight_ = &narrowStrongLight_;
+
+
 }
 
 void TitleScene::Finalize() {
@@ -149,6 +151,7 @@ void TitleScene::Update() {
 	// ライト
 	Light();
 
+	//========================================
 
 
 	if(Input::GetInstance()->TriggerKey(DIK_RETURN)) {

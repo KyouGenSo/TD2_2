@@ -34,8 +34,8 @@ void Player::Initialize(Boss* boss) {
 
 	tutorialSprite_ = std::make_unique<Sprite>();
 	tutorialSprite_->Initialize("phase1.png"); // テクスチャファイル名を指定
-	tutorialSprite_->SetPos({ 300, 250 });      // 描画位置を指定 (画面中央)
-	tutorialSprite_->SetSize({ 256, 256 });     // スプライトサイズを指定
+	tutorialSprite_->SetPos({ 0.0f, 0.0f });      // 描画位置を指定 (画面中央)
+	//tutorialSprite_->SetSize({ 256, 256 });     // スプライトサイズを指定
 
 	//// lightの初期設定-----------------------------------------------------------------------------------------------------------------------------
 
@@ -94,7 +94,7 @@ void Player::Update() {
 	// チュートリアル中の処理
 	if (isTutorial_) {
 		tutorialElapsedTime_ += 1.0f / 60.0f; // フレームレート60FPSを想定
-		if (tutorialElapsedTime_ >= 5.0f) { // 5秒経過したらチュートリアル終了
+		if (tutorialElapsedTime_ >= 8.0f) { // 5秒経過したらチュートリアル終了
 			isTutorial_ = false;
 		}
 		return; // 入力処理やその他の更新をスキップ
@@ -447,13 +447,6 @@ void Player::OnCollision(ObjectBase* objectBase) {
 	}
 }
 
-void Player::DrawSprite()
-{
-	if (isTutorial_) {
-		tutorialSprite_->Draw(); // スプライトを描画
-	}
-}
-
 void Player::GenerateDust() {
 	// ランダムな速度を生成
 	std::random_device rd;
@@ -475,6 +468,13 @@ void Player::GenerateDust() {
 	Vector3 velocity = { distX(gen), 0.0f, distZ(gen) };
 	DustParticle particle = { std::move(particleObject), velocity, 30 }; // 寿命30フレーム
 	dustParticles_.emplace_back(std::move(particle));
+}
+
+void Player::DrawSprite()
+{
+	//if (isTutorial_) {
+	tutorialSprite_->Draw(); // スプライトを描画
+	//}
 }
 
 
