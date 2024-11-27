@@ -15,6 +15,7 @@
 #include "ObjectBase.h"
 #include <memory>
 #include "LightCollision.h"
+#include <vector>
 
 class Player :public ObjectBase {
 	///--------------------------------------------------------------
@@ -114,6 +115,17 @@ private:
 
 	//ライトの当たり判定(ユニークポインタ)
 	std::unique_ptr<LightCollision> lightCollision_ = nullptr;
+
+private:
+	// パーティクル管理用の構造体
+	struct DustParticle {
+		std::unique_ptr<Object3d> object; // パーティクルオブジェクト
+		Vector3 velocity;                // 速度
+		int lifetime;                    // 寿命（フレーム数）
+	};
+
+	std::vector<DustParticle> dustParticles_; // 砂埃パーティクルのリスト
+	void GenerateDust();                     // 砂埃を生成する関数
 
 };
 

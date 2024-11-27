@@ -4,6 +4,7 @@
 #include "ImGuiManager.h"
 #include <cmath>
 #include <numbers>
+#include <random>
 
 void Player::Initialize(Boss* boss) {
 	// プレイヤーモデルの読み込みと設定
@@ -83,6 +84,30 @@ void Player::Update() {
 	// 移動処理
 	Move();
 
+	// 砂埃パーティクルの更新
+	for (auto it = dustParticles_.begin(); it != dustParticles_.end(); ) {
+		DustParticle& particle = *it;
+
+		// パーティクルの位置を更新（Y軸の移動なし）
+		Vector3 position = particle.object->GetTranslate();
+		position.x += particle.velocity.x;
+		position.z += particle.velocity.z;
+
+		particle.object->SetTranslate(position);
+		particle.object->Update();
+
+		// 寿命を減らし、寿命切れのパーティクルを削除
+		particle.lifetime--;
+		if (particle.lifetime <= 0) {
+			it = dustParticles_.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+
+
+
 	// BossにPlayerの位置を通知
 	boss_->SetPlayerPosition(transform_.translate);
 
@@ -133,15 +158,23 @@ void Player::Update() {
 void Player::Draw() {
 	// モデルの描画
 	object3d_->Draw();
+
+	// 砂埃パーティクルの描画
+	for (const auto& particle : dustParticles_) {
+		particle.object->Draw();
+	}
+
 }
 
 void Player::Move() {
 	// プレイヤーの左右移動 (Boss の周りを回転)
 	if (Input::GetInstance()->PushKey(DIK_A)) {
 		angle_ -= rotationSpeed_; // 左回転
+		GenerateDust();
 	}
 	if (Input::GetInstance()->PushKey(DIK_D)) {
 		angle_ += rotationSpeed_; // 右回転
+		GenerateDust();
 	}
 
 	// Boss の位置を中心に円状に移動
@@ -157,6 +190,7 @@ void Player::Move() {
 	if (Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
 		isJumping_ = true;
 		jumpVelocity_ = jumpPower_;
+		GenerateDust();
 	}
 
 	if (isJumping_) {
@@ -167,8 +201,10 @@ void Player::Move() {
 			transform_.translate.y = 0.0f;
 			isJumping_ = false;
 			jumpVelocity_ = 0.0f;
+			GenerateDust();
 		}
 	}
+
 }
 
 void Player::Light() {
@@ -248,6 +284,14 @@ void Player::Light() {
 	);
 }
 
+
+
+
+
+
+
+
+
 void Player::DrawImGui()
 {
 	ImGui::Begin("Player SpotLight");
@@ -274,4 +318,28 @@ void Player::OnCollision(ObjectBase* objectBase) {
 		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 	}
 }
+
+void Player::GenerateDust() {
+	// ランダムな速度を生成
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> distX(-0.1f, 0.1f); // 水平方向のランダムな速度
+	std::uniform_real_distribution<float> distZ(-0.1f, 0.1f);
+
+	Vector3 position = transform_.translate; // プレイヤーの足元
+	position.y = 0.1f;
+
+	auto particleObject = std::make_unique<Object3d>();
+	particleObject->Initialize();
+	particleObject->SetModel("ShockWave.obj");
+	particleObject->SetTranslate(position);
+	particleObject->SetScale({ 0.3f, 0.2f, 0.2f });
+	particleObject->Update();
+
+	// Y軸方向の速度を 0 に設定
+	Vector3 velocity = { distX(gen), 0.0f, distZ(gen) };
+	DustParticle particle = { std::move(particleObject), velocity, 30 }; // 寿命30フレーム
+	dustParticles_.emplace_back(std::move(particle));
+}
+
 

@@ -287,9 +287,9 @@ void Boss::Usually() {
 		state_->Update();
 	}*/
 
-	if (Input::GetInstance()->PushKey(DIK_V)) {
+	/*if(Input::GetInstance()->PushKey(DIK_V)) {
 		phase_ = Phase::Down;
-	}
+	}*/
 }
 
 void Boss::Down() {

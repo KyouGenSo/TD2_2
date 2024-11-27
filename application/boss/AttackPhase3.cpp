@@ -13,18 +13,18 @@ void AttackPhase3::Update()
     fireCounter_++;
 
     // 弾発射中のみボスを回転させる
-    if (bulletsFired_ < 60) {
+    if (bulletsFired_ < 20) {
         RotateBoss();
     }
 
     // 3秒間（180フレーム）で弾を60発発射
-    if (bulletsFired_ < 60 && fireCounter_ % 3 == 0) { // 3フレームに1回発射
+    if (bulletsFired_ < 20 && fireCounter_ % 3 == 0) { // 3フレームに1回発射
         FireBullets();
         bulletsFired_++;
     }
 
     // 全弾発射後はクールタイム
-    if (bulletsFired_ >= 60 && fireCounter_ >= 360) {
+    if (bulletsFired_ >= 20 && fireCounter_ >= 360) {
         bulletsFired_ = 0;   // 弾発射カウントをリセット
         fireCounter_ = 0;   // カウンタをリセット
     }
