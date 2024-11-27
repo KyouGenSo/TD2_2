@@ -198,6 +198,8 @@ void GameScene::Draw() {
 	// ボスのHPバーの描画
 	boss_->HPDraw();
 
+	player_->DrawHPBar();
+
 
 	//--------------------------------------------------//
 }
