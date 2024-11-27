@@ -26,18 +26,15 @@ public: // メンバ関数
 	/// </summary>
 	void Draw() override;
 
-	/// <summary>
-	/// DX12を取得
-	/// </summary>
-	DX12Basic* GetDX12() { return dx12_; }
-
 private: // メンバ変数
 
 	float vignettePower = 0.f;
 	float vignetteRange = 20.0f;
-	float bloomThreshold = 1.0f;
+	float bloomThreshold = 0.12f;
 	float bloomIntensity = 1.0f;
-	float bloomSigma = 2.0f;
+	float bloomSigma = 3.0f;
+	Vector4 fogColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	float fogDensity = 0.002f;
 
 	enum PostEffectType
 	{
@@ -47,8 +44,9 @@ private: // メンバ変数
 		GrayScale,
 		VigRedGrayScale,
 		Bloom,
+		BloomFog,
 	};
 
-	PostEffectType postEffectType = NoEffect;
+	PostEffectType postEffectType;
 
 };

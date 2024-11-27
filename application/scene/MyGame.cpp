@@ -25,7 +25,18 @@ void MyGame::Initialize()
 	sceneFactory_ = new SceneFactory();
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
 	SceneManager::GetInstance()->ChangeScene("title", 0.0f);
+
+	postEffectType = NoEffect;
+	PostEffect::GetInstance()->SetBloomIntensity(bloomIntensity);
+	PostEffect::GetInstance()->SetBloomThreshold(bloomThreshold);
+	PostEffect::GetInstance()->SetBloomSigma(bloomSigma);
+	PostEffect::GetInstance()->SetFogColor(fogColor);
+	PostEffect::GetInstance()->SetFogDensity(fogDensity);
+
 }
+
+
+
 
 void MyGame::Finalize()
 {
@@ -40,17 +51,25 @@ void MyGame::Finalize()
 
 void MyGame::Update()
 {
-
-	TakoFramework::Update();
+	// カメラの更新
+	defaultCamera_->Update();
 
 	// 入力情報の更新
 	Input::GetInstance()->Update();
 
+	TakoFramework::Update();
+
 	//　サウンドの更新
 	Audio::GetInstance()->Update();
 
-	// カメラの更新
-	defaultCamera_->Update();
+	uint32_t sceneIndex = SceneManager::GetInstance()->GetSceneIndex();
+	if (sceneIndex == 1)
+	{
+		postEffectType = BloomFog;
+	} else
+	{
+		postEffectType = NoEffect;
+	}
 
 }
 
@@ -99,6 +118,9 @@ void MyGame::Draw()
 	case::MyGame::Bloom:
 		PostEffect::GetInstance()->Draw("Bloom");
 		break;
+	case::MyGame::BloomFog:
+		PostEffect::GetInstance()->Draw("BloomFog");
+		break;
 	}
 
 
@@ -126,6 +148,7 @@ void MyGame::Draw()
 			ImGui::RadioButton("GrayScale", (int*)&postEffectType, GrayScale);
 			ImGui::RadioButton("VigRedGrayScale", (int*)&postEffectType, VigRedGrayScale);
 			ImGui::RadioButton("Bloom", (int*)&postEffectType, Bloom);
+			ImGui::RadioButton("BloomFog", (int*)&postEffectType, BloomFog);
 
 			ImGui::EndTabItem();
 		}
@@ -147,7 +170,7 @@ void MyGame::Draw()
 				PostEffect::GetInstance()->SetBloomThreshold(bloomThreshold);
 			}
 
-			if (postEffectType == Bloom)
+			if (postEffectType == Bloom || postEffectType == BloomFog)
 			{
 				ImGui::DragFloat("BloomIntensity", &bloomIntensity, 0.01f, 0.0f, 10.0f);
 				PostEffect::GetInstance()->SetBloomIntensity(bloomIntensity);
@@ -155,6 +178,14 @@ void MyGame::Draw()
 				PostEffect::GetInstance()->SetBloomThreshold(bloomThreshold);
 				ImGui::DragFloat("BloomSigma", &bloomSigma, 0.01f, 0.0f, 10.0f);
 				PostEffect::GetInstance()->SetBloomSigma(bloomSigma);
+			}
+
+			if (postEffectType == BloomFog)
+			{
+				ImGui::ColorEdit4("FogColor", &fogColor.x);
+				PostEffect::GetInstance()->SetFogColor(fogColor);
+				ImGui::DragFloat("FogDensity", &fogDensity, 0.001f, 0.0f, 1.0f);
+				PostEffect::GetInstance()->SetFogDensity(fogDensity);
 			}
 
 			ImGui::EndTabItem();

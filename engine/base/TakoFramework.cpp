@@ -10,7 +10,6 @@
 #include "PostEffect.h"
 #include "DebugCamera.h"
 #include "Transition.h"
-#include "ParticleManager.h"
 
 void TakoFramework::Initialize()
 {
@@ -35,8 +34,6 @@ void TakoFramework::Initialize()
 
 	ModelManager::GetInstance()->Initialize(dx12_);
 
-	PostEffect::GetInstance()->Initialize(dx12_);
-
 	Object3dBasic::GetInstance()->Initialize(dx12_);
 
 	SpriteBasic::GetInstance()->Initialize(dx12_);
@@ -54,14 +51,7 @@ void TakoFramework::Initialize()
 	// デフォルトカメラを設定
 	Object3dBasic::GetInstance()->SetCamera(defaultCamera_);
 
-	// カメラマネージャーの初期化
-	cameraManager_ = new CameraManager();
-	cameraManager_->AddCamera(defaultCamera_);
-
-	// particleManagerの初期化
-	ParticleManager::GetInstance()->Initialize(dx12_);
-	ParticleManager::GetInstance()->SetCameraManager(cameraManager_);
-
+	PostEffect::GetInstance()->Initialize(dx12_);
 #pragma endregion
 
 }
@@ -97,9 +87,6 @@ void TakoFramework::Finalize()
 
 	// トランジションの解放
 	Transition::GetInstance()->Finalize();
-
-	// particleManagerの解放
-	ParticleManager::GetInstance()->Finalize();
 
 #ifdef _DEBUG
 	// ImGuiManagerの終了処理
