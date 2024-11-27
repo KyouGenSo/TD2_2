@@ -136,6 +136,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)application\player;$(ProjectDir)application\followCamera;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="application\ground\Ground.cpp" />
+    <ClCompile Include="MAudio.cpp" />
     <ClCompile Include="LightCollision.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\func\mathFunc\Mat4x4Func.cpp" />
@@ -225,6 +226,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\player\Player.h" />
     <ClInclude Include="application\scene\SelectScene.h" />
     <ClInclude Include="application\skydome\Skydome.h" />
+    <ClInclude Include="MAudio.h" />
     <ClInclude Include="LightCollision.h" />
     <ClInclude Include="OverScene.h" />
   </ItemGroup>

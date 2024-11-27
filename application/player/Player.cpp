@@ -1,7 +1,9 @@
 #include "Player.h"
 #include "Input.h"
 #include "ModelManager.h"
+#ifdef _DEBUG
 #include "ImGuiManager.h"
+#endif // _DEBUG
 #include <cmath>
 #include <numbers>
 #include <random>
@@ -80,8 +82,10 @@ void Player::Update() {
 	//ライト
 	Light();
 
+
 	// 移動処理
 	Move();
+
 
 	// 砂埃パーティクルの更新
 	for(auto it = dustParticles_.begin(); it != dustParticles_.end(); ) {
@@ -165,6 +169,68 @@ void Player::Draw() {
 }
 
 void Player::Move() {
+#ifdef _DEBUG
+	// コントローラーの状態を取得
+	ZeroMemory(&controllerState_, sizeof(XINPUT_STATE));
+	DWORD dwResult = XInputGetState(0, &controllerState_);
+
+	// コントローラーが接続されている場合、入力を処理
+	if(dwResult == ERROR_SUCCESS) {
+		// 左スティックの入力値を取得
+		float LX = controllerState_.Gamepad.sThumbLX;
+		float LY = controllerState_.Gamepad.sThumbLY;
+
+		// デッドゾーンの設定
+		const float DEADZONE = XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE;
+		if(abs(LX) < DEADZONE) LX = 0;
+		if(abs(LY) < DEADZONE) LY = 0;
+
+		// スティックの入力がある場合に移動
+		if(LX != 0 || LY != 0) {
+			// スティックの値を正規化
+			float magnitude = sqrtf(LX * LX + LY * LY);
+			float normalizedLX = LX / magnitude;
+			// 未使用のため削除: float normalizedLY = LY / magnitude;
+
+			// 移動速度の計算
+			float moveSpeed = rotationSpeed_ * ( magnitude / 32767.0f ); // 32767 はスティックの最大値
+
+			// プレイヤーの回転角度を更新
+			angle_ += normalizedLX * moveSpeed;
+
+			// ボスの位置を中心に円状に移動
+			const Transform& bossTransform = boss_->GetTransform();
+			transform_.translate.x = bossTransform.translate.x + radius_ * cosf(angle_);
+			transform_.translate.z = bossTransform.translate.z + radius_ * sinf(angle_);
+
+			// ボスの方向を向くための角度計算
+			Vector3 directionToBoss = bossTransform.translate - transform_.translate;
+			transform_.rotate.y = atan2f(directionToBoss.x, directionToBoss.z);
+
+			GenerateDust();
+		}
+
+		// ジャンプ処理
+		if(( controllerState_.Gamepad.wButtons & XINPUT_GAMEPAD_A ) && !isJumping_) {
+			isJumping_ = true;
+			jumpVelocity_ = jumpPower_;
+			GenerateDust();
+		}
+
+		if(isJumping_) {
+			transform_.translate.y += jumpVelocity_;
+			jumpVelocity_ += gravity_;
+
+			if(transform_.translate.y <= 0.0f) {
+				transform_.translate.y = 0.0f;
+				isJumping_ = false;
+				jumpVelocity_ = 0.0f;
+				GenerateDust();
+			}
+		}
+	}
+#endif // _DEBUG
+
 	// プレイヤーの左右移動 (Boss の周りを回転)
 	if(Input::GetInstance()->PushKey(DIK_A)) {
 		angle_ -= rotationSpeed_; // 左回転
@@ -224,30 +290,55 @@ void Player::Light() {
 	const float minVerticalOffset = -1.0f;
 	const float maxHorizontalOffset = 1.0f; // 左右の制限
 	const float minHorizontalOffset = -1.0f;
+#ifdef _DEBUG
+	//コントローラでのライトの方向の変更
+	// 右スティックの入力値を取得
+	float RX = controllerState_.Gamepad.sThumbRX;
+	float RY = controllerState_.Gamepad.sThumbRY;
 
-	// 上下移動
-	if(Input::GetInstance()->PushKey(DIK_DOWN)) {
-		directionVerticalOffset -= 0.02f; // 下方向に移動
+	// デッドゾーンの設定
+	const float DEADZONE = XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
+	if(abs(RX) < DEADZONE) RX = 0;
+	if(abs(RY) < DEADZONE) RY = 0;
+
+	// スティックの入力がある場合に移動
+	if(RX != 0 || RY != 0) {
+		// スティックの値を正規化
+		float magnitude = sqrtf(RX * RX + RY * RY);
+		float normalizedRX = RX / magnitude;
+		float normalizedRY = RY / magnitude;
+
+		// 移動速度の計算
+		float moveSpeed = 0.02f * ( magnitude / 32767.0f ); // 32767 はスティックの最大値
+
+		// ライトの方向オフセットを更新
+		directionHorizontalOffset += normalizedRX * moveSpeed;
+		directionVerticalOffset += normalizedRY * moveSpeed;
+
+		// ライトの方向オフセットを制限
+		directionVerticalOffset = std::clamp(directionVerticalOffset, minVerticalOffset, maxVerticalOffset);
+		directionHorizontalOffset = std::clamp(directionHorizontalOffset, minHorizontalOffset, maxHorizontalOffset);
 	}
+#endif // _DEBUG
+	//ライトの向きの変更
+	// ライトの方向オフセットを更新
 	if(Input::GetInstance()->PushKey(DIK_UP)) {
-		directionVerticalOffset += 0.02f; // 上方向に移動
+		directionVerticalOffset += 0.01f;
 	}
-	// 制限を適用
-	directionVerticalOffset = std::clamp(directionVerticalOffset, minVerticalOffset, maxVerticalOffset);
-
-	// 左右移動
+	if(Input::GetInstance()->PushKey(DIK_DOWN)) {
+		directionVerticalOffset -= 0.01f;
+	}
 	if(Input::GetInstance()->PushKey(DIK_LEFT)) {
-		directionHorizontalOffset -= 0.02f; // 左方向に回転
+		directionHorizontalOffset -= 0.01f;
 	}
 	if(Input::GetInstance()->PushKey(DIK_RIGHT)) {
-		directionHorizontalOffset += 0.02f; // 右方向に回転
+		directionHorizontalOffset += 0.01f;
 	}
-	// 制限を適用
-	directionHorizontalOffset = std::clamp(directionHorizontalOffset, minHorizontalOffset, maxHorizontalOffset);
 
-	//ライトの位置修正
-	directionVerticalOffset = std::sin(directionVerticalOffset);
-	directionHorizontalOffset = std::sin(directionHorizontalOffset);
+
+	// 制限を適用
+	directionVerticalOffset = std::clamp(directionVerticalOffset, minVerticalOffset, maxVerticalOffset);
+	directionHorizontalOffset = std::clamp(directionHorizontalOffset, minHorizontalOffset, maxHorizontalOffset);
 
 	// ライトの位置更新
 	currentLight_->lightPos = {
@@ -258,7 +349,7 @@ void Player::Light() {
 
 	// ボスの方向を基準にライトの方向を計算
 	Vector3 directionToBoss = {
-		  boss_->GetTransform().translate.x - currentLight_->lightPos.x
+	boss_->GetTransform().translate.x - currentLight_->lightPos.x
 		, currentLight_->lightPos.y
 		, boss_->GetTransform().translate.z - currentLight_->lightPos.z };
 
@@ -298,6 +389,7 @@ void Player::Light() {
 
 
 void Player::DrawImGui() {
+#ifdef _DEBUG
 	ImGui::Begin("Player SpotLight");
 
 	ImGui::Text("Current Light Profile: %s", isLightProfileToggled_ ? "Wide Weak" : "Narrow Strong");
@@ -311,6 +403,7 @@ void Player::DrawImGui() {
 	ImGui::Checkbox("SpotLight", &currentLight_->isSpotLight);
 
 	ImGui::End();
+#endif // DEBUG
 }
 
 ///=============================================================================

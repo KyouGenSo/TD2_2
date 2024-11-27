@@ -17,7 +17,8 @@
 #include "LightCollision.h"
 #include <vector>
 //コントローラー操作
-#include "XInput.h"
+#include <XInput.h>
+#pragma comment(lib, "Xinput.lib")
 
 
 class Player :public ObjectBase {
@@ -130,5 +131,8 @@ private:
 	std::vector<DustParticle> dustParticles_; // 砂埃パーティクルのリスト
 	void GenerateDust();                     // 砂埃を生成する関数
 
+#ifdef _DEBUG
+	XINPUT_STATE controllerState_{}; 
+#endif // _DEBUG
 };
 

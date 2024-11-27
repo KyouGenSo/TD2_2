@@ -87,7 +87,7 @@ private:
 	std::list<ObjectBase*> Objects_;
 	std::unordered_set<ObjectBase*> collidedObjects_; // 衝突したオブジェクトを追跡するセット
 
-	bool isDrawCapsule_ = true; // カプセルの描画フラグ
+	bool isDrawCapsule_ = false; // カプセルの描画フラグ
 
 	std::unordered_set<std::pair<ObjectBase*, ObjectBase*>, PairHash> collidedPairs_; // 衝突済みペア
 

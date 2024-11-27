@@ -167,6 +167,7 @@ void Boss::Draw() {
 }
 
 void Boss::DrawImGui() {
+#ifdef _DEBUG
 	ImGui::Begin("phase");
 	// フェーズの変更
 	float hpRatio = static_cast<float>(hp_) / 1000.0f;
@@ -182,7 +183,9 @@ void Boss::DrawImGui() {
 		ImGui::Text("phase5");
 	}
 	ImGui::DragFloat("duration", &lightHitDuration_);
-	ImGui::End();
+	ImGui::End(); 
+#endif // DEBUG
+
 }
 
 void Boss::HPUpdate() {
