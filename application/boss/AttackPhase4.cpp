@@ -50,7 +50,7 @@ void AttackPhase4::Update()
         particle.velocity.z *= 0.98f;*/
 
         // 簡易的な重力処理
-        particle.velocity.y -= 0.06f;
+        particle.velocity.y -= 0.1f;
         particle.object->SetTranslate(position);
         particle.object->Update();
 

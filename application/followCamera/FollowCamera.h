@@ -22,4 +22,17 @@ private:
     float lookUpAngle_ = 0.1f;     // 見上げる角度（ラジアン）
     int frameCounter_ = 0;         // フレームカウンター
     int transitionTime_ = 180;      // 補間速度切り替えまでの時間（フレーム数）
+
+    //Vector3 cameraPos;
+    Vector3 currentShakeOffset_ = { 0.0f, 0.0f, 0.0f }; // シェイクのオフセット
+
+private:
+    bool isShaking_ = false;
+    int shakeDuration_ = 30; // シェイクのフレーム数
+    int shakeFrameCount_ = 0;
+    float shakeIntensity_ = 0.5f; // シェイクの強さ
+
+public:
+    void StartShake(int duration, float intensity);
+    void UpdateShake();
 };

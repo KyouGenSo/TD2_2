@@ -5,6 +5,8 @@
 #include <vector>
 #include <memory>
 
+class FollowCamera;
+
 enum class PhaseState {
     Ascending,    // 上昇中
     Descending,   // 下降中
@@ -33,5 +35,6 @@ private:
     const float maxRadius_ = 20.0f;      // 衝撃波の最大半径
     const size_t shockWaveObjectCount_ = 30; // 衝撃波オブジェクト数
     std::vector<std::unique_ptr<Object3d>> shockWaveObjects_;
+    std::unique_ptr<FollowCamera> followCamera_; // FollowCamera への参照
 };
 
