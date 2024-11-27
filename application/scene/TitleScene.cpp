@@ -152,7 +152,7 @@ void TitleScene::Update() {
 
 
 	if(Input::GetInstance()->TriggerKey(DIK_RETURN)) {
-		SceneManager::GetInstance()->ChangeScene("select");
+		SceneManager::GetInstance()->ChangeScene("game");
 	}
 }
 
