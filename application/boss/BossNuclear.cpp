@@ -63,7 +63,7 @@ void BossNuclear::OnCollision(ObjectBase* objectBase) {
 
 		if (alpha_ <= 0.0f && !isDestroyed_ && boss_ != nullptr) {
 			isDestroyed_ = true;
-			boss_->DecreaseHP(300);
+			boss_->DecreaseHP(50);
 		}
 	}
 }
