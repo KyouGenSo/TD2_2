@@ -45,7 +45,7 @@ void AttackPhase3::Update()
     }
 
     // フェーズ終了条件: HPが50%以下
-    if (boss_->GetHP() <= 600) {
+    if (boss_->GetHP() <= 400) {
         boss_->ChangeState(std::make_unique<AttackPhase4>(boss_));
     }
 }

@@ -143,5 +143,5 @@ void AttackPhase4::DropMeteor()
     // NOTE:
     meteorCollision_ = std::make_unique<BossBullet>(meteor_->GetTranslate() , Vector3(0.0f, 0.0f, 0.0f), 0.0f);
     meteorCollision_->InitializeAsShockWave(meteor_->GetTranslate(), Vector3(5.0f, 5.0f, 5.0f), Vector3(0.0f, 0.0f, 0.0f));
-	meteorCollision_->SetRadius(15.0f);
+	meteorCollision_->SetRadius(13.0f);
 }
