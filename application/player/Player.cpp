@@ -8,6 +8,8 @@
 #include <numbers>
 #include <random>
 #include "BossBullet.h"
+#include "TextureManager.h"
+#include <SpriteBasic.h>
 
 void Player::Initialize(Boss* boss) {
 	// プレイヤーモデルの読み込みと設定
@@ -24,6 +26,16 @@ void Player::Initialize(Boss* boss) {
 	boss_ = boss; // Boss のポインタを設定
 
 	followCamera_ = std::make_unique<FollowCamera>();
+
+	isTutorial_ = true; // チュートリアル開始
+	tutorialElapsedTime_ = 0.0f; // 経過時間を初期化
+
+	TextureManager::GetInstance()->LoadTexture("Core.png");
+
+	tutorialSprite_ = std::make_unique<Sprite>();
+	tutorialSprite_->Initialize("Core.png"); // テクスチャファイル名を指定
+	tutorialSprite_->SetPos({ 300, 250 });      // 描画位置を指定 (画面中央)
+	tutorialSprite_->SetSize({ 256, 256 });     // スプライトサイズを指定
 
 	//// lightの初期設定-----------------------------------------------------------------------------------------------------------------------------
 
@@ -77,7 +89,19 @@ void Player::Initialize(Boss* boss) {
 
 void Player::Update() {
 	// ボスが存在しない場合、処理をスキップ
-	if(boss_ == nullptr) return;
+	if (boss_ == nullptr) return;
+
+	// チュートリアル中の処理
+	if (isTutorial_) {
+		tutorialElapsedTime_ += 1.0f / 60.0f; // フレームレート60FPSを想定
+		if (tutorialElapsedTime_ >= 5.0f) { // 5秒経過したらチュートリアル終了
+			isTutorial_ = false;
+		}
+		return; // 入力処理やその他の更新をスキップ
+	}
+
+	//
+	tutorialSprite_->Update();
 
 	//ライト
 	Light();
@@ -88,7 +112,7 @@ void Player::Update() {
 
 
 	// 砂埃パーティクルの更新
-	for(auto it = dustParticles_.begin(); it != dustParticles_.end(); ) {
+	for (auto it = dustParticles_.begin(); it != dustParticles_.end(); ) {
 		DustParticle& particle = *it;
 
 		// パーティクルの位置を更新（Y軸の移動なし）
@@ -101,7 +125,7 @@ void Player::Update() {
 
 		// 寿命を減らし、寿命切れのパーティクルを削除
 		particle.lifetime--;
-		if(particle.lifetime <= 0) {
+		if (particle.lifetime <= 0) {
 			it = dustParticles_.erase(it);
 		} else {
 			++it;
@@ -158,11 +182,12 @@ void Player::Update() {
 
 
 void Player::Draw() {
+
 	// モデルの描画
 	object3d_->Draw();
 
 	// 砂埃パーティクルの描画
-	for(const auto& particle : dustParticles_) {
+	for (const auto& particle : dustParticles_) {
 		particle.object->Draw();
 	}
 
@@ -175,25 +200,25 @@ void Player::Move() {
 	DWORD dwResult = XInputGetState(0, &controllerState_);
 
 	// コントローラーが接続されている場合、入力を処理
-	if(dwResult == ERROR_SUCCESS) {
+	if (dwResult == ERROR_SUCCESS) {
 		// 左スティックの入力値を取得
 		float LX = controllerState_.Gamepad.sThumbLX;
 		float LY = controllerState_.Gamepad.sThumbLY;
 
 		// デッドゾーンの設定
 		const float DEADZONE = XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE;
-		if(abs(LX) < DEADZONE) LX = 0;
-		if(abs(LY) < DEADZONE) LY = 0;
+		if (abs(LX) < DEADZONE) LX = 0;
+		if (abs(LY) < DEADZONE) LY = 0;
 
 		// スティックの入力がある場合に移動
-		if(LX != 0 || LY != 0) {
+		if (LX != 0 || LY != 0) {
 			// スティックの値を正規化
 			float magnitude = sqrtf(LX * LX + LY * LY);
 			float normalizedLX = LX / magnitude;
 			// 未使用のため削除: float normalizedLY = LY / magnitude;
 
 			// 移動速度の計算
-			float moveSpeed = rotationSpeed_ * ( magnitude / 32767.0f ); // 32767 はスティックの最大値
+			float moveSpeed = rotationSpeed_ * (magnitude / 32767.0f); // 32767 はスティックの最大値
 
 			// プレイヤーの回転角度を更新
 			angle_ += normalizedLX * moveSpeed;
@@ -211,17 +236,17 @@ void Player::Move() {
 		}
 
 		// ジャンプ処理
-		if(( controllerState_.Gamepad.wButtons & XINPUT_GAMEPAD_A ) && !isJumping_) {
+		if ((controllerState_.Gamepad.wButtons & XINPUT_GAMEPAD_A) && !isJumping_) {
 			isJumping_ = true;
 			jumpVelocity_ = jumpPower_;
 			GenerateDust();
 		}
 
-		if(isJumping_) {
+		if (isJumping_) {
 			transform_.translate.y += jumpVelocity_;
 			jumpVelocity_ += gravity_;
 
-			if(transform_.translate.y <= 0.0f) {
+			if (transform_.translate.y <= 0.0f) {
 				transform_.translate.y = 0.0f;
 				isJumping_ = false;
 				jumpVelocity_ = 0.0f;
@@ -232,11 +257,11 @@ void Player::Move() {
 #endif // _DEBUG
 
 	// プレイヤーの左右移動 (Boss の周りを回転)
-	if(Input::GetInstance()->PushKey(DIK_A)) {
+	if (Input::GetInstance()->PushKey(DIK_A)) {
 		angle_ -= rotationSpeed_; // 左回転
 		GenerateDust();
 	}
-	if(Input::GetInstance()->PushKey(DIK_D)) {
+	if (Input::GetInstance()->PushKey(DIK_D)) {
 		angle_ += rotationSpeed_; // 右回転
 		GenerateDust();
 	}
@@ -251,17 +276,17 @@ void Player::Move() {
 	transform_.rotate.y = atan2f(directionToBoss.x, directionToBoss.z);
 
 	// ジャンプ処理
-	if(Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
+	if (Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
 		isJumping_ = true;
 		jumpVelocity_ = jumpPower_;
 		GenerateDust();
 	}
 
-	if(isJumping_) {
+	if (isJumping_) {
 		transform_.translate.y += jumpVelocity_;
 		jumpVelocity_ += gravity_;
 
-		if(transform_.translate.y <= 0.0f) {
+		if (transform_.translate.y <= 0.0f) {
 			transform_.translate.y = 0.0f;
 			isJumping_ = false;
 			jumpVelocity_ = 0.0f;
@@ -276,8 +301,8 @@ void Player::Light() {
 	static float directionHorizontalOffset = 0.0f; // ライトの方向のX軸オフセット
 
 	// ライト切り替え
-	if(Input::GetInstance()->TriggerKey(DIK_L)) {
-		if(isLightProfileToggled_) {
+	if (Input::GetInstance()->TriggerKey(DIK_L)) {
+		if (isLightProfileToggled_) {
 			currentLight_ = &narrowStrongLight_;
 		} else {
 			currentLight_ = &wideWeakLight_;
@@ -298,18 +323,18 @@ void Player::Light() {
 
 	// デッドゾーンの設定
 	const float DEADZONE = XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
-	if(abs(RX) < DEADZONE) RX = 0;
-	if(abs(RY) < DEADZONE) RY = 0;
+	if (abs(RX) < DEADZONE) RX = 0;
+	if (abs(RY) < DEADZONE) RY = 0;
 
 	// スティックの入力がある場合に移動
-	if(RX != 0 || RY != 0) {
+	if (RX != 0 || RY != 0) {
 		// スティックの値を正規化
 		float magnitude = sqrtf(RX * RX + RY * RY);
 		float normalizedRX = RX / magnitude;
 		float normalizedRY = RY / magnitude;
 
 		// 移動速度の計算
-		float moveSpeed = 0.02f * ( magnitude / 32767.0f ); // 32767 はスティックの最大値
+		float moveSpeed = 0.02f * (magnitude / 32767.0f); // 32767 はスティックの最大値
 
 		// ライトの方向オフセットを更新
 		directionHorizontalOffset += normalizedRX * moveSpeed;
@@ -322,16 +347,16 @@ void Player::Light() {
 
 	//ライトの向きの変更
 	// ライトの方向オフセットを更新
-	if(Input::GetInstance()->PushKey(DIK_UP)) {
+	if (Input::GetInstance()->PushKey(DIK_UP)) {
 		directionVerticalOffset += 0.01f;
 	}
-	if(Input::GetInstance()->PushKey(DIK_DOWN)) {
+	if (Input::GetInstance()->PushKey(DIK_DOWN)) {
 		directionVerticalOffset -= 0.01f;
 	}
-	if(Input::GetInstance()->PushKey(DIK_LEFT)) {
+	if (Input::GetInstance()->PushKey(DIK_LEFT)) {
 		directionHorizontalOffset -= 0.01f;
 	}
-	if(Input::GetInstance()->PushKey(DIK_RIGHT)) {
+	if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
 		directionHorizontalOffset += 0.01f;
 	}
 
@@ -410,15 +435,22 @@ void Player::DrawImGui() {
 ///						 衝突判定イベント
 void Player::OnCollision(ObjectBase* objectBase) {
 	//Bossとの衝突判定
-	if(dynamic_cast<Boss*>( objectBase ) != nullptr) {
+	if (dynamic_cast<Boss*>(objectBase) != nullptr) {
 		//赤色に変更
 		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 	}
 
 	//ボスの弾との接触
-	if(dynamic_cast<BossBullet*>( objectBase ) != nullptr) {
+	if (dynamic_cast<BossBullet*>(objectBase) != nullptr) {
 		//赤色に変更
 		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+}
+
+void Player::DrawSprite()
+{
+	if (isTutorial_) {
+		tutorialSprite_->Draw(); // スプライトを描画
 	}
 }
 
