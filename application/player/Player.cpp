@@ -18,7 +18,7 @@ void Player::Initialize(Boss* boss) {
 	transform_.scale = { 5.0f, 5.0f, 5.0f };
 	transform_.rotate = { 0.0f, 0.0f, 0.0f };
 	transform_.translate = { 0.0f, 0.0f, -13.0f };
-	
+
 	boss_ = boss; // Boss のポインタを設定
 
 	followCamera_ = std::make_unique<FollowCamera>();
@@ -120,8 +120,7 @@ void Player::Update() {
 		particle.lifetime--;
 		if (particle.lifetime <= 0) {
 			it = dustParticles_.erase(it);
-		}
-		else {
+		} else {
 			++it;
 		}
 	}
@@ -280,8 +279,8 @@ void Player::Light() {
 	};
 
 	// ボスの方向を基準にライトの方向を計算
-	Vector3 directionToBoss = { 
-		  boss_->GetTransform().translate.x - currentLight_->lightPos.x 
+	Vector3 directionToBoss = {
+		  boss_->GetTransform().translate.x - currentLight_->lightPos.x
 		, currentLight_->lightPos.y
 		, boss_->GetTransform().translate.z - currentLight_->lightPos.z };
 
@@ -368,15 +367,15 @@ void Player::HandleMoveJumpPhase()
 
 void Player::HandleLightAndDestroyPhase()
 {
-	  // ライトを有効化
-    Light();
+	// ライトを有効化
+	Light();
 
-    // ボスの全コアが破壊されているか確認
-    if (boss_->AreAllCoresDestroyed()) {
-        boss_->SetHP(1000); // ボスのHPを1000に設定
-        boss_->SetHPBarVisible(true); // HPバーを表示する
-        tutorialPhase = TutorialPhase::End;
-    }
+	// ボスの全コアが破壊されているか確認
+	if (boss_->AreAllCoresDestroyed()) {
+		boss_->SetHP(1000); // ボスのHPを1000に設定
+		boss_->SetHPBarVisible(true); // HPバーを表示する
+		tutorialPhase = TutorialPhase::End;
+	}
 }
 
 void Player::GenerateDust() {
