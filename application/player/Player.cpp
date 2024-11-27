@@ -16,7 +16,7 @@ void Player::Initialize(Boss* boss) {
 	transform_.scale = { 5.0f, 5.0f, 5.0f };
 	transform_.rotate = { 0.0f, 0.0f, 0.0f };
 	transform_.translate = { 0.0f, 0.0f, -13.0f };
-
+	
 	boss_ = boss; // Boss のポインタを設定
 
 	followCamera_ = std::make_unique<FollowCamera>();
@@ -237,11 +237,6 @@ void Player::Light() {
 		currentLight_->isSpotLight
 	);
 }
-
-
-
-
-
 
 void Player::DrawImGui()
 {
