@@ -27,21 +27,7 @@ void PostEffect::Initialize(DX12Basic* dx12)
 
 	CreatePSO("NoEffect");
 
-	CreatePSO("VignetteRed");
-
-	CreatePSO("VignetteRedBloom");
-
-	CreatePSO("GrayScale");
-
-	CreatePSO("VigRedGrayScale");
-
-	CreatePSO("Bloom");
-
 	CreatePSO("BloomFog");
-
-	CreateVignetteParam();
-
-	CreateVignetteRedBloomParam();
 
 	CreateBloomParam();
 
@@ -119,22 +105,8 @@ void PostEffect::SetBarrier(D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_ST
 	m_dx12_->GetCommandList()->ResourceBarrier(1, &barrier);
 }
 
-void PostEffect::SetVignettePower(float power)
-{
-	vignetteParam_->power = power;
-	vignetteRedBloomParam_->power = power;
-}
-
-void PostEffect::SetVignetteRange(float range)
-{
-	vignetteParam_->range = range;
-	vignetteRedBloomParam_->range = range;
-
-}
-
 void PostEffect::SetBloomThreshold(float threshold)
 {
-	vignetteRedBloomParam_->threshold = threshold;
 	bloomParam_->threshold = threshold;
 }
 

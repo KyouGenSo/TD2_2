@@ -87,10 +87,6 @@ public: // メンバ関数
 	// レンダーテクスチャの取得
 	ID3D12Resource* GetRenderTextureResource() { return renderTextureResourceA_.Get(); }
 
-	void SetVignettePower(float power);
-
-	void SetVignetteRange(float range);
-
 	void SetBloomThreshold(float threshold);
 
 	void SetBloomIntensity(float intensity);
