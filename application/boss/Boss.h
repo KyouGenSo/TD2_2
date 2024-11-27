@@ -64,6 +64,15 @@ public: // メンバ関数
 	/// @param objectBase 衝突したオブジェクト
 	void OnCollision(ObjectBase* objectBase) override;
 
+	// 可視性を設定するメソッド
+	void SetVisible(bool visible) { isVisible_ = visible; }
+
+	// 可視性を取得するメソッド
+	bool IsVisible() const { return isVisible_; }
+
+	//コア再生成関数
+	void RespawnCores();
+
 private:// メンバ変数
 
 	std::unique_ptr<Object3d> object3d_ = nullptr;
@@ -80,6 +89,12 @@ private:// メンバ変数
 
 	std::vector<std::unique_ptr<BossNuclear>> cores_;  // 核のリスト
 
+	float lightHitDuration_ = 0.0f; // ライトが当たった時間を追跡
+	bool coresAreVisible_ = false; // 核が可視化されているかどうか
+	bool isLightHitting_ = false; // ライトが現在当たっているかどうか
+
+	float coreRespawnTimer_ = 0.0f; // 再生成までの時間
+	bool allCoresDestroyed_ = false; // すべてのコアが破壊されたか
 
 private: // メンバ関数
 
@@ -130,5 +145,7 @@ private: // メンバ関数
 
 	// 状態のメンバ関数ポインタのテーブル
 	static void (Boss::* spFuncTable[])();
+
+	bool isVisible_ = false; // 核の可視性フラグ
 
 };

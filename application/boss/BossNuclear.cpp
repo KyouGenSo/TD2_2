@@ -32,14 +32,20 @@ void BossNuclear::Initialize(const Vector3& position, const Vector3& offset)
 
 void BossNuclear::Update(const Vector3& bossPosition)
 {
-	// ボスの位置にオフセットを足して核の位置を更新
+	if (isDestroyed_) {
+		// 破壊された場合、タイマーを進める
+		destructionTimer_ += 1.0f / 60.0f;
+		if (destructionTimer_ >= destructionDuration_) {
+			SetVisible(false); // 一定時間後に非表示
+		}
+		return; // 破壊中は位置を更新しない
+	}
+
+	// 通常の処理
 	transform_.translate = bossPosition + offset_;
-
-
 	object3d_->SetTranslate(transform_.translate);
 	object3d_->Update();
 
-	//========================================
 	// 判定場所の処理
 	Vector3 test = transform_.translate + Vector3(0.0f, 0.1f, 0.0f);
 	ObjectBase::Update(transform_.translate, test);
@@ -47,32 +53,32 @@ void BossNuclear::Update(const Vector3& bossPosition)
 
 void BossNuclear::Draw()
 {
-	if (object3d_ && alpha_ > 0.0f) {
+	if (object3d_ && alpha_ > 0.0f && isVisible_) {
 		object3d_->SetAlpha(alpha_);
 		object3d_->Draw();
 	}
 }
 
 void BossNuclear::OnCollision(ObjectBase* objectBase) {
-	// 衝突処理
-	//Bossとの衝突判
-	if (dynamic_cast<LightCollision*>(objectBase) != nullptr) {
-		//赤色に変更
-		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
-	}
+	if (!isVisible_ || isDestroyed_) return; // 可視状態でない、または既に破壊済みの場合は無視
 
-	// 衝突対象がLightCollisionである場合のみ処理
+	// 通常の衝突処理
 	if (dynamic_cast<LightCollision*>(objectBase) != nullptr) {
-		// 個別のalpha_を減少させる
+		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 		alpha_ = std::max(0.0f, alpha_ - 0.1f);
 
 		if (alpha_ <= 0.0f) {
-			// 透明になった後の処理を追加（必要に応じて）
-		}	
+			isDestroyed_ = true; // 破壊フラグを立てる
+			destructionTimer_ = 0.0f; // タイマー初期化
+			boss_->DecreaseHP(50); // ボスのHPを減少
+		}
 	}
+}
 
-	if (alpha_ <= 0.0f && !isDestroyed_ && boss_ != nullptr) {
-		isDestroyed_ = true; // 核が壊れた状態を記録
-		boss_->DecreaseHP(50); // HPを減らす
-	}
+void BossNuclear::ResetCore()
+{
+	isDestroyed_ = false;       // 破壊フラグをリセット
+	destructionTimer_ = 0.0f;   // タイマーをリセット
+	alpha_ = 1.0f;              // アルファ値をリセット
+	SetVisible(true);           // コアを表示
 }

@@ -26,9 +26,14 @@ public:
 	// 核の位置を取得
 	Transform& GetTransform() { return transform_; }
 	void SetBoss(Boss* boss) { boss_ = boss; }
+	void SetVisible(bool visible) { isVisible_ = visible; }
+	bool IsVisible() const { return isVisible_; }
 
 	// 核の位置を設定
 	void SetTransform(const Transform& transform) { transform_ = transform; }
+
+	bool IsDestroyed() const { return isDestroyed_; } // 核が破壊されているか取得
+	void ResetCore(); // 核をリセットするメソッド
 
 private:
 	Transform transform_;    // 核の現在位置
@@ -41,6 +46,11 @@ private:
 	Boss* boss_ = nullptr; // Bossへの参照
 
 	bool isDestroyed_ = false; // 核が壊れたかどうかを示すフラグ
+
+	bool isVisible_ = false; // 核の可視性
+
+	float destructionTimer_ = 0.0f; // 破壊後のタイマー
+	const float destructionDuration_ = 3.0f; // 核が消えるまでの時間（秒）
 
 };
 
