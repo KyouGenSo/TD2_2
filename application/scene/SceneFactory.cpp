@@ -22,8 +22,7 @@ BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 		newScene = new ClearScene();
 		sceneType_ = Clear;
 	}
-	else if (sceneName == "over") 
-	{
+	else if (sceneName == "over") {
 		newScene = new OverScene();
 		sceneType_ = Over;
 	}
@@ -47,6 +46,9 @@ uint32_t SceneFactory::GetSceneType()
 		break;
 	case Clear:
 		result = 3;
+		break;
+	case Over:
+		result = 4;
 		break;
 	}
 
