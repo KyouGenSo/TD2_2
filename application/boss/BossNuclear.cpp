@@ -47,6 +47,8 @@ void BossNuclear::Draw()
 		// アルファ値を反映
 		object3d_->SetAlpha(alpha_);
 		object3d_->Draw();
+	} else if (alpha_ <= 0.0f) {// アルファが0以下になった場合
+
 	}
 }
 
@@ -58,9 +60,7 @@ void BossNuclear::OnCollision(ObjectBase* objectBase) {
 		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 	}
 
-	// lightとの衝突判定
 	if (dynamic_cast<LightCollision*>(objectBase) != nullptr) {
-		// アルファ値を減少（最小値は0.0）
 		alpha_ = std::max(0.0f, alpha_ - 0.1f);
 	}
 }

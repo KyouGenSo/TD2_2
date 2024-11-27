@@ -50,7 +50,7 @@ public: // メンバ関数
     uint32_t GetHP() const { return hp_; }
 
 	//コアを取得
-	std::vector<BossNuclear>& GetCores() { return cores_; }
+    std::vector<std::unique_ptr<BossNuclear>>& GetCores();
 
     /// @brief 衝突処理イベント
     /// @param objectBase 衝突したオブジェクト
@@ -70,7 +70,7 @@ private:// メンバ変数
     // 現在の状態
     std::unique_ptr<BossAttackBaseState> state_;
 
-    std::vector<BossNuclear> cores_;  // 核のリスト
+    std::vector<std::unique_ptr<BossNuclear>> cores_;  // 核のリスト
 
 
 private: // メンバ関数
