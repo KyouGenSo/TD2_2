@@ -5,6 +5,7 @@
 #include <cmath>
 #include <numbers>
 #include <random>
+#include "Boss.h"
 
 void Player::Initialize(Boss* boss) {
 	// プレイヤーモデルの読み込みと設定
@@ -78,8 +79,23 @@ void Player::Update() {
 	// ボスが存在しない場合、処理をスキップ
 	if (boss_ == nullptr) return;
 
+	switch (tutorialPhase) {
+	case TutorialPhase::MoveJump:
+		HandleMoveJumpPhase();
+		break;
+
+	case TutorialPhase::LightAndDestroy:
+		HandleLightAndDestroyPhase();
+		Light(); // ライトを更新
+		break;
+
+	case TutorialPhase::End:
+		Light(); // チュートリアル終了後もライトを更新
+		break;
+	}
+
 	//ライト
-	Light();
+	//Light();
 
 	// 移動処理
 	Move();
@@ -319,6 +335,40 @@ void Player::OnCollision(ObjectBase* objectBase) {
 	if (dynamic_cast<Boss*>(objectBase) != nullptr) {
 		//赤色に変更
 		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+}
+
+void Player::HandleMoveJumpPhase()
+{
+	// プレイヤーの左右移動の完了判定
+	if (Input::GetInstance()->PushKey(DIK_A)) {
+		movedLeft = true;
+	}
+	if (Input::GetInstance()->PushKey(DIK_D)) {
+		movedRight = true;
+	}
+
+	// ジャンプ完了判定
+	if (Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
+		jumped = true;
+	}
+
+	// 全ての動作が完了したら次のフェーズへ
+	if (movedLeft && movedRight && jumped) {
+		tutorialPhase = TutorialPhase::LightAndDestroy;
+	}
+}
+
+void Player::HandleLightAndDestroyPhase()
+{
+	// ライトを有効化
+	Light();
+
+	// ボスの全コアが破壊されているか確認
+	if (boss_->AreAllCoresDestroyed()) {
+		boss_->SetHP(1000); // ボスのHPを1000に設定
+		boss_->SetHPBarVisible(true); // HPバーを表示する
+		tutorialPhase = TutorialPhase::End;
 	}
 }
 

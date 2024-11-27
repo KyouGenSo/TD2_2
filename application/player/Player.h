@@ -43,11 +43,16 @@ public:
 	/// @param objectBase 衝突したオブジェクト
 	void OnCollision(ObjectBase* objectBase) override;
 
+	void HandleMoveJumpPhase();
+	void HandleLightAndDestroyPhase();
+
+	void SetLightVisible(bool visible) { lightVisible_ = visible; }
+
 
 	///--------------------------------------------------------------
 	///							入出力関数
 public:
-
+		
 	Transform& GetTransform() { return transform_; }
 
 	// プレイヤーの現在位置を取得
@@ -61,6 +66,19 @@ public:
 	///--------------------------------------------------------------
 	///							メンバ変数
 private:
+
+	enum class TutorialPhase {
+		MoveJump,
+		LightAndDestroy,
+		End
+	};
+
+	TutorialPhase tutorialPhase = TutorialPhase::MoveJump;
+	bool movedLeft = false;
+	bool movedRight = false;
+	bool jumped = false;
+	bool allCoresDestroyed = false;
+
 	//---------------------------------------
 	// 3Dオブジェクト
 	std::unique_ptr<Object3d> object3d_;
@@ -115,6 +133,8 @@ private:
 
 	//ライトの当たり判定(ユニークポインタ)
 	std::unique_ptr<LightCollision> lightCollision_ = nullptr;
+
+	bool lightVisible_ = false; // ライト表示フラグ
 
 private:
 	// パーティクル管理用の構造体

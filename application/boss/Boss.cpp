@@ -207,27 +207,29 @@ void Boss::HPUpdate() {
 
 
 void Boss::HPDraw() {
-	// 背景用の薄い黒色のボックスを描画
-	Vector4 backgroundColor = Vector4(0.0f, 0.0f, 0.0f, 0.5f); // 薄い黒色
-	Vector2 backgroundSize = Vector2(1000.0f, boxSize.y);      // 初期サイズの幅と現在の高さ
-	Draw2D::GetInstance()->DrawBox(boxPosition, backgroundSize, backgroundColor);
+	 if (!hpBarVisible_) return; // HPバー非表示の場合は描画しない
 
-	// HPバーを描画
-	Draw2D::GetInstance()->DrawBox(boxPosition, boxSize, boxColor);
+    // 背景用の薄い黒色のボックスを描画
+    Vector4 backgroundColor = Vector4(0.0f, 0.0f, 0.0f, 0.5f); // 薄い黒色
+    Vector2 backgroundSize = Vector2(1000.0f, boxSize.y);      // 初期サイズの幅と現在の高さ
+    Draw2D::GetInstance()->DrawBox(boxPosition, backgroundSize, backgroundColor);
 
-	// HPバーの枠を描画
-	Vector4 borderColor = Vector4(0.0f, 0.0f, 0.0f, 1.0f); // 黒色
+    // HPバーを描画
+    Draw2D::GetInstance()->DrawBox(boxPosition, boxSize, boxColor);
 
-	// 枠の4辺を描画
-	Vector2 topLeft = boxPosition;
-	Vector2 topRight = Vector2(boxPosition.x + 1000.0f, boxPosition.y); // HP最大値に基づく固定幅
-	Vector2 bottomLeft = Vector2(boxPosition.x, boxPosition.y + boxSize.y);
-	Vector2 bottomRight = Vector2(boxPosition.x + 1000.0f, boxPosition.y + boxSize.y);
+    // HPバーの枠を描画
+    Vector4 borderColor = Vector4(0.0f, 0.0f, 0.0f, 1.0f); // 黒色
 
-	Draw2D::GetInstance()->DrawLine(topLeft, topRight, borderColor);      // 上辺
-	Draw2D::GetInstance()->DrawLine(topRight, bottomRight, borderColor);  // 右辺
-	Draw2D::GetInstance()->DrawLine(bottomRight, bottomLeft, borderColor); // 下辺
-	Draw2D::GetInstance()->DrawLine(bottomLeft, topLeft, borderColor);    // 左辺
+    // 枠の4辺を描画
+    Vector2 topLeft = boxPosition;
+    Vector2 topRight = Vector2(boxPosition.x + 1000.0f, boxPosition.y); // HP最大値に基づく固定幅
+    Vector2 bottomLeft = Vector2(boxPosition.x, boxPosition.y + boxSize.y);
+    Vector2 bottomRight = Vector2(boxPosition.x + 1000.0f, boxPosition.y + boxSize.y);
+
+    Draw2D::GetInstance()->DrawLine(topLeft, topRight, borderColor);      // 上辺
+    Draw2D::GetInstance()->DrawLine(topRight, bottomRight, borderColor);  // 右辺
+    Draw2D::GetInstance()->DrawLine(bottomRight, bottomLeft, borderColor); // 下辺
+    Draw2D::GetInstance()->DrawLine(bottomLeft, topLeft, borderColor);    // 左辺
 }
 
 void Boss::ChangeState(std::unique_ptr<BossAttackBaseState> state) {
@@ -269,6 +271,28 @@ void Boss::RespawnCores()
 		core->SetVisible(true); // 再生成時は表示
 		cores_.push_back(std::move(core));
 	}
+}
+
+void Boss::SetHPBarVisible(bool visible)
+{
+	hpBarVisible_ = visible;
+}
+
+bool Boss::IsHPBarVisible() const
+{
+	return hpBarVisible_;
+}
+
+void Boss::SetHP(uint32_t hp) {
+	hp_ = hp;
+}
+
+
+
+bool Boss::AreAllCoresDestroyed() const {
+	return std::all_of(cores_.begin(), cores_.end(), [](const auto& core) {
+		return !core->IsVisible();
+		});
 }
 
 // メンバ関数ポインタのテーブルの実体

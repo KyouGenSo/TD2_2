@@ -74,6 +74,13 @@ public: // メンバ関数
 	//コア再生成関数
 	void RespawnCores();
 
+	bool AreAllCoresDestroyed() const;
+	void SetHP(uint32_t hp); // HPを設定するメソッド
+
+	void SetHPBarVisible(bool visible); // HPバー表示を切り替える
+	bool IsHPBarVisible() const;        // HPバー表示状態を取得する
+
+
 private:// メンバ変数
 
 	std::unique_ptr<Object3d> object3d_ = nullptr;
@@ -148,5 +155,7 @@ private: // メンバ関数
 	static void (Boss::* spFuncTable[])();
 
 	bool isVisible_ = false; // 核の可視性フラグ
+
+	bool hpBarVisible_ = false;         // HPバー表示フラグ
 
 };
