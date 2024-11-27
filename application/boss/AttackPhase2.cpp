@@ -42,10 +42,15 @@ void AttackPhase2::Update() {
         break;
     }
 
-    // フェーズ終了条件: HPが70%以下
-    if (boss_->GetHP() <= 700) {
+    // フェーズ終了条件: y軸が0.0fでHPが700以下
+    if (transform.translate.y == 0.0f && boss_->GetHP() <= 700) {
         boss_->ChangeState(std::make_unique<AttackPhase3>(boss_));
     }
+
+    //// フェーズ終了条件: HPが70%以下
+    //if (boss_->GetHP() <= 700) {
+    //    boss_->ChangeState(std::make_unique<AttackPhase3>(boss_));
+    //}
 }
 
 void AttackPhase2::Draw() {

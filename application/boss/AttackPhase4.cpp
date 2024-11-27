@@ -41,7 +41,7 @@ void AttackPhase4::Update()
     }
 
     // 次のフェーズに移行
-    if (boss_->GetHP() <= 200) {
+    if (boss_->GetHP() <= 50) {
         boss_->ChangeState(std::make_unique<AttackPhase5>(boss_));
     }
 }
