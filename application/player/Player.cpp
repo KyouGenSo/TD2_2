@@ -32,7 +32,7 @@ void Player::Initialize(Boss* boss) {
 		{ transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z }, // lightPos
 		boss->GetTransform().translate - Vector3(transform_.translate.x, transform_.translate.y + 5.0f, transform_.translate.z), // lightDir
 		{ 1.0f, 1.0f, 1.0f, 1.0f }, // lightColor
-		50.0f, // 光の強さ
+		35.0f, // 光の強さ
 		30.0f, // ライト範囲
 		0.1f, // 光減衰
 		std::cos(std::numbers::pi_v<float> / 20.0f), // ライトスポット角度

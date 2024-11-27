@@ -39,7 +39,7 @@ void FollowCamera::Update(const Vector3& playerPosition, const Vector3& playerRo
 	Vector3 directionToPlayer = lookAt - cameraPos;
 	float cameraYAngle = atan2f(directionToPlayer.x, directionToPlayer.z);
 
-	camera->SetRotate(Vector3(-0.15f, cameraYAngle, 0.0f));
+	camera->SetRotate(Vector3(-0.17f, cameraYAngle, 0.0f));
 
 	//UpdateShake(); // シェイクの更新
 
