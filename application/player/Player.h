@@ -134,5 +134,19 @@ private:
 
 	XINPUT_STATE controllerState_{}; 
 
+	// HP 関連のメンバ変数
+	int hp_ = 200;                    // 現在の HP
+	const int maxHp_ = 200;           // 最大 HP
+	Vector2 hpBarPosition_ = { 50.0f, 300.0f }; // HP バーの描画位置 (画面の上に移動)
+	Vector2 hpBarSize_ = { 20.0f, 300.0f };     // HP バーのサイズ (縦長)
+	Vector4 hpBarColor_ = { 0.0f, 1.0f, 0.0f, 1.0f }; // HP バーの色
+
+
+public:
+
+	// HP の描画関数
+	void DrawHPBar();
+	void UpdateHP();
+
 };
 

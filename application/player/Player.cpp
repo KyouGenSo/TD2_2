@@ -8,6 +8,8 @@
 #include <numbers>
 #include <random>
 #include "BossBullet.h"
+#include "Draw2D.h"
+#include <SceneManager.h>
 
 void Player::Initialize(Boss* boss) {
 	// プレイヤーモデルの読み込みと設定
@@ -87,6 +89,13 @@ void Player::Update() {
 	Move();
 
 
+	UpdateHP();
+
+	if (hp_ <= 0)
+	{
+		SceneManager::GetInstance()->ChangeScene("over");
+	}
+
 	// 砂埃パーティクルの更新
 	for(auto it = dustParticles_.begin(); it != dustParticles_.end(); ) {
 		DustParticle& particle = *it;
@@ -165,7 +174,6 @@ void Player::Draw() {
 	for(const auto& particle : dustParticles_) {
 		particle.object->Draw();
 	}
-
 }
 
 void Player::Move() {
@@ -382,12 +390,6 @@ void Player::Light() {
 
 
 
-
-
-
-
-
-
 void Player::DrawImGui() {
 #ifdef _DEBUG
 	ImGui::Begin("Player SpotLight");
@@ -419,6 +421,7 @@ void Player::OnCollision(ObjectBase* objectBase) {
 	if(dynamic_cast<BossBullet*>( objectBase ) != nullptr) {
 		//赤色に変更
 		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+		hp_ -= 20;
 	}
 }
 
@@ -443,6 +446,46 @@ void Player::GenerateDust() {
 	Vector3 velocity = { distX(gen), 0.0f, distZ(gen) };
 	DustParticle particle = { std::move(particleObject), velocity, 30 }; // 寿命30フレーム
 	dustParticles_.emplace_back(std::move(particle));
+}
+
+void Player::DrawHPBar()
+{
+	// 背景用バー（灰色）
+	Draw2D::GetInstance()->DrawBox(hpBarPosition_, { 20.0f, 200.0f }, { 0.5f, 0.5f, 0.5f, 0.5f });
+
+	// 現在の HP バー
+	Vector2 currentBarPosition = { hpBarPosition_.x, hpBarPosition_.y + (200.0f - hpBarSize_.y) };
+	Draw2D::GetInstance()->DrawBox(currentBarPosition, hpBarSize_, hpBarColor_);
+
+	// 枠線の描画
+	Vector4 borderColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+	Vector2 topRight = { hpBarPosition_.x + 20.0f, hpBarPosition_.y };
+	Vector2 bottomLeft = { hpBarPosition_.x, hpBarPosition_.y + 200.0f };
+	Vector2 bottomRight = { hpBarPosition_.x + 20.0f, hpBarPosition_.y + 200.0f };
+	Draw2D::GetInstance()->DrawLine(hpBarPosition_, topRight, borderColor);       // 上辺
+	Draw2D::GetInstance()->DrawLine(topRight, bottomRight, borderColor);       // 右辺
+	Draw2D::GetInstance()->DrawLine(bottomRight, bottomLeft, borderColor);     // 下辺
+	Draw2D::GetInstance()->DrawLine(bottomLeft, hpBarPosition_, borderColor);    // 左辺
+}
+
+void Player::UpdateHP()
+{
+	// HP の割合を計算
+	float hpRatio = static_cast<float>(hp_) / maxHp_;
+
+	// HP バーの高さを更新
+	hpBarSize_.y = 200.0f * hpRatio; // 最大高さは 200
+
+	// HP バーの色を変更
+	if (hpRatio > 0.5f) {
+		hpBarColor_ = { 0.0f, 1.0f, 0.0f, 1.0f }; // 緑
+	}
+	else if (hpRatio > 0.2f) {
+		hpBarColor_ = { 1.0f, 1.0f, 0.0f, 1.0f }; // 黄色
+	}
+	else {
+		hpBarColor_ = { 1.0f, 0.0f, 0.0f, 1.0f }; // 赤
+	}
 }
 
 

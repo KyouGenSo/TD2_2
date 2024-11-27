@@ -102,7 +102,7 @@ void AttackPhase4::Update()
     }
 
     // フェーズ遷移の条件
-    if (boss_->GetHP() <= 50) {
+    if (boss_->GetHP() <= 30) {
         boss_->ChangeState(std::make_unique<AttackPhase5>(boss_));
     }
 }
@@ -143,5 +143,5 @@ void AttackPhase4::DropMeteor()
     // NOTE:
     meteorCollision_ = std::make_unique<BossBullet>(meteor_->GetTranslate() , Vector3(0.0f, 0.0f, 0.0f), 0.0f);
     meteorCollision_->InitializeAsShockWave(meteor_->GetTranslate(), Vector3(5.0f, 5.0f, 5.0f), Vector3(0.0f, 0.0f, 0.0f));
-	meteorCollision_->SetRadius(5.0f);
+	meteorCollision_->SetRadius(15.0f);
 }

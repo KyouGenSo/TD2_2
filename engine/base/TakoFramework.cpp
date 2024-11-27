@@ -54,7 +54,7 @@ void TakoFramework::Initialize()
 
 	PostEffect::GetInstance()->Initialize(dx12_);
 
-	ParticleManager::GetInstance()->Initialize(dx12_);
+	//ParticleManager::GetInstance()->Initialize(dx12_);
 #pragma endregion
 
 }
@@ -91,7 +91,7 @@ void TakoFramework::Finalize()
 	// トランジションの解放
 	Transition::GetInstance()->Finalize();
 
-	ParticleManager::GetInstance()->Finalize();
+	//ParticleManager::GetInstance()->Finalize();
 
 #ifdef _DEBUG
 	// ImGuiManagerの終了処理
