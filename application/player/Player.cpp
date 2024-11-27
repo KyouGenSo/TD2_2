@@ -25,7 +25,8 @@ void Player::Initialize(Boss* boss) {
 	// スプライトの生成と初期化
 	phaseSprite_ = std::make_unique<Sprite>();
 	phaseSprite_->Initialize("phase1.png"); // テクスチャパスを指定
-	phaseSprite_->SetPos({ 0.0f, 0.0f }); // 座標(0, 0)
+	phaseSprite_->SetPos({ 100.0f, 100.0f }); // 座標(0, 0)
+	phaseSprite_->SetSize({ 100.0f, 100.0f });
 	showPhaseSprite_ = true; // スプライトを表示
 
 
@@ -83,13 +84,16 @@ void Player::Update() {
 	// ボスが存在しない場合、処理をスキップ
 	if (boss_ == nullptr) return;
 
+	// チュートリアルフェーズの処理
 	switch (tutorialPhase) {
 	case TutorialPhase::MoveJump:
 		HandleMoveJumpPhase();
+		showPhaseSprite_ = true; // フェーズ中はスプライトを表示
 		break;
 
 	case TutorialPhase::LightAndDestroy:
 		HandleLightAndDestroyPhase();
+		showPhaseSprite_ = false; // フェーズ終了後はスプライトを非表示
 		Light(); // ライトを更新
 		break;
 

@@ -173,11 +173,12 @@ void GameScene::Draw()
 	SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
 	//---------------------------------------
-	// コリジョンマネージャの描画
-	collisionManager_->Draw();
-
+	
 	//
 	player_->DrawSprite();
+
+	// コリジョンマネージャの描画
+	collisionManager_->Draw();
 
 	// ボスのHPバーの描画
 	boss_->HPDraw();
