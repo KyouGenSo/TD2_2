@@ -65,7 +65,7 @@ void CollisionManager::AddCollider(ObjectBase* ObjectBase) {
 ///-------------------------------------------///
 void CollisionManager::CheckColliderPair(ObjectBase* characterA, ObjectBase* characterB) {
 	if (characterA->GetCollider()->Intersects(*characterB->GetCollider())) {
-		characterA->OnCollision(characterB);
+		characterA->OnCollision(characterB); // 衝突したペアにのみ処理
 		characterB->OnCollision(characterA);
 	}
 }

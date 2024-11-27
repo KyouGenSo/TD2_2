@@ -4,6 +4,7 @@
 #include <Object3d.h>
 #include "ObjectBase.h"
 
+
 class BossNuclear : public ObjectBase
 {
 public:

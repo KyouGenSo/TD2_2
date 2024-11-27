@@ -21,6 +21,10 @@ void BossNuclear::Initialize(const Vector3& position, const Vector3& offset)
 
 	alpha_ = 1.0f; // アルファ値を初期化
 
+	// Bossの位置とColliderの位置を同期
+	ObjectBase::Init(transform_.translate, transform_.translate, 1.0f);
+
+
 	//========================================
 	// Bossの位置とColliderの位置を同期
 	ObjectBase::Init(transform_.translate, transform_.translate, 1.0f);
@@ -43,24 +47,27 @@ void BossNuclear::Update(const Vector3& bossPosition)
 
 void BossNuclear::Draw()
 {
-	if (object3d_) {
-		// アルファ値を反映
+	if (object3d_ && alpha_ > 0.0f) {
 		object3d_->SetAlpha(alpha_);
 		object3d_->Draw();
-	} else if (alpha_ <= 0.0f) {// アルファが0以下になった場合
-
 	}
 }
 
 void BossNuclear::OnCollision(ObjectBase* objectBase) {
 	// 衝突処理
 	//Bossとの衝突判
-	if(dynamic_cast<LightCollision*>( objectBase ) != nullptr) {
+	if (dynamic_cast<LightCollision*>(objectBase) != nullptr) {
 		//赤色に変更
 		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 	}
 
+	// 衝突対象がLightCollisionである場合のみ処理
 	if (dynamic_cast<LightCollision*>(objectBase) != nullptr) {
+		// 個別のalpha_を減少させる
 		alpha_ = std::max(0.0f, alpha_ - 0.1f);
+
+		if (alpha_ <= 0.0f) {
+			// 透明になった後の処理を追加（必要に応じて）
+		}
 	}
 }
