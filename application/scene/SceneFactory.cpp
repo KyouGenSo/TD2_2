@@ -22,6 +22,11 @@ BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 		newScene = new ClearScene();
 		sceneType_ = Clear;
 	}
+	else if (sceneName == "over") 
+	{
+		newScene = new OverScene();
+		sceneType_ = Over;
+	}
 
     return newScene;
 }

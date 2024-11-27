@@ -10,6 +10,7 @@ public: // sheneType
 		Game,
 		Select,
 		Clear,
+		Over
 	};
 
 	SceneType sceneType_;
