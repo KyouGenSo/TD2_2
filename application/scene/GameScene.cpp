@@ -34,6 +34,7 @@ void GameScene::Initialize()
 	ModelManager::GetInstance()->LoadModel("Nuclear.obj");
 	ModelManager::GetInstance()->LoadModel("ShockWave.obj");
 	ModelManager::GetInstance()->LoadModel("Meteor.obj");
+	ModelManager::GetInstance()->LoadModel("Prediction.obj");
 	TextureManager::GetInstance()->LoadTexture("Nuclear.png");
 	TextureManager::GetInstance()->LoadTexture("ShockWave.png");
 
