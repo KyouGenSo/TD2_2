@@ -70,6 +70,7 @@ public: // メンバー関数
 	void SetShininess(float shininess) { materialData_->shininess = shininess; }
 	void SetEnableLighting(bool enableLighting) { materialData_->enableLighting = enableLighting; }
 	void SetEnableHighlight(bool enableHighlight) { materialData_->enableHighlight = enableHighlight; }
+	void SetAlpha(float alpha) { materialData_->color.w = alpha; }
 
 private: // プライベートメンバー関数
 

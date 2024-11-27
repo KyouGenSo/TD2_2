@@ -109,11 +109,13 @@ void GameScene::Update()
 	collisionManager_->Reset();
 	//追加
 	collisionManager_->AddCollider(player_.get());//プレイヤー
+	//プレイヤーのライトの当たり判定の追加
+	collisionManager_->AddCollider(player_->GetLightCollision());
 	collisionManager_->AddCollider(boss_);		  //ボス
 	//ボスのコアの追加
-	std::vector<BossNuclear>& cores = boss_->GetCores();
-	for(auto& core : cores) {
-		collisionManager_->AddCollider(&core);
+	std::vector<std::unique_ptr<BossNuclear>>& cores = boss_->GetCores();
+	for (auto& core : cores) {
+		collisionManager_->AddCollider(core.get()); // unique_ptrから生のポインタを取得
 	}
 
 	//すべての当たり判定をチェック

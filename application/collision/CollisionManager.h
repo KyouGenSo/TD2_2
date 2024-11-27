@@ -1,10 +1,10 @@
 /*********************************************************************
  * \file   CollisionManager.h
- * \brief  
- * 
+ * \brief
+ *
  * \author Harukichimaru
  * \date   November 2024
- * \note   
+ * \note
  *********************************************************************/
 #pragma once
 #include "ObjectBase.h"
@@ -15,67 +15,80 @@
  ///=============================================================================
  ///						クラス定義　
 class CollisionManager {
-    ///--------------------------------------------------------------
-    ///						 メンバ変数
+	///--------------------------------------------------------------
+	///						 メンバ変数
 public:
 
 	/**----------------------------------------------------------------------------
-	 * \brief  Initialize 
-	 * \note   
+	 * \brief  Initialize
+	 * \note
 	 */
 	void Initialize();
 
-    /**----------------------------------------------------------------------------
-     * \brief  Update  
-     * \note    
-     */
+	/**----------------------------------------------------------------------------
+	 * \brief  Update
+	 * \note
+	 */
 	void Update();
 
-    /**----------------------------------------------------------------------------
-     * \brief  Draw 
-     * \note   
-     */
+	/**----------------------------------------------------------------------------
+	 * \brief  Draw
+	 * \note
+	 */
 	void Draw();
 
-    /**----------------------------------------------------------------------------
+	/**----------------------------------------------------------------------------
 	 * \brief  DrawImGui ImGuiの描画
-     * \note   
-     */
+	 * \note
+	 */
 	void DrawImGui();
 
-    /**----------------------------------------------------------------------------
+	/**----------------------------------------------------------------------------
 	 * \brief  Reset リセット
-     * \note   
-     */
-    void Reset();
+	 * \note
+	 */
+	void Reset();
 
-    /**----------------------------------------------------------------------------
+	/**----------------------------------------------------------------------------
 	 * \brief  AddCollider 当たり判定を追加
 	 * \param  characterBase 追加する当たり判定
-     * \note   
-     */
-    void AddCollider(ObjectBase* characterBase);
+	 * \note
+	 */
+	void AddCollider(ObjectBase* characterBase);
 
-    /**----------------------------------------------------------------------------
+	/**----------------------------------------------------------------------------
 	 * \brief  CheckColliderPair 当たり判定同士をチェック
-     * \param  characterA
-     * \param  characterB
-     * \note   
-     */
-    void CheckColliderPair(ObjectBase* characterA, ObjectBase* characterB);
+	 * \param  characterA
+	 * \param  characterB
+	 * \note
+	 */
+	void CheckColliderPair(ObjectBase* characterA, ObjectBase* characterB);
 
-    /**----------------------------------------------------------------------------
+	/**----------------------------------------------------------------------------
 	 * \brief  CheckAllCollisions すべての当たり判定をチェック
-     * \note   
-     */
-    void CheckAllCollisions();
+	 * \note
+	 */
+	void CheckAllCollisions();
 
-    ///--------------------------------------------------------------
+	///--------------------------------------------------------------
 	///						 メンバ変数
 private:
-    /// ===コライダー=== ///
-    std::list<ObjectBase*> Objects_;
-    std::unordered_set<ObjectBase*> collidedObjects_; // 衝突したオブジェクトを追跡するセット
+
+	struct PairHash {
+		template <class T1, class T2>
+		std::size_t operator()(const std::pair<T1, T2>& pair) const {
+			auto hash1 = std::hash<T1>{}(pair.first);
+			auto hash2 = std::hash<T2>{}(pair.second);
+			return hash1 ^ hash2; // シンプルなXORでハッシュを計算
+		}
+	};
+
+	/// ===コライダー=== ///
+	std::list<ObjectBase*> Objects_;
+	std::unordered_set<ObjectBase*> collidedObjects_; // 衝突したオブジェクトを追跡するセット
 
 	bool isDrawCapsule_ = true; // カプセルの描画フラグ
+
+	std::unordered_set<std::pair<ObjectBase*, ObjectBase*>, PairHash> collidedPairs_; // 衝突済みペア
+
 };

@@ -67,6 +67,11 @@ void Object3d::SetModel(const std::string& fileName)
 	m_model_ = ModelManager::GetInstance()->FindModel(fileName);
 }
 
+void Object3d::SetAlpha(float alpha)
+{
+	m_model_->SetAlpha(alpha);
+}
+
 void Object3d::SetShininess(float shininess)
 {
 	if (m_model_)

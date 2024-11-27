@@ -13,16 +13,16 @@ void CollisionManager::Update() {
 
 void CollisionManager::Draw() {
 	// Capsuleワイヤーの描画有無
-	if(isDrawCapsule_) {
+	if (isDrawCapsule_) {
 		// 登録されているObjectBaseの描画
 		std::list<ObjectBase*>::iterator itr = Objects_.begin();
-		for(; itr != Objects_.end(); ++itr) {
+		for (; itr != Objects_.end(); ++itr) {
 			// 始点と終点を取得
-			Vector3 start = ( *itr )->GetCollider()->GetStart();
-			Vector3 end = ( *itr )->GetCollider()->GetEnd();
+			Vector3 start = (*itr)->GetCollider()->GetStart();
+			Vector3 end = (*itr)->GetCollider()->GetEnd();
 			//半径の取得
-			float radius = ( *itr )->GetCollider()->GetRadius();
-			Vector4 color = ( *itr )->GetCollider()->GetColor();
+			float radius = (*itr)->GetCollider()->GetRadius();
+			Vector4 color = (*itr)->GetCollider()->GetColor();
 
 
 			//ワイヤーフレームの描画
@@ -30,7 +30,7 @@ void CollisionManager::Draw() {
 			Draw2D::GetInstance()->DrawCapsule(radius, start, end, color, viewProjectionMatrix);
 
 			//白色に変更
-			( *itr )->GetCollider()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			(*itr)->GetCollider()->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 		}
 	}
 }
@@ -64,11 +64,8 @@ void CollisionManager::AddCollider(ObjectBase* ObjectBase) {
 /// コライダー2つの衝突判定と応答
 ///-------------------------------------------///
 void CollisionManager::CheckColliderPair(ObjectBase* characterA, ObjectBase* characterB) {
-	if(characterA->GetCollider()->Intersects(*characterB->GetCollider())) {
-		// コライダーAの衝突コールバックを呼び出す
-		characterA->OnCollision(characterB);
-
-		// コライダーBの衝突コールバックを呼び出す
+	if (characterA->GetCollider()->Intersects(*characterB->GetCollider())) {
+		characterA->OnCollision(characterB); // 衝突したペアにのみ処理
 		characterB->OnCollision(characterA);
 	}
 }
@@ -77,21 +74,9 @@ void CollisionManager::CheckColliderPair(ObjectBase* characterA, ObjectBase* cha
 /// すべての当たり判定チェック
 ///-------------------------------------------///
 void CollisionManager::CheckAllCollisions() {
-	// リスト内のペアを総当り
-	std::list<ObjectBase*>::iterator itrA = Objects_.begin();
-
-	for(; itrA != Objects_.end(); ++itrA) {
-		ObjectBase* characterA = *itrA;
-
-		// イテレーターBはイテレータAの次の要素から回す(重複判定を回避)
-		std::list<ObjectBase*>::iterator itrB = itrA;
-		itrB++;
-
-		for(; itrB != Objects_.end(); ++itrB) {
-			ObjectBase* characterB = *itrB;
-
-			// ペアの当たり判定
-			CheckColliderPair(characterA, characterB);
+	for (auto itrA = Objects_.begin(); itrA != Objects_.end(); ++itrA) {
+		for (auto itrB = std::next(itrA); itrB != Objects_.end(); ++itrB) {
+			CheckColliderPair(*itrA, *itrB);
 		}
 	}
 }

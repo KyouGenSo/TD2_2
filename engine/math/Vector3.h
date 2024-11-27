@@ -112,4 +112,9 @@ struct Vector3 final {
 
 		return { x, y, z };
 	}
+
+	// ベクトルの長さを計算する
+	float length() const {
+		return std::sqrt(x * x + y * y + z * z);
+	}
 };

@@ -27,16 +27,18 @@ void Boss::Initialize() {
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<float> distRadius(0.0f, 10.0f);
-	std::uniform_real_distribution<float> distAngle(0.0f, 2 * static_cast<float>( M_PI ));
+	std::uniform_real_distribution<float> distAngle(0.0f, 2 * static_cast<float>(M_PI));
 	std::uniform_real_distribution<float> distHeight(0.0f, 20.0f);
 
 	// 核のランダムな配置
-	for(auto& core : cores_) {
+	for (auto& core : cores_) {
+		core = std::make_unique<BossNuclear>();
 		float radius = distRadius(gen);
 		float angle = distAngle(gen);
 		float height = distHeight(gen);
 		Vector3 offset = { radius * cos(angle), height, radius * sin(angle) };
-		core.Initialize(transform_.translate, offset);
+		core->Initialize(transform_.translate, offset);
+		core->SetBoss(this); // Bossの参照を設定
 	}
 
 	ChangeState(std::make_unique<AttackPhase1>(this)); // 初期状態を設定
@@ -61,8 +63,8 @@ void Boss::Update() {
 	}
 
 	// 核の更新
-	for(auto& core : cores_) {
-		core.Update(transform_.translate);
+	for (auto& core : cores_) {
+		core->Update(transform_.translate);
 	}
 
 	object3d_->SetScale(transform_.scale);
@@ -107,7 +109,7 @@ void Boss::Move() {
 void Boss::Draw() {
 	// 核の描画
 	for (auto& core : cores_) {
-		core.Draw();
+		core->Draw();
 	}
 
 	// ステートの更新
@@ -138,23 +140,19 @@ void Boss::DrawImGui() {
 }
 
 void Boss::HPUpdate() {
-	if(Input::GetInstance()->PushKey(DIK_SPACE)) {
-		if(hp_ > 0) {
-			hp_ -= 1;
-			boxSize.x = static_cast<float>( hp_ );
-		}
-	}
+	// HPバーの幅を更新（HPの最大値を1000と仮定）
+	const float maxHP = 1000.0f;
+	boxSize.x = (static_cast<float>(hp_) / maxHP) * 1000.0f;
 
 	// HPバーの色を変更
-	float hpRatio = static_cast<float>( hp_ ) / 1000.0f;
-	if(hpRatio > 0.9f) {
+	float hpRatio = static_cast<float>(hp_) / maxHP;
+	if (hpRatio > 0.9f) {
 		boxColor = Vector4(0.0f, 1.0f, 0.0f, 1.0f); // 緑
-	}
-	else if (hpRatio > 0.7f) {
+	} else if (hpRatio > 0.7f) {
 		boxColor = Vector4(0.3f, 1.0f, 0.0f, 1.0f); // 黄緑
-	} else if(hpRatio > 0.5f) {
+	} else if (hpRatio > 0.5f) {
 		boxColor = Vector4(1.0f, 1.0f, 0.0f, 1.0f); // 黄色
-	} else if(hpRatio > 0.2f) {
+	} else if (hpRatio > 0.2f) {
 		boxColor = Vector4(1.0f, 0.5f, 0.0f, 1.0f); // オレンジ
 	} else {
 		boxColor = Vector4(1.0f, 0.0f, 0.0f, 1.0f); // 赤
@@ -188,6 +186,11 @@ void Boss::HPDraw() {
 
 void Boss::ChangeState(std::unique_ptr<BossAttackBaseState> state) {
 	state_ = std::move(state);
+}
+
+std::vector<std::unique_ptr<BossNuclear>>& Boss::GetCores()
+{
+	return cores_;
 }
 
 ///=============================================================================
