@@ -3,7 +3,9 @@
 #include "Object3dBasic.h"
 #include "Draw2D.h"
 #include "Camera.h"
+#ifdef _DEBUG
 #include "ImGuiManager.h"
+#endif
 
 void CollisionManager::Initialize() {
 }
@@ -38,10 +40,13 @@ void CollisionManager::Draw() {
 ///=============================================================================
 ///						Imguiの描画
 void CollisionManager::DrawImGui() {
+#ifdef _DEBUG
 	ImGui::Begin("Collision MGR");
 	//ワイヤーフレームの描画
 	ImGui::Checkbox("DrawCapsule", &isDrawCapsule_);
-	ImGui::End();
+	ImGui::End(); 
+#endif // DEBUG
+
 }
 
 ///-------------------------------------------///

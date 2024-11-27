@@ -30,6 +30,7 @@ void AttackPhase4::GenerateParticles(const Vector3& position)
         Particle particle = { std::move(particleObject), velocity, 180 }; // 寿命を100フレームに設定
         particles_.emplace_back(std::move(particle));
     }
+;
 }
 
 void AttackPhase4::Update()
@@ -58,6 +59,7 @@ void AttackPhase4::Update()
         particle.lifetime--;
         if (particle.lifetime <= 0 || position.y < 0.0f) {
             it = particles_.erase(it);
+			meteorCollision_->SetRadius(0.01f);
         }
         else {
             ++it;
@@ -80,6 +82,9 @@ void AttackPhase4::Update()
         Vector3 position = meteor_->GetTranslate();
         position.y -= 1.0f; // 降下速度
         meteor_->SetTranslate(position);
+		// NOTE: 隕石の衝突判定用オブジェクトの位置を更新
+		meteorCollision_->position = meteor_->GetTranslate();
+		meteorCollision_->PositionUpdate();
 
         // 隕石の回転を更新
         Vector3 rotation = meteor_->GetRotate();
@@ -133,4 +138,10 @@ void AttackPhase4::DropMeteor()
     meteor_->SetTranslate(meteorPosition);
     meteor_->SetScale({ 5.0f, 5.0f, 5.0f });
     meteor_->Update();
+
+    // 隕石の衝突判定用オブジェクトを生成
+    // NOTE:
+    meteorCollision_ = std::make_unique<BossBullet>(meteor_->GetTranslate() , Vector3(0.0f, 0.0f, 0.0f), 0.0f);
+    meteorCollision_->InitializeAsShockWave(meteor_->GetTranslate(), Vector3(5.0f, 5.0f, 5.0f), Vector3(0.0f, 0.0f, 0.0f));
+	meteorCollision_->SetRadius(5.0f);
 }

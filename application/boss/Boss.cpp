@@ -167,6 +167,7 @@ void Boss::Draw() {
 }
 
 void Boss::DrawImGui() {
+#ifdef _DEBUG
 	ImGui::Begin("phase");
 	// フェーズの変更
 	float hpRatio = static_cast<float>(hp_) / 1000.0f;
@@ -182,7 +183,9 @@ void Boss::DrawImGui() {
 		ImGui::Text("phase5");
 	}
 	ImGui::DragFloat("duration", &lightHitDuration_);
-	ImGui::End();
+	ImGui::End(); 
+#endif // DEBUG
+
 }
 
 void Boss::HPUpdate() {
@@ -203,7 +206,7 @@ void Boss::HPUpdate() {
 	} else {
 		boxColor = Vector4(1.0f, 0.0f, 0.0f, 1.0f); // 赤
 	}
-}
+}	
 
 
 void Boss::HPDraw() {
@@ -252,9 +255,9 @@ void Boss::RespawnCores()
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<float> distRadius(0.0f, 10.0f);
+	std::uniform_real_distribution<float> distRadius(0.0f, 12.0f);
 	std::uniform_real_distribution<float> distAngle(0.0f, 2 * static_cast<float>(M_PI));
-	std::uniform_real_distribution<float> distHeight(0.0f, 20.0f);
+	std::uniform_real_distribution<float> distHeight(0.0f, 12.0f);
 
 	cores_.clear(); // 既存のコアをクリア
 

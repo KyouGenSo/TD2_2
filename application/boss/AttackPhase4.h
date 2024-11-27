@@ -4,6 +4,7 @@
 #include "Object3d.h"
 #include <memory>
 #include <vector>
+#include "BossBullet.h"
 
 // パーティクルのデータ構造
 struct Particle {
@@ -20,6 +21,8 @@ public:
     void Update() override;
     void Draw() override;
 
+	BossBullet* GetMeteorCollision() { return meteorCollision_.get(); }
+
 private:
     void DropMeteor();
     void GenerateParticles(const Vector3& position); // パーティクル生成
@@ -28,4 +31,7 @@ private:
     int meteorDropCounter_ = 0;       // 隕石の降下カウント
     int coolDownCounter_ = 0;         // クールタイムのカウント
     std::vector<Particle> particles_; // パーティクル管理
+
+    //当たり判定用弾
+    std::unique_ptr<BossBullet> meteorCollision_;
 };
