@@ -35,6 +35,22 @@ public:
 	bool IsDestroyed() const { return isDestroyed_; } // 核が破壊されているか取得
 	void ResetCore(); // 核をリセットするメソッド
 
+	///--------------------------------------------------------------
+	///	
+	// パーティクル
+	struct Particle {
+		std::vector<std::unique_ptr<Object3d>> models; // 破壊時のパーティクル
+		std::vector<Vector3> velocities; // パーティクルの速度
+		std::vector<float> lifeTimes; // パーティクルの寿命
+		std::vector<bool> isDead; // パーティクルが死んでいるかどうか
+	};
+
+	void MakeParticle();
+	void UpdateParticle();
+	void DrawParticle();
+
+	const int MAX_PARTICLE = 25; // パーティクルの最大数
+
 private:
 	Transform transform_;    // 核の現在位置
 	Vector3 offset_;      // ボスからのオフセット位置
@@ -49,8 +65,13 @@ private:
 
 	bool isVisible_ = false; // 核の可視性
 
+	bool isCollision_ = false; // 衝突したかどうか
+
 	float destructionTimer_ = 0.0f; // 破壊後のタイマー
 	const float destructionDuration_ = 3.0f; // 核が消えるまでの時間（秒）
+
+	// パーティクル
+	std::unique_ptr<Particle> particle_;
 
 };
 
