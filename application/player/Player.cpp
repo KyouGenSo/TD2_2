@@ -22,7 +22,11 @@ void Player::Initialize(Boss* boss) {
 	boss_ = boss; // Boss のポインタを設定
 
 	followCamera_ = std::make_unique<FollowCamera>();
-
+	// スプライトの生成と初期化
+	phaseSprite_ = std::make_unique<Sprite>();
+	phaseSprite_->Initialize("phase1.png"); // テクスチャパスを指定
+	phaseSprite_->SetPos({ 0.0f, 0.0f }); // 座標(0, 0)
+	showPhaseSprite_ = true; // スプライトを表示
 
 
 	//// lightの初期設定-----------------------------------------------------------------------------------------------------------------------------
@@ -175,9 +179,14 @@ void Player::Draw() {
 	// モデルの描画
 	object3d_->Draw();
 
-	// 砂埃パーティクルの描画
+	// パーティクルの描画
 	for (const auto& particle : dustParticles_) {
 		particle.object->Draw();
+	}
+
+	// スプライトの描画
+	if (showPhaseSprite_ && phaseSprite_) {
+		phaseSprite_->Draw();
 	}
 
 }
@@ -340,15 +349,12 @@ void Player::OnCollision(ObjectBase* objectBase) {
 
 void Player::HandleMoveJumpPhase()
 {
-	// プレイヤーの左右移動の完了判定
 	if (Input::GetInstance()->PushKey(DIK_A)) {
 		movedLeft = true;
 	}
 	if (Input::GetInstance()->PushKey(DIK_D)) {
 		movedRight = true;
 	}
-
-	// ジャンプ完了判定
 	if (Input::GetInstance()->PushKey(DIK_W) && !isJumping_) {
 		jumped = true;
 	}
@@ -356,6 +362,7 @@ void Player::HandleMoveJumpPhase()
 	// 全ての動作が完了したら次のフェーズへ
 	if (movedLeft && movedRight && jumped) {
 		tutorialPhase = TutorialPhase::LightAndDestroy;
+		showPhaseSprite_ = false; // スプライトを非表示
 	}
 }
 

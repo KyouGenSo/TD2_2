@@ -53,7 +53,7 @@ public:
 	///--------------------------------------------------------------
 	///							入出力関数
 public:
-		
+
 	Transform& GetTransform() { return transform_; }
 
 	// プレイヤーの現在位置を取得
@@ -136,10 +136,6 @@ private:
 	std::unique_ptr<LightCollision> lightCollision_ = nullptr;
 
 	bool lightVisible_ = false; // ライト表示フラグ
-
-	std::unique_ptr<Sprite> phaseSprite_; // フェーズ表示用のスプライト
-	bool showPhaseSprite_ = false;        // スプライト表示フラグ
-
 private:
 	// パーティクル管理用の構造体
 	struct DustParticle {
@@ -150,6 +146,10 @@ private:
 
 	std::vector<DustParticle> dustParticles_; // 砂埃パーティクルのリスト
 	void GenerateDust();                     // 砂埃を生成する関数
+
+	std::unique_ptr<Sprite> phaseSprite_; // スプライトオブジェクト
+	bool showPhaseSprite_ = false;        // スプライトの表示フラグ
+
 
 };
 
