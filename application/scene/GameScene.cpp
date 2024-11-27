@@ -176,6 +176,8 @@ void GameScene::Draw()
 	// コリジョンマネージャの描画
 	collisionManager_->Draw();
 
+	//
+	player_->DrawSprite();
 
 	// ボスのHPバーの描画
 	boss_->HPDraw();

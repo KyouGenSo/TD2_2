@@ -49,6 +49,8 @@ public:
 
 	void SetLightVisible(bool visible) { lightVisible_ = visible; }
 
+	void DrawSprite();
+
 
 	///--------------------------------------------------------------
 	///							入出力関数

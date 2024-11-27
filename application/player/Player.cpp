@@ -183,11 +183,6 @@ void Player::Draw() {
 		particle.object->Draw();
 	}
 
-	// スプライトの描画
-	if (showPhaseSprite_ && phaseSprite_) {
-		phaseSprite_->Draw();
-	}
-
 }
 
 void Player::Move() {
@@ -375,6 +370,13 @@ void Player::HandleLightAndDestroyPhase()
 		boss_->SetHP(1000); // ボスのHPを1000に設定
 		boss_->SetHPBarVisible(true); // HPバーを表示する
 		tutorialPhase = TutorialPhase::End;
+	}
+}
+
+void Player::DrawSprite()
+{
+	if (showPhaseSprite_ && phaseSprite_) {
+		phaseSprite_->Draw(); // スプライトの描画
 	}
 }
 
