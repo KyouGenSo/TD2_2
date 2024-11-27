@@ -77,6 +77,9 @@ void Player::Update() {
 	// ボスが存在しない場合、処理をスキップ
 	if (boss_ == nullptr) return;
 
+	// HPの更新
+	HPUpdate();
+
 	//ライト
 	Light();
 
@@ -133,6 +136,9 @@ void Player::Update() {
 void Player::Draw() {
 	// モデルの描画
 	object3d_->Draw();
+
+	// HPバーの描画
+	HPDraw();
 }
 
 void Player::Move() {
@@ -278,5 +284,44 @@ void Player::OnCollision(ObjectBase* objectBase) {
 		//赤色に変更
 		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 	}
+}
+
+void Player::HPUpdate()
+{
+	// HPバーの幅を更新（HPの最大値を500と仮定）
+	const float maxHP = 500.0f;
+	boxSize_.x = (static_cast<float>(hp_) / maxHP) * 200.0f; // 横幅をスケーリング
+
+	// HPバーの色を変更
+	float hpRatio = static_cast<float>(hp_) / maxHP;
+	if (hpRatio > 0.7f) {
+		boxColor_ = { 0.0f, 1.0f, 0.0f, 1.0f }; // 緑
+	} else if (hpRatio > 0.4f) {
+		boxColor_ = { 1.0f, 1.0f, 0.0f, 1.0f }; // 黄色
+	} else {
+		boxColor_ = { 1.0f, 0.0f, 0.0f, 1.0f }; // 赤
+	}
+}
+
+void Player::HPDraw()
+{
+	// 背景用の黒いバー
+	Vector4 backgroundColor = { 0.0f, 0.0f, 0.0f, 0.5f };
+	Vector2 backgroundSize = { 200.0f, boxSize_.y };
+	Draw2D::GetInstance()->DrawBox(boxPosition_, backgroundSize, backgroundColor);
+
+	// HPバー
+	Draw2D::GetInstance()->DrawBox(boxPosition_, boxSize_, boxColor_);
+
+	// 枠を描画
+	Vector4 borderColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+	Vector2 topLeft = boxPosition_;
+	Vector2 topRight = { boxPosition_.x + 200.0f, boxPosition_.y };
+	Vector2 bottomLeft = { boxPosition_.x, boxPosition_.y + boxSize_.y };
+	Vector2 bottomRight = { boxPosition_.x + 200.0f, boxPosition_.y + boxSize_.y };
+	Draw2D::GetInstance()->DrawLine(topLeft, topRight, borderColor);
+	Draw2D::GetInstance()->DrawLine(topRight, bottomRight, borderColor);
+	Draw2D::GetInstance()->DrawLine(bottomRight, bottomLeft, borderColor);
+	Draw2D::GetInstance()->DrawLine(bottomLeft, topLeft, borderColor);
 }
 

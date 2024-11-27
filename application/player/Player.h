@@ -42,6 +42,11 @@ public:
 	/// @param objectBase 衝突したオブジェクト
 	void OnCollision(ObjectBase* objectBase) override;
 
+	//HPの更新関数
+	void HPUpdate();
+	//HPバーの描画関数
+	void HPDraw();
+
 
 	///--------------------------------------------------------------
 	///							入出力関数
@@ -114,6 +119,11 @@ private:
 
 	//ライトの当たり判定(ユニークポインタ)
 	std::unique_ptr<LightCollision> lightCollision_ = nullptr;
+
+	uint32_t hp_ = 500; // プレイヤーのHP
+	Vector2 boxPosition_ = { 800.0f, 450.0f }; // HPバーの位置（画面右下）
+	Vector2 boxSize_ = { 200.0f, 25.0f }; // HPバーのサイズ
+	Vector4 boxColor_ = { 0.0f, 1.0f, 0.0f, 1.0f }; // HPバーの色
 
 };
 
