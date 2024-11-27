@@ -31,8 +31,8 @@ void Player::Initialize(Boss* boss) {
 		{ transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z }, // lightPos
 		boss->GetTransform().translate - Vector3(transform_.translate.x, transform_.translate.y + 5.0f, transform_.translate.z), // lightDir
 		{ 1.0f, 1.0f, 1.0f, 1.0f }, // lightColor
-		10.0f, // 光の強さ
-		26.0f, // ライト範囲
+		50.0f, // 光の強さ
+		30.0f, // ライト範囲
 		0.1f, // 光減衰
 		std::cos(std::numbers::pi_v<float> / 20.0f), // ライトスポット角度
 		true // isSpotLightフラグ
@@ -43,7 +43,7 @@ void Player::Initialize(Boss* boss) {
 		{ transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z }, // lightPos
 		boss->GetTransform().translate - Vector3(transform_.translate.x, transform_.translate.y + 2.0f, transform_.translate.z), // lightDir
 		{ 1.0f, 1.0f, 1.0f, 1.0f }, // lightColor
-		10.0f, // 光の強さ
+		20.0f, // 光の強さ
 		50.0f, // ライト範囲
 		1.0f, // 光減衰
 		std::cos(std::numbers::pi_v<float> / 5.0f), // ライトスポット角度
@@ -255,7 +255,10 @@ void Player::Light() {
 	};
 
 	// ボスの方向を基準にライトの方向を計算
-	Vector3 directionToBoss = boss_->GetTransform().translate - currentLight_->lightPos;
+	Vector3 directionToBoss = { 
+		  boss_->GetTransform().translate.x - currentLight_->lightPos.x 
+		, currentLight_->lightPos.y
+		, boss_->GetTransform().translate.z - currentLight_->lightPos.z };
 
 	// ライトの方向をリセットし、プレイヤーからボスへ向かう方向を初期値とする
 	Vector3 initialDirection = directionToBoss.normalize();
@@ -300,7 +303,7 @@ void Player::DrawImGui()
 	ImGui::DragFloat3("Light Dir", &currentLight_->lightDir.x, 0.01f, -10.0f, 10.0f);
 	ImGui::DragFloat3("Light Pos", &currentLight_->lightPos.x, 0.1f);
 	ImGui::ColorEdit4("Light Color", &currentLight_->lightColor.x);
-	ImGui::SliderFloat("Light Intensity", &currentLight_->lightIntensity, 0.0f, 10.0f);
+	ImGui::SliderFloat("Light Intensity", &currentLight_->lightIntensity, 0.0f, 50.0f);
 	ImGui::SliderFloat("Light Range", &currentLight_->lightRange, 0.0f, 100.0f);
 	ImGui::SliderFloat("Light Decay", &currentLight_->lightDecay, 0.0f, 2.0f);
 	ImGui::SliderFloat("Light Spot Angle", &currentLight_->lightSpotAngle, 0.0f, 1.0f);

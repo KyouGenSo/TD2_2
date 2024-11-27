@@ -15,4 +15,9 @@ public: // メンバ関数
 	/// シーンの生成
 	///	</summary>
 	virtual BaseScene* CreateScene(const std::string& sceneName) = 0;
+
+	/// <summary>
+	/// sceneTypeのゲッター
+	/// </summary>
+	virtual uint32_t GetSceneType() = 0;
 };

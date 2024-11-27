@@ -24,6 +24,10 @@ public: // メンバー関数
 	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix_; }
 	const Vector3& GetRotate() const { return transform_.rotate; }
 	const Vector3& GetTranslate() const { return transform_.translate; }
+	const float GetFovY() const { return fovY_; }
+	const float GetAspect() const { return aspect_; }
+	const float GetNearClip() const { return nearZ_; }
+	const float GetFarClip() const { return farZ_; }
 
 
 	//-----------------------------------------Setter-----------------------------------------//
@@ -34,9 +38,6 @@ public: // メンバー関数
 	void SetNearClip(float nearZ) { nearZ_ = nearZ; }
 	void SetFarClip(float farZ) { farZ_ = farZ; }
 	void SetViewProjectionMatrix(const Matrix4x4& viewProjectionMatrix) { viewProjectionMatrix_ = viewProjectionMatrix; }
-	void SetLookAt(const Vector3& lookAt) {
-		lookAt_ = lookAt;
-	}
 
 private: // メンバー変数
 
@@ -58,6 +59,4 @@ private: // メンバー変数
 
 	// ビュープロジェクション行列
 	Matrix4x4 viewProjectionMatrix_;
-
-	Vector3 lookAt_; // 視点
 };

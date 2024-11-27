@@ -55,6 +55,9 @@
     <FxCompile Include="resources\shaders\Sprite.VS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="resources\shaders\BloomFog.PS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application\scene\MyGame.cpp">
