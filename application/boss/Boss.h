@@ -58,12 +58,6 @@ public: // メンバ関数
 	Transform& GetTransform() { return transform_; }
 	uint32_t GetHP() const { return hp_; }
 
-    // Player セッター
-    void SetPlayer(Player* player) { player_ = player; }
-
-    // Player ゲッター
-    Player* GetPlayer() const { return player_; }
-
 	//コアを取得
 	std::vector<std::unique_ptr<BossNuclear>>& GetCores();
 
