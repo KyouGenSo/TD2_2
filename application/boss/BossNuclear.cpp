@@ -47,32 +47,23 @@ void BossNuclear::Update(const Vector3& bossPosition)
 
 void BossNuclear::Draw()
 {
-	if (object3d_ && alpha_ > 0.0f) {
+	if (object3d_ && alpha_ > 0.0f && isVisible_) {
 		object3d_->SetAlpha(alpha_);
 		object3d_->Draw();
 	}
 }
 
 void BossNuclear::OnCollision(ObjectBase* objectBase) {
-	// 衝突処理
-	//Bossとの衝突判
-	if (dynamic_cast<LightCollision*>(objectBase) != nullptr) {
-		//赤色に変更
-		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
-	}
+	if (!isVisible_) return; // 可視状態でない場合は無視
 
-	// 衝突対象がLightCollisionである場合のみ処理
+	// 通常の衝突処理
 	if (dynamic_cast<LightCollision*>(objectBase) != nullptr) {
-		// 個別のalpha_を減少させる
+		collider_->SetColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 		alpha_ = std::max(0.0f, alpha_ - 0.1f);
 
-		if (alpha_ <= 0.0f) {
-			// 透明になった後の処理を追加（必要に応じて）
-		}	
-	}
-
-	if (alpha_ <= 0.0f && !isDestroyed_ && boss_ != nullptr) {
-		isDestroyed_ = true; // 核が壊れた状態を記録
-		boss_->DecreaseHP(50); // HPを減らす
+		if (alpha_ <= 0.0f && !isDestroyed_ && boss_ != nullptr) {
+			isDestroyed_ = true;
+			boss_->DecreaseHP(50);
+		}
 	}
 }

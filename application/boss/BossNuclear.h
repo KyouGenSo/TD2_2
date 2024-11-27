@@ -26,6 +26,8 @@ public:
 	// 核の位置を取得
 	Transform& GetTransform() { return transform_; }
 	void SetBoss(Boss* boss) { boss_ = boss; }
+	void SetVisible(bool visible) { isVisible_ = visible; }
+	bool IsVisible() const { return isVisible_; }
 
 	// 核の位置を設定
 	void SetTransform(const Transform& transform) { transform_ = transform; }
@@ -41,6 +43,8 @@ private:
 	Boss* boss_ = nullptr; // Bossへの参照
 
 	bool isDestroyed_ = false; // 核が壊れたかどうかを示すフラグ
+
+	bool isVisible_ = false; // 核の可視性
 
 };
 
