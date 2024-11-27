@@ -70,6 +70,9 @@ public: // メンバ関数
 	// 可視性を取得するメソッド
 	bool IsVisible() const { return isVisible_; }
 
+	//コア再生成関数
+	void RespawnCores();
+
 private:// メンバ変数
 
 	std::unique_ptr<Object3d> object3d_ = nullptr;
@@ -90,6 +93,8 @@ private:// メンバ変数
 	bool coresAreVisible_ = false; // 核が可視化されているかどうか
 	bool isLightHitting_ = false; // ライトが現在当たっているかどうか
 
+	float coreRespawnTimer_ = 0.0f; // 再生成までの時間
+	bool allCoresDestroyed_ = false; // すべてのコアが破壊されたか
 
 private: // メンバ関数
 

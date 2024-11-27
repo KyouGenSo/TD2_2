@@ -92,6 +92,21 @@ void Boss::Update() {
 		state_->Update();
 	}
 
+	// コアの状態チェック
+	allCoresDestroyed_ = std::all_of(cores_.begin(), cores_.end(), [](const std::unique_ptr<BossNuclear>& core) {
+		return core->IsVisible() == false;
+		});
+
+	// 全てのコアが破壊された場合の再生成処理
+	if (allCoresDestroyed_) {
+		coreRespawnTimer_ += 1.0f / 60.0f; // フレーム単位でタイマー進行
+		if (coreRespawnTimer_ >= 3.0f) {
+			RespawnCores();
+			coreRespawnTimer_ = 0.0f; // タイマーリセット
+			allCoresDestroyed_ = false; // 状態リセット
+		}
+	}
+
 	// 核の更新
 	for (auto& core : cores_) {
 		core->Update(transform_.translate);
@@ -233,10 +248,33 @@ void Boss::OnCollision(ObjectBase* objectBase) {
 	}
 }
 
+void Boss::RespawnCores()
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> distRadius(0.0f, 10.0f);
+	std::uniform_real_distribution<float> distAngle(0.0f, 2 * static_cast<float>(M_PI));
+	std::uniform_real_distribution<float> distHeight(0.0f, 20.0f);
+
+	cores_.clear(); // 既存のコアをクリア
+
+	for (int i = 0; i < 5; ++i) {
+		auto core = std::make_unique<BossNuclear>();
+		float radius = distRadius(gen);
+		float angle = distAngle(gen);
+		float height = distHeight(gen);
+		Vector3 offset = { radius * cos(angle), height, radius * sin(angle) };
+		core->Initialize(transform_.translate, offset);
+		core->SetBoss(this);
+		core->SetVisible(true); // 再生成時は表示
+		cores_.push_back(std::move(core));
+	}
+}
+
 // メンバ関数ポインタのテーブルの実体
 void (Boss::* Boss::spFuncTable[])() = {
 	&Boss::Usually,
-	&Boss::Down,
+	&Boss::Down,	
 	&Boss::GettingUp
 };
 
