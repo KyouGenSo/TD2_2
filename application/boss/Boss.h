@@ -149,4 +149,10 @@ private: // メンバ関数
 
 	bool isVisible_ = false; // 核の可視性フラグ
 
+	float alpha_ = 1.0f;       // オブジェクトの透明度
+	int waitTimer_ = 0;        // 待機タイマー
+	bool isFading_ = false;    // フェード中かどうかを判定
+	//bool isVisible_ = true;    // 描画するかどうかを判定
+	bool hasBounced_ = false;  // バウンドが終了したかどうかを判定
+
 };
