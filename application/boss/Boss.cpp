@@ -12,6 +12,7 @@
 #include "Player.h"
 #include <random>
 #include <SceneManager.h>
+#include <iostream>
 
 void Boss::Initialize() {
 	object3d_ = std::make_unique<Object3d>();
@@ -49,6 +50,12 @@ void Boss::Initialize() {
 	// Bossの位置とColliderの位置を同期
 	ObjectBase::Init(transform_.translate, transform_.translate, 10.0f);
 	collider_->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+
+	//particle->Initialize(dxCommon_);
+	/*particle = std::make_unique<ParticleManager>();
+	particle->CreateParticleGroup("particle", "resources/circle.png", ParticleManager::BlendMode::kBlendModeAdd);*/
+	//ParticleManager::GetInstance()->CreateParticleGroup("particle", "circle.png", ParticleManager::BlendMode::kBlendModeAdd);
+	//particle->CreateParticleGroup("particle", "circle.png", ParticleManager::BlendMode::kBlendModeAdd);
 }
 
 void Boss::Update() {
@@ -81,16 +88,19 @@ void Boss::Update() {
 	// HPの更新
 	HPUpdate();
 
-	// HPが0以下の場合、ClearSceneに移行
-	if (hp_ <= 0) {
-		SceneManager::GetInstance()->ChangeScene("clear");
-		return; // 処理を中断して早期リターン
+	// HPが0以下の場合、通常のフェーズからDownフェーズへ移行
+	if (hp_ <= 0 && phase_ != Phase::Down) {
+		phase_ = Phase::Down;
+		std::cout << "Phase changed to Down" << std::endl; // デバッグログ
 	}
 
 	// ステートの更新
 	if (state_) {
 		state_->Update();
 	}
+
+	// パーティクルの更新
+	UpdateParticles();
 
 	// コアの状態チェック
 	allCoresDestroyed_ = std::all_of(cores_.begin(), cores_.end(), [](const std::unique_ptr<BossNuclear>& core) {
@@ -163,6 +173,11 @@ void Boss::Draw() {
 	}
 
 	object3d_->Draw();
+
+	// パーティクルの描画
+	DrawParticles();
+
+	//ParticleManager::GetInstance()->Draw();
 
 }
 
@@ -290,64 +305,66 @@ void Boss::Usually() {
 		state_->Update();
 	}*/
 
+	if (hp_ <= 0)
+	{
+		phase_ = Phase::Down;
+	}
+
 	/*if(Input::GetInstance()->PushKey(DIK_V)) {
 		phase_ = Phase::Down;
 	}*/
 }
 
 void Boss::Down() {
-	// イージング用のタイマー
-	static float easingTime = 0.0f;      // 現在の時間
-	static int waitTimer = 0;            // バウンド後の待機タイマー
-	const float fallDuration = 2.0f;    // 倒れるまでの時間（秒）
-	const float bounceDuration = 1.0f;  // バウンドの時間（秒）
+	static float easingTime = 0.0f;
+	static int waitTimer = 0;
+	const float fallDuration = 2.0f;
+	const float bounceDuration = 1.0f;
+	const float maxRotation = static_cast<float>(M_PI) / 2.0f;
 
-	const float maxRotation = static_cast<float>(M_PI) / 2.0f; // 最大回転角（90度）
-
-	// イージングタイマーの進行
-	if (easingTime < fallDuration + bounceDuration) {
-		easingTime += 0.02f; // 時間を進める（フレーム単位で調整）
-	}
-
-	if (easingTime <= fallDuration) {
-		// 正規化時間 t を計算（倒れる動きの進行）
-		float t = easingTime / fallDuration;
-		if (t > 1.0f) t = 1.0f;
-
-		// イージング値を取得（倒れる動き）
-		float easedT = EaseInExpo(t);
-
-		// 回転角の更新
-		transform_.rotate.x = maxRotation * easedT;
-	} else if (easingTime <= fallDuration + bounceDuration) {
-		// 正規化時間 t を計算（バウンドの進行）
-		float t = (easingTime - fallDuration) / bounceDuration;
-		if (t > 1.0f) t = 1.0f;
-
-		// イージング値を取得（バウンド）
-		float easedT = EaseOutBounce(t);
-
-		// 回転角の更新（バウンド）
-		transform_.rotate.x = maxRotation - (maxRotation * 0.1f * easedT); // 最大回転角から少し戻る動き
-	} else {
-		// バウンドが終了後の待機
-		waitTimer++;
-		if (waitTimer >= 360) {
-			// 待機時間が経過したら起き上がりフェーズに移行
-			easingTime = 0.0f;
-			waitTimer = 0;
-			phase_ = Phase::GettingUp;
+	// アニメーションがまだ終了していない場合
+	if (!hasBounced_) {
+		// 倒れるアニメーション
+		if (easingTime < fallDuration) {
+			easingTime += 0.02f;
+			float t = easingTime / fallDuration;
+			if (t > 1.0f) t = 1.0f;
+			float easedT = EaseInExpo(t);
+			transform_.rotate.x = maxRotation * easedT;
+		}
+		// バウンドアニメーション
+		else if (easingTime < fallDuration + bounceDuration) {
+			easingTime += 0.02f;
+			float t = (easingTime - fallDuration) / bounceDuration;
+			if (t > 1.0f) t = 1.0f;
+			float easedT = EaseOutBounce(t);
+			transform_.rotate.x = maxRotation - (maxRotation * 0.1f * easedT);
+		}
+		// アニメーション終了
+		else {
+			hasBounced_ = true; // アニメーション終了フラグを設定
+			easingTime = 0.0f;  // タイマーリセット
 		}
 	}
+	// アニメーション終了後のフェードアウト処理
+	else {
+		// 待機タイマーを進行
+		waitTimer_++;
+		if (waitTimer_ >= 60) { // 60フレーム後にパーティクル生成
+			for (int i = 0; i < 5; ++i) { // 5つのパーティクルを生成
+				CreateParticle(transform_.translate);
+			}
 
-	// リセット（デバッグ用）
-	if (Input::GetInstance()->PushKey(DIK_B)) {
-		transform_.rotate.x = 0.0f; // 回転をリセット
-		easingTime = 0.0f;          // タイマーをリセット
-		waitTimer = 0;              // 待機タイマーをリセット
-		phase_ = Phase::Usually;    // 通常状態に戻す
+			alpha_ -= 0.01f;
+			if (alpha_ <= 0.0f) {
+				alpha_ = 0.0f;
+				SceneManager::GetInstance()->ChangeScene("clear");
+			}
+			object3d_->SetAlpha(alpha_);
+		}
 	}
 }
+
 
 
 void Boss::GettingUp() {
@@ -373,11 +390,65 @@ void Boss::GettingUp() {
 	// 位置の更新（元の位置に戻す）
 	transform_.translate.x *= (1.0f - easedT);
 
-	// 起き上がりが完了したら通常状態に戻す
-	if (t >= 1.0f) {
-		transform_.rotate.x = 0.0f;  // 回転を完全にリセット
-		transform_.translate.x = 0.0f; // 位置を完全にリセット
-		easingTime = 0.0f;           // タイマーをリセット
-		phase_ = Phase::Usually;     // 通常状態に戻す
+	//// 起き上がりが完了したら通常状態に戻す
+	//if (t >= 1.0f) {
+	//	transform_.rotate.x = 0.0f;  // 回転を完全にリセット
+	//	transform_.translate.x = 0.0f; // 位置を完全にリセット
+	//	easingTime = 0.0f;           // タイマーをリセット
+	//	phase_ = Phase::Usually;     // 通常状態に戻す
+	//}
+}
+
+// パーティクルを生成
+void Boss::CreateParticle(const Vector3& basePosition) {
+	// ランダムな移動量を生成
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> distX(-2.1f, 2.1f); // X軸のランダム範囲
+	std::uniform_real_distribution<float> distZ(-2.1f, 2.1f); // Z軸のランダム範囲
+	std::uniform_real_distribution<float> distY(0.5f, 20.8f);  // Y軸の上方向範囲
+
+	// パーティクルの位置
+	Vector3 position = basePosition;
+	position.x += distX(gen); // X軸をランダムに
+	position.z += distZ(gen); // Z軸をランダムに
+	position.y += distY(gen); // Y軸はプラス方向
+
+	// パーティクルオブジェクトを生成
+	std::unique_ptr<Object3d> particleObject = std::make_unique<Object3d>();
+	particleObject->Initialize();
+	particleObject->SetModel("Particle.obj"); // パーティクル用モデル
+	particleObject->SetTranslate(position);
+	particleObject->SetScale({ 0.2f, 0.2f, 0.2f }); // スケール調整
+	particleObject->Update();
+
+	// 最大個数を超えた場合は古いパーティクルを削除
+	if (particles_.size() >= kMaxParticles) {
+		particles_.erase(particles_.begin());
+	}
+
+	// パーティクルをリストに追加
+	particles_.emplace_back(std::move(particleObject));
+}
+
+// パーティクルの更新処理
+void Boss::UpdateParticles() {
+	for (auto it = particles_.begin(); it != particles_.end(); ) {
+		Vector3 position = (*it)->GetTranslate();
+		position.y += 0.1f; // Y軸方向に徐々に下がる
+
+		// パーティクルの更新
+		(*it)->SetTranslate(position);
+		(*it)->Update();
+
+		// パーティクルが画面外または条件を満たさない場合は削除（今回は削除しない）
+		++it;
+	}
+}
+
+// パーティクルの描画処理
+void Boss::DrawParticles() {
+	for (const auto& particle : particles_) {
+		particle->Draw();
 	}
 }

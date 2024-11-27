@@ -38,8 +38,10 @@ void GameScene::Initialize() {
 	ModelManager::GetInstance()->LoadModel("ShockWave.obj");
 	ModelManager::GetInstance()->LoadModel("Meteor.obj");
 	ModelManager::GetInstance()->LoadModel("Prediction.obj");
+	ModelManager::GetInstance()->LoadModel("Particle.obj");
 	TextureManager::GetInstance()->LoadTexture("Nuclear.png");
 	TextureManager::GetInstance()->LoadTexture("ShockWave.png");
+	TextureManager::GetInstance()->LoadTexture("circle.png");
 
 	//---------------------------------------
 	// ボスの初期化

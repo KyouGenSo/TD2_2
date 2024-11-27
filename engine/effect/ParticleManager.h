@@ -13,7 +13,7 @@
 
 class ParticleManager
 {
-private: // シングルトン設定
+public: // シングルトン設定
 	static ParticleManager* instance_;
 
 	ParticleManager() = default;
@@ -186,6 +186,8 @@ private:
 		// スケール
 		Vector3 scale = { 1.0f, 1.0f, 1.0f };
 	};
+
+public:
 
 	/// <summary>
 	/// パーティクル生成器
