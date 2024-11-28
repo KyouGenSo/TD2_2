@@ -71,4 +71,6 @@ private: // メンバ変数
 	//---------------------------------------
 	// コリジョンマネージャ
 	std::unique_ptr<CollisionManager> collisionManager_;
+
+	Sprite* sprite_ = nullptr;
 };

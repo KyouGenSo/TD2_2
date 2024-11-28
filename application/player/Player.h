@@ -15,6 +15,7 @@
 #include "ObjectBase.h"
 #include <memory>
 #include "LightCollision.h"
+#include "Sprite.h"
 #include <vector>
 //コントローラー操作
 #include <XInput.h>
@@ -47,6 +48,9 @@ public:
 	/// @param objectBase 衝突したオブジェクト
 	void OnCollision(ObjectBase* objectBase) override;
 
+	/// スプライト描画関数
+	void DrawSprite();
+
 
 	///--------------------------------------------------------------
 	///							入出力関数
@@ -60,7 +64,7 @@ public:
 	//ライトの当たり判定のゲッター
 	LightCollision* GetLightCollision() { return lightCollision_.get(); }
 
-
+	bool GetisTutorial() { return isTutorial_; }
 
 	///--------------------------------------------------------------
 	///							メンバ変数
@@ -86,6 +90,11 @@ private:
 
 
 	std::unique_ptr<FollowCamera> followCamera_;
+
+	bool isTutorial_ = false;        // チュートリアル中かどうか
+	float tutorialElapsedTime_ = 0; // チュートリアル経過時間
+
+	std::unique_ptr<Sprite> tutorialSprite_; // チュートリアル用スプライト
 
 
 	////ライト関連のコード-------------------------

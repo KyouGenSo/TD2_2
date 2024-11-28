@@ -68,21 +68,27 @@ void GameScene::Initialize() {
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
 
+	// スプライトの初期化
+	TextureManager::GetInstance()->LoadTexture("tutorial.png");
 
+	sprite_ = new Sprite();
+	sprite_->Initialize("tutorial.png");
+	sprite_->SetPos(Vector2(140.0f, 140.0f));
 }
 
 void GameScene::Finalize() {
 	delete boss_;
+	delete sprite_;
 }
 
 void GameScene::Update() {
 #ifdef _DEBUG
-	if(Input::GetInstance()->TriggerKey(DIK_F1)) {
+	if (Input::GetInstance()->TriggerKey(DIK_F1)) {
 		Object3dBasic::GetInstance()->SetDebug(!Object3dBasic::GetInstance()->GetDebug());
 		isDebug_ = !isDebug_;
 	}
 
-	if(isDebug_) {
+	if (isDebug_) {
 		DebugCamera::GetInstance()->Update();
 	}
 #endif
@@ -106,6 +112,9 @@ void GameScene::Update() {
 	// 天球の更新
 	skydome_->Update();
 
+	// spriteの更新
+	sprite_->Update();
+
 	//---------------------------------------
 	// コリジョンマネージャの処理
 	//リセット
@@ -119,23 +128,23 @@ void GameScene::Update() {
 	//ボスの弾の当たり判定の追加
 	//BossAttackBaseState* state = boss_->GetCurrentState();
 	// AttackPhase3の弾を取得して追加
-	if(auto attackPhase3 = dynamic_cast<AttackPhase3*>( boss_->GetCurrentState() )) {
+	if (auto attackPhase3 = dynamic_cast<AttackPhase3*>(boss_->GetCurrentState())) {
 		const std::list<BossBullet>& bullets = attackPhase3->GetBullets();
-		for(auto& bullet : bullets) {
+		for (auto& bullet : bullets) {
 			collisionManager_->AddCollider(const_cast<BossBullet*>(&bullet));
 		}
 	}
 	// AttackPhase4の隕石の当たり判定を追加
-	if(auto attackPhase4 = dynamic_cast<AttackPhase4*>( boss_->GetCurrentState() )) {
-		if(auto meteorCollision = attackPhase4->GetMeteorCollision()) {
+	if (auto attackPhase4 = dynamic_cast<AttackPhase4*>(boss_->GetCurrentState())) {
+		if (auto meteorCollision = attackPhase4->GetMeteorCollision()) {
 			collisionManager_->AddCollider(meteorCollision);
 		}
 	}
 
 	// ボスのコアの追加
 	std::vector<std::unique_ptr<BossNuclear>>& cores = boss_->GetCores();
-	for(auto& core : cores) {
-		if(core) {
+	for (auto& core : cores) {
+		if (core) {
 			collisionManager_->AddCollider(core.get()); // unique_ptrから生のポインタを取得
 		}
 	}
@@ -146,7 +155,7 @@ void GameScene::Update() {
 	collisionManager_->Update();
 
 	// シーン遷移
-	if(Input::GetInstance()->TriggerKey(DIK_RETURN)) {
+	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
 		SceneManager::GetInstance()->ChangeScene("clear");
 	}
 }
@@ -191,6 +200,11 @@ void GameScene::Draw() {
 	SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
 	//---------------------------------------
+
+	// チュートリアル中のスプライト描画
+	if (player_->GetisTutorial())
+	sprite_->Draw();
+
 	// コリジョンマネージャの描画
 	collisionManager_->Draw();
 
