@@ -155,9 +155,9 @@ void GameScene::Update() {
 	collisionManager_->Update();
 
 	// シーン遷移
-	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
-		SceneManager::GetInstance()->ChangeScene("clear");
-	}
+	//if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
+	//	SceneManager::GetInstance()->ChangeScene("clear");
+	//}
 }
 
 void GameScene::Draw() {

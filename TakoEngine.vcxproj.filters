@@ -168,9 +168,6 @@
     <ClCompile Include="engine\func\commonFunc\StringUtility.cpp">
       <Filter>ソースファイル\engine\func\commom</Filter>
     </ClCompile>
-    <ClCompile Include="application\scene\ClearScene.cpp">
-      <Filter>ソースファイル\application</Filter>
-    </ClCompile>
     <ClCompile Include="application\followCamera\FollowCamera.cpp">
       <Filter>ソースファイル\application</Filter>
     </ClCompile>
@@ -200,6 +197,9 @@
     <ClCompile Include="LightCollision.cpp" />
     <ClCompile Include="OverScene.cpp" />
     <ClCompile Include="MAudio.cpp" />
+    <ClCompile Include="application\scene\ClearScene.cpp">
+      <Filter>ソースファイル\application\scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\scene\GameScene.h">
